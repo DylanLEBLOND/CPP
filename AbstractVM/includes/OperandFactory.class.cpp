@@ -13,39 +13,28 @@
 //# include <OperandFactory.class.hpp>
 # include "OperandFactory.class.hpp"
 
-OperandFactory::_pfuncArray = NULL;		//Default Value
+OperandFactory::_pfuncArray[] = { OperandFactory::createInt8,
+								  OperandFactory::createInt16,
+								  OperandFactory::createInt32,
+								  OperandFactory::createFloat,
+								  OperandFactory::createDouble };
 
 /*
 ** Constructors
 */
-OperandFactory::OperandFactory(void)
-{
-	this->_pfuncArray = new t_pfunc [5];
+OperandFactory::OperandFactory(void) {}
 
-	this->_pfuncArray[Int8] = &this->createInt8;
-	this->_pfuncArray[Int16] = &this->createInt16;
-	this->_pfuncArray[Int32] = &this->createInt32;
-	this->_pfuncArray[Float] = &this->createFloat;
-	this->_pfuncArray[Double] = &this->createDouble;
-}
-
-OperandFactory::OperandFactory(OperandFactory const &copy)
-{
-	*this = copy;
-}
+OperandFactory::OperandFactory(OperandFactory const &src) {}
 
 /*
 ** Destructor
 */
-OperandFactory::~OperandFactory(void)
-{
-	delete [] this->_pfuncArray;
-}
+OperandFactory::~OperandFactory(void) {}
 
 /*
-** = Operator Overload
+** Operator "=" Overload
 */
-OperandFactory		&OperandFactory::operator=(OperandFactoryconst &copy)
+OperandFactory		&OperandFactory::operator=(OperandFactory const &src)
 {
 	return *this;
 }
@@ -53,37 +42,34 @@ OperandFactory		&OperandFactory::operator=(OperandFactoryconst &copy)
 /*
 ** Private
 */
-#if 0
 IOperand const		*OperandFactory::createInt8(std::string const & value) const
 {
-	return &(new Operand(value, Int8));
+	return &(new Operand(Int8, value));
 }
 
 IOperand const		*OperandFactory::createInt16(std::string const & value) const
 {
-	return &(new Operand(value, Int16));
+	return &(new Operand(Int16, value));
 }
 
 IOperand const		*OperandFactory::createInt32(std::string const & value) const
 {
-	return &(new Operand(value, Int32));
+	return &(new Operand(Int32, value));
 }
 
 IOperand const		*OperandFactory::createFloat(std::string const & value) const
 {
-	return &(new Operand(value, Float));
+	return &(new Operand(Float, value));
 }
 
 IOperand const		*OperandFactory::createDouble(std::string const & value) const
 {
-	return &(new Operand(value, Double));
+	return &(new Operand(Double, value));
 }
-#endif
 
 /*
 ** Public
 */
-#if 0
 IOperand const		*OperandFactory::createOperand(eOperandType type, std::string const & value) const
 {
 	switch (type)
@@ -98,10 +84,5 @@ IOperand const		*OperandFactory::createOperand(eOperandType type, std::string co
 			return NULL;
 	}
 
-	if (this->_pfuncArray == NULL)
-		return NULL;
-
 	return this->_pfuncArray[type](value);
 }
-#endif
-

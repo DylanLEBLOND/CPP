@@ -15,6 +15,7 @@
 
 //# include <IOperand.class.hpp>
 # include "IOperand.class.hpp"
+# include <iostream>
 
 typedef IOperand (OperandFactory::*t_pfunc) (std::string const &value) const;
 
@@ -22,10 +23,11 @@ class OperandFactory
 {
 
 private:
-	
-	t_pfunc *_pfuncArray;
 
-	OperandFactory(OperandFactory const &copy);
+	static t_pfunc _pfuncArray[5];
+
+	OperandFactory(OperandFactory const &src);
+	~OperandFactory(void);
 	OperandFactory &operator=(OperandFactory const &src);
 
 	IOperand const *createInt8(std::string const &value) const;
@@ -37,7 +39,6 @@ private:
 public:
 
 	OperandFactory(void);
-	~OperandFactory(void);
 
 	IOperand const * createOperand(eOperandType type, std::string const &value) const;
 

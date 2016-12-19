@@ -19,12 +19,28 @@ class Operand : public IOperand
 {
 
 private:
-	
+
 	eOperandType _type;
-	int cost
-	
+	int _precision;
+	std::string _value;
+
 public:
 
+	Operand(eOperandType type, std::string value);
+	Operand(Operand const &src);
+	~Operand(void);
+	Operand	&operator=(Operand const &src);
+
+	int getPrecision(void) const;
+	eOperandType getType(void) const;
+
+	std::string const &toString(void) const;
+
+	IOperand const *operator+(IOperand const &rhs) const;
+	IOperand const *operator-(IOperand const &rhs) const;
+	IOperand const *operator*(IOperand const &rhs) const;
+	IOperand const *operator/(IOperand const &rhs) const;
+	IOperand const *operator%(IOperand const &rhs) const;
 };
 
 #endif
