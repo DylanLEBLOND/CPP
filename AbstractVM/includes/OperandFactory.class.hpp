@@ -15,7 +15,7 @@
 
 //# include <IOperand.class.hpp>
 # include "IOperand.class.hpp"
-# include <iostream>
+# include "Operand.class.hpp"
 
 typedef IOperand (OperandFactory::*t_pfunc) (std::string const &value) const;
 
