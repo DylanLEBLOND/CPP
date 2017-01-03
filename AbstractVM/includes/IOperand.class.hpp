@@ -13,9 +13,9 @@
 #ifndef IOPERAND_CLASS_HPP
 # define IOPERAND_CLASS_HPP
 
-#include <iostream>
+# include <iostream>
 
-enum eOperandType { Int8 = 0, Int16, Int32, Float, Double };
+#include "common.hpp"
 
 class IOperand
 {
@@ -36,4 +36,4 @@ public:
 	virtual IOperand const *operator%(IOperand const &rhs) const = 0; // Modulo
 };
 
-#endif
+#endif // IOPERAND_CLASS_HPP

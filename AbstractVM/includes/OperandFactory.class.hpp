@@ -13,7 +13,6 @@
 #ifndef OPERANDFACTORY_CLASS_HPP
 # define OPERANDFACTORY_CLASS_HPP
 
-//# include <IOperand.class.hpp>
 # include "IOperand.class.hpp"
 # include "Operand.class.hpp"
 
@@ -44,4 +43,4 @@ public:
 
 };
 
-#endif
+#endif /* OPERANDFACTORY_CLASS_HPP */
