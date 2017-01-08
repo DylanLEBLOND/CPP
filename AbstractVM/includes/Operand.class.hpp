@@ -17,7 +17,7 @@
  * Personals Includes
  */
 #include "IOperand.class.hpp"
-#include "Exceptions.h"
+#include "Exceptions.hpp"
 
 /*
  * System Includes
@@ -44,8 +44,6 @@ private:
 
 	eOperandType _type;
 	unsigned int _precision;
-	template <typename T>
-	T _value;
 	std::string _value_str;
 
 	Operand(void);
@@ -59,6 +57,18 @@ private:
 	float					getValueFloat (std::string const &str) const;
 	double					getValueDouble (std::string const &str) const;
 
+	std::string				addInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
+	std::string				addFloating (std::string const &lhs, std::string const &rhs, double min, double max, double epsilon) const;
+
+	std::string				subInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
+	std::string				subFloating (std::string const &lhs, std::string const &rhs, double min, double max, double epsilon) const;
+
+	std::string				mulInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
+	std::string				mulFloating (std::string const &lhs, std::string const &rhs, double min, double max, double epsilon) const;
+
+	std::string				divInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
+	std::string				divFloating (std::string const &lhs, std::string const &rhs, double min, double max, double epsilon) const;
+
 public:
 
 	Operand(eOperandType type, std::string const &value_str);
@@ -69,20 +79,13 @@ public:
 
 	unsigned int			getPrecision(void) const;
 	eOperandType			getType(void) const;
-	template <typename T>
-	T						getValue(void) const;
 
-	std::string const		&toString(void) const;
+	std::string const		&toString(void) const;		// return _value_str
 
-	template <typename T>
 	IOperand const			*operator+(IOperand const &rhs) const;
-	template <typename T>
 	IOperand const			*operator-(IOperand const &rhs) const;
-	template <typename T>
 	IOperand const			*operator*(IOperand const &rhs) const;
-	template <typename T>
 	IOperand const			*operator/(IOperand const &rhs) const;
-	template <typename T>
 	IOperand const			*operator%(IOperand const &rhs) const;
 };
 
