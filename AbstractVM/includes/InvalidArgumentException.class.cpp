@@ -3,7 +3,12 @@
 /*
 ** Constructors
 */
-InvalidArgumentException::InvalidArgumentException(std::string &message)
+InvalidArgumentException::InvalidArgumentException(std::string const &message)
+{
+	_message = message;
+}
+
+InvalidArgumentException::InvalidArgumentException(const char *message)
 {
 	_message = message;
 }
@@ -30,7 +35,7 @@ InvalidArgumentException		&InvalidArgumentException::operator=(InvalidArgumentEx
 /*
 ** Getter
 */
-std::string				InvalidArgumentException::getInstruction() const
+std::string						InvalidArgumentException::getMessage() const
 {
 	return this->_message;
 }
@@ -38,7 +43,7 @@ std::string				InvalidArgumentException::getInstruction() const
 /*
 ** Public
 */
-virtual const char		*InvalidArgumentException::what() const throw()
+const char						*InvalidArgumentException::what() const throw()
 {
 	return this->_message.c_str();
 }

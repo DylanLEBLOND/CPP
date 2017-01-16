@@ -3,7 +3,12 @@
 /*
 ** Constructors
 */
-OverflowException::OverflowException(std::string &message)
+OverflowException::OverflowException(std::string const &message)
+{
+	_message = message;
+}
+
+OverflowException::OverflowException(const char *message)
 {
 	_message = message;
 }
@@ -38,7 +43,7 @@ std::string				OverflowException::getMessage() const
 /*
 ** Public
 */
-virtual const char		*OverflowException::what() const throw()
+const char				*OverflowException::what() const throw()
 {
 	std::string outmessage = "Overflow: ";
 

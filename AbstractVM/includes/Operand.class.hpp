@@ -18,6 +18,7 @@
  */
 #include "IOperand.class.hpp"
 #include "Exceptions.hpp"
+#include "common.hpp"
 
 /*
  * System Includes
@@ -25,6 +26,9 @@
 #include <string>		// std::string
 #include <cstdint>		// limits INT8 INT16 INT32
 #include <cfloat>		// limits FLOAT DOUBLE
+#include <cmath>		// fabs isnan
+#include <iomanip>		// setprecision
+#include <sstream>		// stringstream
 
 /*
  * PRECISION:
@@ -43,7 +47,7 @@ class Operand : public IOperand
 private:
 
 	eOperandType _type;
-	unsigned int _precision;
+	int _precision;
 	std::string _value_str;
 
 	Operand(void);
@@ -51,23 +55,24 @@ private:
 	bool					stringIsInteger (std::string const &str) const;
 	bool					stringIsFloating (std::string const &str) const;
 
-	signed char				getValueInt8 (std::string const &str) const;
-	signed short int		getValueInt16 (std::string const &str) const;
-	signed long				getValueInt32 (std::string const &str) const;
-	float					getValueFloat (std::string const &str) const;
-	double					getValueDouble (std::string const &str) const;
+	signed long				getValueInteger (std::string const &str, signed long min, signed long max) const;
+	double					getValueFloating (std::string const &str, double min, double max) const;
 
 	std::string				addInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
-	std::string				addFloating (std::string const &lhs, std::string const &rhs, double min, double max, double epsilon) const;
+	std::string				addFloating (std::string const &lhs, std::string const &rhs, double min, double max) const;
 
 	std::string				subInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
-	std::string				subFloating (std::string const &lhs, std::string const &rhs, double min, double max, double epsilon) const;
+	std::string				subFloating (std::string const &lhs, std::string const &rhs, double min, double max) const;
 
 	std::string				mulInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
-	std::string				mulFloating (std::string const &lhs, std::string const &rhs, double min, double max, double epsilon) const;
+	std::string				mulFloating (std::string const &lhs, std::string const &rhs, double min, double max) const;
 
-	std::string				divInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
-	std::string				divFloating (std::string const &lhs, std::string const &rhs, double min, double max, double epsilon) const;
+	std::string				divInteger (std::string const &lhs, std::string const &rhs) const;
+	std::string				divFloating (std::string const &lhs, std::string const &rhs, double min, double max) const;
+
+	std::string				modInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
+	std::string				modFloating (std::string const &lhs, std::string const &rhs, double min, double max) const;
+
 
 public:
 
@@ -76,8 +81,9 @@ public:
 	Operand(Operand const &src);
 	~Operand(void);
 	Operand					&operator=(Operand const &src);
+	Operand					&operator=(IOperand const &src);
 
-	unsigned int			getPrecision(void) const;
+	int						getPrecision(void) const;
 	eOperandType			getType(void) const;
 
 	std::string const		&toString(void) const;		// return _value_str

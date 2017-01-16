@@ -3,6 +3,7 @@
 
 # include <exception>		// std::exception
 # include <string>			// std::string
+# include <cstdio>
 
 class ShouldNeverOccurException : public std::exception
 {
@@ -14,13 +15,13 @@ private:
 
 public:
 
-	ShouldNeverOccurException(char const &file, unsigned int line);
+	ShouldNeverOccurException(char const *file, unsigned int line);
 	ShouldNeverOccurException(ShouldNeverOccurException const &src);
 	~ShouldNeverOccurException(void);
 
 	ShouldNeverOccurException		&operator=(ShouldNeverOccurException const &src);
 
-	virtual const char*				what(void) const throw();
+	const char*						what(void) const throw();
 
 	char const						*getFile(void) const;
 	unsigned int					getLine(void) const;

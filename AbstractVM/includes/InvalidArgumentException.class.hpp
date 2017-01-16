@@ -13,15 +13,16 @@ private:
 
 public:
 
-	InvalidArgumentException(std::string &message);
+	InvalidArgumentException(std::string const &message);
+	InvalidArgumentException(const char *message);
 	InvalidArgumentException(InvalidArgumentException const &src);
 	~InvalidArgumentException();
 
 	InvalidArgumentException		&operator=(InvalidArgumentException const &src);
 
-	virtual const char*		what() const throw();
+	const char*						what() const throw();
 
-	std::string				getMessage() const;
+	std::string						getMessage() const;
 };
 
 #endif // INVALIDARGUMENTEXCEPTION_CLASS_HPP

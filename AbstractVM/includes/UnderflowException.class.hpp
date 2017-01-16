@@ -13,13 +13,14 @@ private:
 
 public:
 
-	UnderflowException(std::string &message);
+	UnderflowException(std::string const &message);
+	UnderflowException(const char *message);
 	UnderflowException(UnderflowException const &src);
 	~UnderflowException();
 
 	UnderflowException		&operator=(UnderflowException const &src);
 
-	virtual const char*		what() const throw();
+	const char*				what() const throw();
 
 	std::string				getMessage() const;
 };

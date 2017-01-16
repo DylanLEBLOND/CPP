@@ -5,9 +5,10 @@
 */
 ShouldNeverOccurException::ShouldNeverOccurException(void) : _file("null"), _line(0) {}
 
-ShouldNeverOccurException::ShouldNeverOccurException(const char &file, unsigned int line)
+ShouldNeverOccurException::ShouldNeverOccurException(const char *file, unsigned int line)
 {
-	_file = file;
+	if (file != NULL)
+		_file = file;
 	_line = line;
 }
 
@@ -48,7 +49,7 @@ unsigned int					ShouldNeverOccurException::getLine(void) const
 /*
 ** Public
 */
-virtual const char		*ShouldNeverOccurException::what(void) const throw()
+const char						*ShouldNeverOccurException::what(void) const throw()
 {
 	std::string message = "Should Never Occur exception was thrown at line ";
 

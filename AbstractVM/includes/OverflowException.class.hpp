@@ -13,13 +13,14 @@ private:
 
 public:
 
-	OverflowException(std::string &message);
+	OverflowException(std::string const &message);
+	OverflowException(const char *message);
 	OverflowException(OverflowException const &src);
 	~OverflowException();
 
 	OverflowException		&operator=(OverflowException const &src);
 
-	virtual const char*		what() const throw();
+	const char*				what() const throw();
 
 	std::string				getMessage() const;
 };

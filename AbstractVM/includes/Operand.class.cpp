@@ -11,31 +11,32 @@ Operand::Operand(eOperandType type, std::string const &value_str)
 	{
 		case eOperandType::Int8:
 			if (! this->stringIsInteger(value_str))
-				throw new  InvalidArgumentException("Value is invalid");
-			this->getValueInt8(value_str);
+				throw   InvalidArgumentException("Value is invalid");
+			this->getValueInteger(value_str, INT8_MIN, INT8_MAX);
 			break;
 		case eOperandType::Int16:
 			if (! this->stringIsInteger(value_str))
-				throw new  InvalidArgumentException("Value is invalid");
-			this->getValueInt16(value_str);
+				throw   InvalidArgumentException("Value is invalid");
+			this->getValueInteger(value_str, INT16_MIN, INT16_MAX);
 			break;
 		case eOperandType::Int32:
 			if (! this->stringIsInteger(value_str))
-				throw new  InvalidArgumentException("Value is invalid");
-			this->getValueInt32(value_str);
+				throw   InvalidArgumentException("Value is invalid");
+			std::cout << "ICICI" << std::endl;
+			this->getValueInteger(value_str, INT32_MIN, INT32_MAX);
 			break;
 		case eOperandType::Float:
 			if (! this->stringIsFloating(value_str))
-				throw new  InvalidArgumentException("Value is invalid");
-			this->getValueFloat(value_str);
+				throw   InvalidArgumentException("Value is invalid");
+			this->getValueFloating(value_str, FLT_MIN, FLT_MAX);
 			break;
 		case eOperandType::Double:
 			if (! this->stringIsFloating(value_str))
-				throw new  InvalidArgumentException("Value is invalid");
-			this->getValueDouble(value_str);
+				throw   InvalidArgumentException("Value is invalid");
+			this->getValueFloating(value_str, DBL_MIN, DBL_MAX);
 			break;
 		default:		// Unknown
-			throw new InvalidArgumentException("Unknown Type");
+			throw  InvalidArgumentException("Unknown Type");
 			break;
 	}
 
@@ -58,7 +59,7 @@ Operand::Operand(eOperandType type, std::string const &value_str)
 			this->_precision = DOUBLE_PRECISION;
 			break;
 		default:		// Should never occurs
-			throw new ShouldNeverOccurException(__FILE__, __LINE__);
+			throw  ShouldNeverOccurException(__FILE__, __LINE__);
 			break;
 	}
 	this->_value_str = value_str;
@@ -72,31 +73,31 @@ Operand::Operand(IOperand const &src)
 	{
 		case eOperandType::Int8:
 			if (! this->stringIsInteger(src_value_str))
-				throw new  InvalidArgumentException("Value is invalid");
-			this->getValueInt8(src_value_str);
+				throw   InvalidArgumentException("Value is invalid");
+			this->getValueInteger(src_value_str, INT8_MIN, INT8_MAX);
 			break;
 		case eOperandType::Int16:
 			if (! this->stringIsInteger(src_value_str))
-				throw new  InvalidArgumentException("Value is invalid");
-			this->getValueInt16(src_value_str);
+				throw   InvalidArgumentException("Value is invalid");
+			this->getValueInteger(src_value_str, INT16_MIN, INT16_MAX);
 			break;
 		case eOperandType::Int32:
 			if (! this->stringIsInteger(src_value_str))
-				throw new  InvalidArgumentException("Value is invalid");
-			this->getValueInt32(src_value_str);
+				throw   InvalidArgumentException("Value is invalid");
+			this->getValueInteger(src_value_str, INT32_MIN, INT32_MAX);
 			break;
 		case eOperandType::Float:
 			if (! this->stringIsFloating(src_value_str))
-				throw new  InvalidArgumentException("Value is invalid");
-			this->getValueFloat(src_value_str);
+				throw   InvalidArgumentException("Value is invalid");
+			this->getValueFloating(src_value_str, FLT_MIN, FLT_MAX);
 			break;
 		case eOperandType::Double:
 			if (! this->stringIsFloating(src_value_str))
-				throw new  InvalidArgumentException("Value is invalid");
-			this->getValueDouble(src_value_str);
+				throw   InvalidArgumentException("Value is invalid");
+			this->getValueFloating(src_value_str, DBL_MIN, DBL_MAX);
 			break;
 		default:		// Unknown
-			throw new InvalidArgumentException("Unknown Type");
+			throw  InvalidArgumentException("Unknown Type");
 			break;
 	}
 
@@ -119,7 +120,7 @@ Operand::Operand(IOperand const &src)
 			this->_precision = DOUBLE_PRECISION;
 			break;
 		default:		// Should never occurs
-			throw new ShouldNeverOccurException(__FILE__, __LINE__);
+			throw  ShouldNeverOccurException(__FILE__, __LINE__);
 			break;
 	}
 	this->_value_str = src_value_str;
@@ -140,13 +141,27 @@ Operand::~Operand(void) {}
  */
 Operand					&Operand::operator=(Operand const &src)
 {
+	this->_type = src.getType();
+	this->_precision = src.getPrecision();
+	this->_value_str = src.toString();
+
 	return *this;
 }
+
+Operand					&Operand::operator=(IOperand const &src)
+{
+	this->_type = src.getType();
+	this->_precision = src.getPrecision();
+	this->_value_str = src.toString();
+
+	return *this;
+}
+
 
 /*
  * Getter
  */
-unsigned int			Operand::getPrecision(void) const
+int						Operand::getPrecision(void) const
 {
 	return this->_precision;
 }
@@ -169,7 +184,7 @@ std::string const		&Operand::toString(void) const
  */
 bool					Operand::stringIsInteger(std::string const &str) const
 {
-	int i;
+	size_t i;
 
 	if (str.length() == 0)
 		return false;
@@ -189,8 +204,8 @@ bool					Operand::stringIsInteger(std::string const &str) const
 
 bool					Operand::stringIsFloating(std::string const &str) const
 {
-	int i;
-	int point_pos;
+	size_t i;
+	size_t point_pos;
 
 	if (str.length() == 0)
 		return false;
@@ -214,85 +229,48 @@ bool					Operand::stringIsFloating(std::string const &str) const
 	return true;
 }
 
-signed char				Operand::getValueInt8(std::string const &str) const
+signed long				Operand::getValueInteger(std::string const &str, signed long min, signed long max) const
 {
+	std::string min_str = std::to_string(min);
+	std::string max_str = std::to_string(max);
+
 	if (str[0] == '-')
 	{
-		if (str.compare(std::to_string(INT8_MIN)) < 0)
-			throw new OverflowException(str);
+		if (str.length() >= min_str.length() && str.compare(min_str) > 0)
+			throw  OverflowException(str);
 	}
 	else
 	{
-		if (str.compare(std::to_string(INT8_MAX)) < 0)
-			throw new OverflowException(str);
-	}
-
-	return std::stoi(str);
-}
-
-signed short int		Operand::getValueInt16(std::string const &str) const
-{
-	if (str[0] == '-')
-	{
-		if (str.compare(std::to_string(INT16_MIN)) < 0)
-			throw new OverflowException(str);
-	}
-	else
-	{
-		if (str.compare(std::to_string(INT16_MAX)) < 0)
-			throw new OverflowException(str);
-	}
-
-	return std::stoi(str);
-}
-
-signed long				Operand::getValueInt32(std::string const &str) const
-{
-	if (str[0] == '-')
-	{
-		if (str.compare(std::to_string(INT32_MIN)) < 0)
-			throw new OverflowException(str);
-	}
-	else
-	{
-		if (str.compare(std::to_string(INT32_MAX)) < 0)
-			throw new OverflowException(str);
+		if (str.length() >= max_str.length() && str.compare(max_str) > 0)
+			throw  OverflowException(str);
 	}
 
 	return std::stol(str);
 }
 
-float					Operand::getValueFloat(std::string const &str) const
+double					Operand::getValueFloating (std::string const &str, double min, double max) const
 {
+	std::string min_str = std::to_string(min);
+	std::string max_str = std::to_string(max);
+
 	if (str[0] == '-')
 	{
-		if (str.compare(std::to_string(FLT_MIN)) < 0)
-			throw new OverflowException(str);
+		if (str.length() >= min_str.length() && str.compare(min_str) > 0)
+			throw OverflowException(str);
 	}
 	else
 	{
-		if (str.compare(std::to_string(FLT_MAX)) < 0)
-			throw new OverflowException(str);
-		if (str.compare("0") != 0 && str.compare(std::to_string(FLT_EPSILON)) > 0)
-			throw new UnderflowException(str);
+		if (str.length() >= max_str.length() && str.compare(max_str) > 0)
+			throw OverflowException(str);
 	}
-
-	return std::stof(str);
-}
-
-double					Operand::getValueDouble(std::string const &str) const
-{
-	if (str[0] == '-')
+	try
 	{
-		if (str.compare(std::to_string(DBL_MIN)) < 0)
-			throw new OverflowException(str);
+		stof (str);
+		stod (str);
 	}
-	else
+	catch (std::out_of_range &u)
 	{
-		if (str.compare(std::to_string(DBL_MAX)) < 0)
-			throw new OverflowException(str);
-		if (str.compare("0") != 0 && str.compare(std::to_string(DBL_EPSILON)) > 0)
-			throw new UnderflowException(str);
+		throw UnderflowException (str);
 	}
 
 	return std::stod(str);
@@ -302,37 +280,65 @@ std::string				Operand::addInteger(std::string const &lhs, std::string const &rh
 {
 	signed long a;
 	signed long b;
+	signed long c;
 
 	a = std::stol(lhs);
 	b = std::stol(rhs);
 
-	if (a > 0 && b > 0 && b > max - a)
-		throw new OverflowException("(" + lhs + ") + (" + rhs + ")");
-	if (a < 0 && b < 0 && b < min - a)
-		throw new OverflowException("(" + lhs + ") + (" + rhs + ")");
+	if (labs(a) < labs(b))
+	{
+		c = a;
+		a = b;
+		b = c;
+	}
 
+	std::cout << "a = " << a << " b = " << b << " max = "<< max << " b > max - a = " << (b > max - a) << std::endl;
+	if (a > 0 && b > 0 && b > max - a)
+	{
+		std::cout << "Ici" << std::endl;
+		throw  OverflowException("( " + lhs + " ) + ( " + rhs + " )");
+	}
+	if (a < 0 && b < 0 && b < min - a)
+	{
+		std::cout << "La" << std::endl;
+		throw  OverflowException("( " + lhs + " ) + ( " + rhs + " )");
+	}
+
+	std::cout << "FIN" << std::endl;
 	return std::to_string(a + b);
 }
 
-std::string				Operand::addFloating(std::string const &lhs, std::string const &rhs, double min, double max, double epsilon) const
+std::string				Operand::addFloating(std::string const &lhs, std::string const &rhs, double min, double max) const
 {
 	double a;
 	double b;
-
+	double c;
+	float f_under;
+	double d_under;
 
 	a = std::stod(lhs);
 	b = std::stod(rhs);
 
+	if (fabs(a) < fabs(b))
+	{
+		c = a;
+		a = b;
+		b = c;
+	}
+
 	if (a > 0 && b > 0 && b > max - a)
-		throw new OverflowException("(" + lhs + ") + (" + rhs + ")");
+		throw  OverflowException("( " + lhs + " ) + ( " + rhs + " )");
 	if (a < 0 && b < 0 && b < min - a)
-		throw new OverflowException("(" + lhs + ") + (" + rhs + ")");
+		throw  OverflowException("( " + lhs + " ) + ( " + rhs + " )");
 
-	if (a > 0 && b < 0 && b < epsilon - a)
-		throw new UnderflowException("(" + lhs + ") + (" + rhs + ")");
-	if (a < 0 && b > 0 && b > -epsilon - a)
-		throw new UnderflowException("(" + lhs + ") + (" + rhs + ")");
+	f_under = a + b;
+	d_under = a + b;
+	if (a != b && (f_under == 0 || d_under == 0))
+		throw  UnderflowException("( " + lhs + " ) + ( " + rhs + " )");
 
+	std::stringstream stream;
+	stream << std::fixed << std::setprecision(400) << a + b;
+	std::string s = stream.str();
 	return std::to_string(a + b);
 }
 
@@ -340,74 +346,313 @@ std::string				Operand::subInteger(std::string const &lhs, std::string const &rh
 {
 	signed long a;
 	signed long b;
+	signed long c;
 
 	a = std::stol(lhs);
 	b = std::stol(rhs);
 
-	if (a > 0 && b < 0 && b > a - max)
-		throw new OverflowException("(" + lhs + ") + (" + rhs + ")");
-	if (a < 0 && b > 0 && b < a - min)
-		throw new OverflowException("(" + lhs + ") + (" + rhs + ")");
+	if (labs(a) < labs(b))
+	{
+		c = a;
+		a = b;
+		b = c;
+	}
 
-	return std::to_string(a + b);
+	if (a > 0 && b < 0 && b > a - max)
+		throw  OverflowException("( " + lhs + " ) - ( " + rhs + " )");
+	if (a < 0 && b > 0 && b < a - min)
+		throw  OverflowException("( " + lhs + " ) - ( " + rhs + " )");
+
+	return std::to_string(a - b);
 }
+
+std::string				Operand::subFloating(std::string const &lhs, std::string const &rhs, double min, double max) const
+{
+	double a;
+	double b;
+	double c;
+	float f_under;
+	double d_under;
+
+	a = std::stod(lhs);
+	b = std::stod(rhs);
+
+	if (fabs(a) < fabs(b))
+	{
+		c = a;
+		a = b;
+		b = c;
+	}
+
+	if (a > 0 && b < 0 && b > a - max)
+		throw  OverflowException("( " + lhs + " ) - ( " + rhs + " )");
+	if (a < 0 && b > 0 && b < a - min)
+		throw  OverflowException("( " + lhs + " ) - ( " + rhs + " )");
+
+	c = a - b;
+	if (a != b && c == 0)
+		throw  UnderflowException("( " + lhs + " ) - ( " + rhs + " )");
+
+	f_under = a - b;
+	d_under = a - b;
+	if (a != -b && (f_under == 0 || d_under == 0))
+		throw  UnderflowException("( " + lhs + " ) - ( " + rhs + " )");
+
+
+	return std::to_string(a - b);
+}
+
+std::string				Operand::mulInteger(std::string const &lhs, std::string const &rhs, signed long min, signed long max) const
+{
+	signed long a;
+	signed long b;
+	signed long c;
+
+	a = std::stol(lhs);
+	b = std::stol(rhs);
+
+	if (a == 0 || b == 0)
+		return std::string ("0");
+
+	if (labs(a) < labs(b))
+	{
+		c = a;
+		a = b;
+		b = c;
+	}
+
+	if (((a > 0 && b > 0) || (a < 0 && b < 0)) && b > max / a)
+		throw  OverflowException("( " + lhs + " ) * ( " + rhs + " )");
+	if (((a > 0 && b < 0) || (a < 0 && b > 0)) && b < min / a)
+		throw  OverflowException("( " + lhs + " ) * ( " + rhs + " )");
+
+	return std::to_string(a * b);
+}
+
+std::string				Operand::mulFloating(std::string const &lhs, std::string const &rhs, double min, double max) const
+{
+	double a;
+	double b;
+	double c;
+	float f_under;
+	double d_under;
+
+	a = std::stod(lhs);
+	b = std::stod(rhs);
+
+	if (a == 0 || b == 0)
+		return std::string ("0");
+
+	if (fabs(a) < fabs(b))
+	{
+		c = a;
+		a = b;
+		b = c;
+	}
+
+	if (((a > 0 && b > 0) || (a < 0 && b < 0)) && b > max / a)
+		throw  OverflowException("( " + lhs + " ) * ( " + rhs + " )");
+	if (((a > 0 && b < 0) || (a < 0 && b > 0)) && b < min / a)
+		throw  OverflowException("( " + lhs + " ) * ( " + rhs + " )");
+
+	f_under = a * b;
+	d_under = a * b;
+	if (a != 1 / b && (f_under == 0 || d_under == 0))
+		throw  UnderflowException("( " + lhs + " ) * ( " + rhs + " )");
+
+	return std::to_string(a * b);
+}
+
+std::string				Operand::divInteger(std::string const &lhs, std::string const &rhs) const
+{
+	signed long a;
+	signed long b;
+
+	a = std::stol(lhs);
+	b = std::stol(rhs);
+
+	if (a == 0 || b == 0)
+		throw DivModByZeroException("( " + lhs + " ) / ( " + rhs + " )");
+
+	return std::to_string(a / b);
+}
+
+std::string				Operand::divFloating (std::string const &lhs, std::string const &rhs, double min, double max) const
+{
+	double a;
+	double b;
+	float f_under;
+	double d_under;
+
+	a = std::stod(lhs);
+	b = std::stod(rhs);
+
+	if (a == 0 || b == 0)
+		throw DivModByZeroException("( " + lhs + " ) / ( " + rhs + " )");
+
+	if (a == b)
+		return std::string ("1");
+
+	if (((a > 0 && b > 0) || (a < 0 && b < 0)) && (-1 < b && b < 1) && a > max * b)
+		throw  OverflowException("( " + lhs + " ) / ( " + rhs + " )");
+	if (((a > 0 && b < 0) || (a < 0 && b > 0)) && (-1 < b && b < 1) && a < min * b)
+		throw  OverflowException("( " + lhs + " ) / ( " + rhs + " )");
+
+	f_under = a / b;
+	d_under = a / b;
+	if (a != 1 / b && (f_under == 0 || d_under == 0))
+		throw  UnderflowException("( " + lhs + " ) / ( " + rhs + " )");
+
+	return std::to_string(a / b);
+}
+
 
 /*
  * Public
  */
 IOperand const			*Operand::operator+(IOperand const &rhs) const
 {
-	eOperandType newType;
-	std::string newValue;
-	unsigned int newPrecision;
-	Operand tmpOperand = new Operand(rhs);
+	eOperandType Type;
+	std::string Value;
+	Operand tmpOperand (rhs);
 
-	newType = this->_type;
+	Type = this->_type;
 	if (this->_precision < tmpOperand.getPrecision())
-		newType = tmpOperand.getType();
+		Type = tmpOperand.getType();
 
-	switch(newType)
+	switch(Type)
 	{
 		case eOperandType::Int8:
-			newValue = this->addInteger(this->_value_str, tmpOperand.toString(), INT8_MIN, INT8_MAX);
+			Value = this->addInteger(this->_value_str, tmpOperand.toString(), INT8_MIN, INT8_MAX);
 			break;
 		case eOperandType::Int16:
-			newValue = this->addInteger(this->_value_str, tmpOperand.toString(), INT16_MIN, INT16_MAX);
+			Value = this->addInteger(this->_value_str, tmpOperand.toString(), INT16_MIN, INT16_MAX);
 			break;
 		case eOperandType::Int32:
-			newValue = this->addInteger(this->_value_str, tmpOperand.toString(), INT32_MIN, INT32_MAX);
+			Value = this->addInteger(this->_value_str, tmpOperand.toString(), INT32_MIN, INT32_MAX);
 			break;
 		case eOperandType::Float:
-			newValue = this->addFloating(this->_value_str, tmpOperand.toString(), FLT_MIN, FLT_MAX, FLT_EPSILON);
+			Value = this->addFloating(this->_value_str, tmpOperand.toString(), FLT_MIN, FLT_MAX);
 			break;
 		case eOperandType::Double:
-			newValue = this->addFloating(this->_value_str, tmpOperand.toString(), DBL_MIN, DBL_MAX, DBL_EPSILON);
+			Value = this->addFloating(this->_value_str, tmpOperand.toString(), DBL_MIN, DBL_MAX);
 			break;
 		default:		// Unknown
-			throw new InvalidArgumentException("Unknown Type");
+			throw  InvalidArgumentException("Unknown Type");
 			break;
 	}
 
-	return &(new Operand(newType, newValue));
+	return new Operand(Type, Value);
 }
-#if 0
+
 IOperand const			*Operand::operator-(IOperand const &rhs) const
 {
+	eOperandType Type;
+	std::string Value;
+	Operand tmpOperand (rhs);
 
+	Type = this->_type;
+	if (this->_precision < tmpOperand.getPrecision())
+		Type = tmpOperand.getType();
+
+	switch(Type)
+	{
+		case eOperandType::Int8:
+			Value = this->subInteger(this->_value_str, tmpOperand.toString(), INT8_MIN, INT8_MAX);
+			break;
+		case eOperandType::Int16:
+			Value = this->subInteger(this->_value_str, tmpOperand.toString(), INT16_MIN, INT16_MAX);
+			break;
+		case eOperandType::Int32:
+			Value = this->subInteger(this->_value_str, tmpOperand.toString(), INT32_MIN, INT32_MAX);
+			break;
+		case eOperandType::Float:
+			Value = this->subFloating(this->_value_str, tmpOperand.toString(), FLT_MIN, FLT_MAX);
+			break;
+		case eOperandType::Double:
+			Value = this->subFloating(this->_value_str, tmpOperand.toString(), DBL_MIN, DBL_MAX);
+			break;
+		default:		// Unknown
+			throw  InvalidArgumentException("Unknown Type");
+			break;
+	}
+
+	return new Operand(Type, Value);
 }
 
 IOperand const			*Operand::operator*(IOperand const &rhs) const
 {
+	eOperandType Type;
+	std::string Value;
+	Operand tmpOperand (rhs);
 
+	Type = this->_type;
+	if (this->_precision < tmpOperand.getPrecision())
+		Type = tmpOperand.getType();
+
+	switch(Type)
+	{
+		case eOperandType::Int8:
+			Value = this->mulInteger(this->_value_str, tmpOperand.toString(), INT8_MIN, INT8_MAX);
+			break;
+		case eOperandType::Int16:
+			Value = this->mulInteger(this->_value_str, tmpOperand.toString(), INT16_MIN, INT16_MAX);
+			break;
+		case eOperandType::Int32:
+			Value = this->mulInteger(this->_value_str, tmpOperand.toString(), INT32_MIN, INT32_MAX);
+			break;
+		case eOperandType::Float:
+			Value = this->mulFloating(this->_value_str, tmpOperand.toString(), FLT_MIN, FLT_MAX);
+			break;
+		case eOperandType::Double:
+			Value = this->mulFloating(this->_value_str, tmpOperand.toString(), DBL_MIN, DBL_MAX);
+			break;
+		default:		// Unknown
+			throw  InvalidArgumentException("Unknown Type");
+			break;
+	}
+
+	return new Operand(Type, Value);
 }
 
 IOperand const			*Operand::operator/(IOperand const &rhs) const
 {
+	eOperandType Type;
+	std::string Value;
+	Operand tmpOperand (rhs);
 
+	Type = this->_type;
+	if (this->_precision < tmpOperand.getPrecision())
+		Type = tmpOperand.getType();
+
+	switch(Type)
+	{
+		case eOperandType::Int8:
+			Value = this->divInteger(this->_value_str, tmpOperand.toString());
+			break;
+		case eOperandType::Int16:
+			Value = this->divInteger(this->_value_str, tmpOperand.toString());
+			break;
+		case eOperandType::Int32:
+			Value = this->divInteger(this->_value_str, tmpOperand.toString());
+			break;
+		case eOperandType::Float:
+			Value = this->divFloating(this->_value_str, tmpOperand.toString(), FLT_MIN, FLT_MAX);
+			break;
+		case eOperandType::Double:
+			Value = this->divFloating(this->_value_str, tmpOperand.toString(), DBL_MIN, DBL_MAX);
+			break;
+		default:		// Unknown
+			throw  InvalidArgumentException("Unknown Type");
+			break;
+	}
+
+	return new Operand(Type, Value);
 }
 
 IOperand const			*Operand::operator%(IOperand const &rhs) const
 {
-
+	(void)rhs;
+	return new Operand (eOperandType::Unknown, "0");
 }
-#endif
+

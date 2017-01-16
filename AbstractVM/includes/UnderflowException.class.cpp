@@ -3,7 +3,12 @@
 /*
 ** Constructors
 */
-UnderflowException::UnderflowException(std::string &message)
+UnderflowException::UnderflowException(std::string const &message)
+{
+	_message = message;
+}
+
+UnderflowException::UnderflowException(const char *message)
 {
 	_message = message;
 }
@@ -38,7 +43,7 @@ std::string				UnderflowException::getMessage() const
 /*
 ** Public
 */
-virtual const char		*UnderflowException::what() const throw()
+const char				*UnderflowException::what() const throw()
 {
 	std::string outmessage = "Underflow: ";
 
