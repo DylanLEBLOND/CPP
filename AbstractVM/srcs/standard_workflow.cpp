@@ -1,25 +1,19 @@
-#include "abstractVM.hpp"
+#include <abstractVM.hpp>
 
-void 	standard_workflow () throw (std::exception)
+void 	standard_workflow ()
 {
 	bool run;
 	std::string line;
-	char *str;
+	char const *str;
 	eInstruction instruction;
 	Stack stack;
 	eOperandType operand;
 	std::string value;
 
-	if (DEBUG)
-		std::cout << "Debut Standard Workflow" << std::endl;
-
 	run = true;
 	while (run)
 	{
 		std::getline (std::cin, line);
-		if (DEBUG)
-			std::cout << "Entree = " << line << std::endl;
-
 		str = line.c_str();
 		if (strcmp (str, ";;") == 0)
 		{
@@ -30,17 +24,41 @@ void 	standard_workflow () throw (std::exception)
 		instruction = get_instruction (line);
 		switch (instruction)
 		{
-			case Push:
-				getPushData (line, &operand, &value);
-				stack.push(operand, value);
+			case eInstruction::Push:
+				getPushData (line, operand, value);
+				stack.push(Operand (operand, value));
 				break;
-
+			case eInstruction::Pop:
+				stack.pop();
+				break;
+			case eInstruction::Dump:
+				std::cout << stack.dump();
+				break;
+			case eInstruction::Assert:
+				getAssertData (line, value);
+				stack.assert(value);
+				break;
+			case eInstruction::Add:
+				stack.add();
+				break;
+			case eInstruction::Sub:
+				stack.sub();
+				break;
+			case eInstruction::Mul:
+				stack.mul();
+				break;
+			case eInstruction::Div:
+				stack.div();
+				break;
+			case eInstruction::Mod:
+				stack.mod();
+				break;
+			case eInstruction::Print:
+				std::cout << stack.print() << std::endl;
+				break;
 			default:	//Unknown
-				throw UnknownInstructionException();
+				throw UnknownInstructionException(line);
 				continue;
 		}
 	}
-
-	if (DEBUG)
-		std::cout << "Fin Standard Workflow" << std::endl;
 }

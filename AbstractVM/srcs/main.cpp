@@ -1,16 +1,10 @@
-#include "abstractVM.hpp"
+#include <abstractVM.hpp>
 
 int main (int ac, char **av)
 {
-
-	if (DEBUG)
-		std::cout << "Debut du programme" << std::endl;
-
 	switch (ac)
 	{
 		case 1:
-			if (DEBUG)
-				std::cout << "Flux: Standard Workflow" << std::endl;
 			try
 			{
 				standard_workflow ();
@@ -21,8 +15,6 @@ int main (int ac, char **av)
 			}
 			break;
 		case 2:
-			if (DEBUG)
-				std::cout << "Flux: File Workflow" << std::endl;
 			try
 			{
 				file_workflow (av[1]);
@@ -33,14 +25,8 @@ int main (int ac, char **av)
 			}
 			break;
 		default:
-			if (DEBUG)
-				std::cout << "Flux: Default" << std::endl;
-			//TEMP INVALID PARAMETERS
 			exit (0);
 			break;
 	}
-
-	if (DEBUG)
-		std::cout << "Fin du programme" << std::endl;
 	return 0;
 }

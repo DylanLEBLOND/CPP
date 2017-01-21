@@ -1,13 +1,13 @@
-#ifndef UNKNOWNINSTRUCTIONEXCEPTION_CLASS_HPP
-# define UNKNOWNINSTRUCTIONEXCEPTION_CLASS_HPP
+#ifndef LEXICALEXCEPTION_CLASS_HPP
+# define LEXICALEXCEPTION_CLASS_HPP
 
 # include <exception>
 
-class UnknownInstructionException : public std::exception
+class LexicalException : public std::exception
 {
 public:
 
 	virtual const char* what() const throw();
 };
 
-#endif // UNKNOWNINSTRUCTIONEXCEPTION_CLASS_HPP
+#endif // LEXICALEXCEPTION_CLASS_HPP

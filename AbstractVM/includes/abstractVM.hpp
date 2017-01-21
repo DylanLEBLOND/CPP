@@ -5,13 +5,16 @@
 # include <cstdlib>
 # include <cstring>
 
-#include <common.hpp>
+# include <common.hpp>
 # include <Exceptions.hpp>
-
-//Operand Class
 # include <Operand.class.hpp>
+# include <Stack.class.hpp>
 
-eInstruction	get_instruction(std::string line);
+
+eInstruction	get_instruction(std::string const &line);
+void			getPushData(std::string const &line, eOperandType &operand, std::string &value);
+void			getAssertData(std::string const &line, std::string &value);
+
 
 void			standard_workflow(void);
 void			file_workflow(char *filename);
