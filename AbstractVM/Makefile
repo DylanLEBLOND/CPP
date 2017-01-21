@@ -6,7 +6,7 @@
 #    By: dle-blon <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/01/16 19:49:24 by dle-blon          #+#    #+#              #
-#    Updated: 2017/01/21 21:28:30 by dle-blon         ###   ########.fr        #
+#    Updated: 2017/01/21 22:44:12 by dle-blon         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -20,12 +20,14 @@ FLAGS = -Wall -Wextra -Werror
 
 INC = -I ./includes
 
-SRC = Operand.class.cpp test.cpp \
+SRC = test.cpp \
+	  Operand.class.cpp Stack.class.cpp \
 	  exceptions/DivModByZeroException.class.cpp \
 	  exceptions/InvalidArgumentException.class.cpp \
 	  exceptions/ModuloFloatingException.class.cpp \
 	  exceptions/OverflowException.class.cpp \
 	  exceptions/ShouldNeverOccurException.class.cpp \
+	  exceptions/StackException.class.cpp \
 	  exceptions/UnderflowException.class.cpp \
 	  exceptions/UnknownInstructionException.class.cpp
 

@@ -1,8 +1,8 @@
 #ifndef STACK_CLASS_HPP
 # define STACK_CLASS_HPP
 
-# include "Operand.class.hpp"
-# include "OperandFactory.class.hpp"
+# include <Operand.class.hpp>
+# include <Exceptions.hpp>
 # include <vector>
 
 class Stack
@@ -21,8 +21,17 @@ public:
 
 	std::vector<Operand> const *getStack() const;
 
-	bool isEmpty(void);
-	void push(std::string const &elem);
+	bool			isEmpty(void) const;
+	void			push(Operand const &elem);
+	void			pop();
+	std::string		dump() const;
+	void			assert(std::string const &elem) const;
+	void			add();
+	void			sub();
+	void			mul();
+	void			div();
+	void			mod();
+	char			print() const;
 };
 
-#endif /* IOPERAND_CLASS_HPP */
+#endif /* STACK_CLASS_HPP */
