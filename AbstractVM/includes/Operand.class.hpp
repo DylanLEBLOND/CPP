@@ -16,9 +16,9 @@
 /*
  * Personals Includes
  */
-#include "IOperand.class.hpp"
-#include "Exceptions.hpp"
-#include "common.hpp"
+#include <IOperand.class.hpp>
+#include <Exceptions.hpp>
+#include <common.hpp>
 
 /*
  * System Includes
@@ -35,11 +35,13 @@
  * It's the number of bytes of type.
  * We use those values to defines the hierarchy of thes differents types
  */
-#define INT8_PRECISION		1
-#define INT16_PRECISION		2
-#define INT32_PRECISION		4
-#define FLOAT_PRECISION		5		// It's actually 4 like INT32 but with the mantisse we have a precision far bigger than INT32
-#define DOUBLE_PRECISION	8
+#define INT8_PRECISION				1
+#define INT16_PRECISION				2
+#define INT32_PRECISION				4
+#define FLOAT_PRECISION				5		// It's actually 4 like INT32 but with the mantisse we have a precision far bigger than INT32
+#define DOUBLE_PRECISION			8
+
+#define FLOATING_POINT_DIGITS		5		//The number of digits after the coma
 
 class Operand : public IOperand
 {
@@ -56,22 +58,21 @@ private:
 	bool					stringIsFloating (std::string const &str) const;
 
 	signed long				getValueInteger (std::string const &str, signed long min, signed long max) const;
-	double					getValueFloating (std::string const &str, double min, double max) const;
+	double					getValueFloating (std::string const &str, double min, double max, bool isFloat) const;
 
 	std::string				addInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
-	std::string				addFloating (std::string const &lhs, std::string const &rhs, double min, double max) const;
+	std::string				addFloating (std::string const &lhs, std::string const &rhs, double min, double max, bool isFloat) const;
 
 	std::string				subInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
-	std::string				subFloating (std::string const &lhs, std::string const &rhs, double min, double max) const;
+	std::string				subFloating (std::string const &lhs, std::string const &rhs, double min, double max, bool isFloat) const;
 
 	std::string				mulInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
-	std::string				mulFloating (std::string const &lhs, std::string const &rhs, double min, double max) const;
+	std::string				mulFloating (std::string const &lhs, std::string const &rhs, double min, double max, bool isFloat) const;
 
 	std::string				divInteger (std::string const &lhs, std::string const &rhs) const;
-	std::string				divFloating (std::string const &lhs, std::string const &rhs, double min, double max) const;
+	std::string				divFloating (std::string const &lhs, std::string const &rhs, double min, double max, bool isFloat) const;
 
-	std::string				modInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
-	std::string				modFloating (std::string const &lhs, std::string const &rhs, double min, double max) const;
+	std::string				modulo (std::string const &lhs, std::string const &rhs) const;
 
 
 public:

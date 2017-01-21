@@ -1,4 +1,4 @@
-#include "DivModByZeroException.class.hpp"
+#include <exceptions/DivModByZeroException.class.hpp>
 
 /*
 ** Constructors

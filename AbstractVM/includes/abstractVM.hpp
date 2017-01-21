@@ -5,11 +5,11 @@
 # include <cstdlib>
 # include <cstring>
 
-#include "common.hpp"
-# include "UnknownInstructionException.class.hpp"
+#include <common.hpp>
+# include <Exceptions.hpp>
 
 //Operand Class
-# include "Operand.class.hpp"
+# include <Operand.class.hpp>
 
 eInstruction	get_instruction(std::string line);
 

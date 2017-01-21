@@ -1,4 +1,4 @@
-#include "ShouldNeverOccurException.class.hpp"
+#include <exceptions/ShouldNeverOccurException.class.hpp>
 
 /*
 ** Constructors

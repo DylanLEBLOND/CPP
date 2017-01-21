@@ -1,4 +1,4 @@
-#include "UnknownInstructionException.class.hpp"
+#include <exceptions/UnknownInstructionException.class.hpp>
 
 const char		*UnknownInstructionException::what() const throw()
 {

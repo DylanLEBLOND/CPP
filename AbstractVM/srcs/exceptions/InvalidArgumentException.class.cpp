@@ -1,4 +1,4 @@
-#include "InvalidArgumentException.class.hpp"
+#include <exceptions/InvalidArgumentException.class.hpp>
 
 /*
 ** Constructors

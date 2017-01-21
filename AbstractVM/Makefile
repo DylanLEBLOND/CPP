@@ -6,7 +6,7 @@
 #    By: dle-blon <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/01/16 19:49:24 by dle-blon          #+#    #+#              #
-#    Updated: 2017/01/16 19:56:11 by dle-blon         ###   ########.fr        #
+#    Updated: 2017/01/21 21:28:30 by dle-blon         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -14,17 +14,26 @@ NAME = avm
 
 CC = g++
 
+VERSION = -std=c++11
+
 FLAGS = -Wall -Wextra -Werror
 
 INC = -I ./includes
 
-SRC = 
+SRC = Operand.class.cpp test.cpp \
+	  exceptions/DivModByZeroException.class.cpp \
+	  exceptions/InvalidArgumentException.class.cpp \
+	  exceptions/ModuloFloatingException.class.cpp \
+	  exceptions/OverflowException.class.cpp \
+	  exceptions/ShouldNeverOccurException.class.cpp \
+	  exceptions/UnderflowException.class.cpp \
+	  exceptions/UnknownInstructionException.class.cpp
 
 SRC_DIR = ./srcs
 
 SRCS = $(addprefix $(SRC_DIR)/,$(SRC))
 
-OBJS = $(SRCS:.c=.o)
+OBJS = $(SRCS:.cpp=.o)
 
 WHITE =		\033[37;01m
 RED =		\033[31;01m
@@ -41,18 +50,18 @@ info :
 	@if (! (test -e $(NAME) && test -e srcs/main.o));					\
 	then																\
 		echo "$(WHITE) Project: $(BASIC) $(PROJECT_NAME)";				\
-		echo "$(WHITE) Flags: $(BASIC) $(FLAGS)";						\
 		echo "$(WHITE) Compiler: $(BASIC) $(CC)";						\
+		echo "$(WHITE) Version: $(BASIC) $(VERSION)";					\
+		echo "$(WHITE) Flags: $(BASIC) $(FLAGS)";						\
 	fi
 
-%.o : %.c
-	@$(CC) $(FLAGS) $(INC) -c -o $@ $<
+%.o : %.cpp
+	@$(CC) $(VERSION) $(FLAGS) $(INC) -c -o $@ $<
 	@echo "$(BLUE) $< $(WHITE)->$(RED) $@ $(BASIC)"
 
 $(NAME) : $(OBJS)
-	@ar rc $(NAME) $(OBJS)
-	@ranlib $(NAME)
-	@echo "$(BLUE) objs $(WHITE)->$(RED) $(NAME) $(BASIC)"
+	@$(CC) $(VERSION) $(FLAGS) $(INC) $(OBJS) -o $(NAME)
+	@echo "$(BLUE) objs $(WHITE)->$(RED) $@ $(BASIC)"
 
 clean :
 	@rm -f $(OBJS)
