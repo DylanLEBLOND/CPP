@@ -25,7 +25,7 @@ public:
 	void			push(Operand const &elem);
 	void			pop();
 	std::string		dump() const;
-	void			assert(std::string const &elem) const;
+	void			assert(Operand const &elem) const;
 	void			add();
 	void			sub();
 	void			mul();

@@ -14,7 +14,7 @@
 
 eInstruction	get_instruction(std::string const &line);
 void			getPushData(std::string const &line, eOperandType &operand, std::string &value);
-void			getAssertData(std::string const &line, std::string &value);
+void			getAssertData(std::string const &line, eOperandType &operand, std::string &value);
 
 
 void			standard_workflow(void);

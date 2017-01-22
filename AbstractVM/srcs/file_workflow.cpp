@@ -37,8 +37,8 @@ void	file_workflow(char const *filename)
 					std::cout << stack.dump();
 					break;
 				case eInstruction::Assert:
-					getAssertData (line, value);
-					stack.assert(value);
+					getAssertData (line, operand, value);
+					stack.assert(Operand (operand, value));
 					break;
 				case eInstruction::Add:
 					stack.add();

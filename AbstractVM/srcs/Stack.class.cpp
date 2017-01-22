@@ -73,7 +73,7 @@ std::string		Stack::dump() const
 	return mess;
 }
 
-void			Stack::assert(std::string const &elem) const
+void			Stack::assert(Operand const &elem) const
 {
 	if (this->_stack.size() < 1)
 		throw StackException ("Assert on empty stack");
@@ -81,8 +81,8 @@ void			Stack::assert(std::string const &elem) const
 	Operand const *op;
 
 	op = &this->_stack[this->_stack.size() - 1];
-	if ((*op).toString() != elem)
-		throw StackException ("An assert instruction is not true: " + elem + " != " + (*op).toString());
+	if ((*op).getType() != elem.getType() || (*op).toString() != elem.toString())
+		throw StackException ("An assert instruction is not true: " + elem.toString() + " != " + (*op).toString());
 }
 
 void			Stack::add()
