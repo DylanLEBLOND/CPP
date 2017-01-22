@@ -2,6 +2,7 @@
 # define ABSTRACTVM_HPP
 
 # include <iostream>
+# include <fstream>
 # include <cstdlib>
 # include <cstring>
 
@@ -17,6 +18,6 @@ void			getAssertData(std::string const &line, std::string &value);
 
 
 void			standard_workflow(void);
-void			file_workflow(char *filename);
+void			file_workflow(char const *filename);
 
 #endif // ABSTRACTVM_HPP

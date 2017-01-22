@@ -11,7 +11,7 @@ int main (int ac, char **av)
 			}
 			catch (std::exception &e)
 			{
-				std::cerr << "Error: " << e.what() << std::endl;
+				std::cerr << "Error : " << e.what() << std::endl;
 			}
 			break;
 		case 2:
@@ -21,7 +21,7 @@ int main (int ac, char **av)
 			}
 			catch (std::exception &e)
 			{
-				std::cerr << "Error: " << e.what() << std::endl;
+				std::cerr << "Error : " << e.what() << std::endl;
 			}
 			break;
 		default:

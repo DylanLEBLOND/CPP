@@ -4,8 +4,8 @@ void 	standard_workflow ()
 {
 	bool run;
 	std::string line;
-	eInstruction instruction;
 	Stack stack;
+	eInstruction instruction;
 	eOperandType operand;
 	std::string value;
 
@@ -13,6 +13,9 @@ void 	standard_workflow ()
 	while (run)
 	{
 		std::getline (std::cin, line);
+		if ((line.length() == 2) || (line.compare (";;") == 0))
+			return;
+
 		if ((line.length() == 0) || (line.find (";") == 0))
 			continue;
 
@@ -52,7 +55,7 @@ void 	standard_workflow ()
 				std::cout << stack.print() << std::endl;
 				break;
 			case eInstruction::Exit:
-				return;
+				continue;
 			default:	//Unknown
 				throw UnknownInstructionException(line);
 				continue;

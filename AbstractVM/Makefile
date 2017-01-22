@@ -6,7 +6,7 @@
 #    By: dle-blon <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/01/16 19:49:24 by dle-blon          #+#    #+#              #
-#    Updated: 2017/01/22 16:22:00 by dle-blon         ###   ########.fr        #
+#    Updated: 2017/01/22 17:06:33 by dle-blon         ###   ########.fr        #
 #                                                                              #
 #******************************************************************************#
 
@@ -24,6 +24,7 @@ SRC = main.cpp \
 	  standard_workflow.cpp file_workflow.cpp skeleton.cpp\
 	  Operand.class.cpp Stack.class.cpp \
 	  exceptions/DivModByZeroException.class.cpp \
+	  exceptions/FileStreamException.class.cpp \
 	  exceptions/InvalidArgumentException.class.cpp \
 	  exceptions/ModuloFloatingException.class.cpp \
 	  exceptions/OverflowException.class.cpp \
