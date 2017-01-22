@@ -64,11 +64,13 @@ std::string		Stack::dump() const
 	Operand const *op;
 	size_t i;
 
-	for (i = 0; i < this->_stack.size(); i++)
+	for (i = this->_stack.size() - 1; i > 0; i--)
 	{
 		op = &this->_stack[i];
 		mess = mess + ((*op).toString()) + "\n";
 	}
+	op = &this->_stack[0];
+	mess = mess + ((*op).toString()) + "\n";
 
 	return mess;
 }

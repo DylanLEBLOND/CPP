@@ -22,7 +22,6 @@ Operand::Operand(eOperandType type, std::string const &value_str)
 		case eOperandType::Int32:
 			if (! this->stringIsInteger(value_str))
 				throw InvalidArgumentException("Value is invalid");
-			std::cout << "ICICI" << std::endl;
 			this->getValueInteger(value_str, INT32_MIN, INT32_MAX);
 			break;
 		case eOperandType::Float:

@@ -41,7 +41,7 @@
 #define FLOAT_PRECISION				5		// It's actually 4 like INT32 but with the mantisse we have a precision far bigger than INT32
 #define DOUBLE_PRECISION			8
 
-#define FLOATING_POINT_DIGITS		5		//The number of digits after the coma
+#define FLOATING_POINT_DIGITS		2		//The number of digits after the coma
 
 class Operand : public IOperand
 {
