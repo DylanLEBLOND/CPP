@@ -412,6 +412,9 @@ std::string				Operand::mulInteger(std::string const &lhs, std::string const &rh
 	a = std::stol(lhs);
 	b = std::stol(rhs);
 
+	if ((a == min && b == -1) || (a == -1 && b == min))
+		throw OverflowException("( " + lhs + " ) * ( " + rhs + " )");
+
 	if (((a > 0 && b > 0) || (a < 0 && b < 0)) && b > max / a)
 		throw OverflowException("( " + lhs + " ) * ( " + rhs + " )");
 	if (((a > 0 && b < 0) || (a < 0 && b > 0)) && b < min / a)
@@ -458,7 +461,7 @@ std::string				Operand::mulFloating(std::string const &lhs, std::string const &r
 	return stream.str();
 }
 
-std::string				Operand::divInteger(std::string const &lhs, std::string const &rhs) const
+std::string				Operand::divInteger(std::string const &lhs, std::string const &rhs, signed long min) const
 {
 	signed long a;
 	signed long b;
@@ -468,6 +471,8 @@ std::string				Operand::divInteger(std::string const &lhs, std::string const &rh
 
 	if (b == 0)
 		throw DivModByZeroException("( " + lhs + " ) / ( " + rhs + " )");
+	if (a == min && b == -1)
+		throw OverflowException("( " + lhs + " ) / ( " + rhs + " )");
 
 	return std::to_string(a / b);
 }
@@ -513,7 +518,7 @@ std::string				Operand::divFloating (std::string const &lhs, std::string const &
 	return stream.str();
 }
 
-std::string				Operand::modulo(std::string const &lhs, std::string const &rhs) const
+std::string				Operand::modulo(std::string const &lhs, std::string const &rhs, signed long min) const
 {
 	signed long a;
 	signed long b;
@@ -523,6 +528,8 @@ std::string				Operand::modulo(std::string const &lhs, std::string const &rhs) c
 
 	if (b == 0)
 		throw DivModByZeroException("( " + lhs + " ) % ( " + rhs + " )");
+	if (a == min && b == -1)
+		throw OverflowException("( " + lhs + " ) % ( " + rhs + " )");
 
 	return std::to_string(a % b);
 }
@@ -649,9 +656,13 @@ IOperand const			*Operand::operator/(IOperand const &rhs) const
 	switch(Type)
 	{
 		case eOperandType::Int8:
+			Value = this->divInteger(this->_value_str, tmpOperand.toString(), INT8_MIN);
+			break;
 		case eOperandType::Int16:
+			Value = this->divInteger(this->_value_str, tmpOperand.toString(), INT16_MIN);
+			break;
 		case eOperandType::Int32:
-			Value = this->divInteger(this->_value_str, tmpOperand.toString());
+			Value = this->divInteger(this->_value_str, tmpOperand.toString(), INT32_MIN);
 			break;
 		case eOperandType::Float:
 			Value = this->divFloating(this->_value_str, tmpOperand.toString(), -FLT_MAX, FLT_MAX, true);
@@ -680,9 +691,13 @@ IOperand const			*Operand::operator%(IOperand const &rhs) const
 	switch(Type)
 	{
 		case eOperandType::Int8:
+			Value = this->modulo(this->_value_str, tmpOperand.toString(), INT8_MIN);
+			break;
 		case eOperandType::Int16:
+			Value = this->modulo(this->_value_str, tmpOperand.toString(), INT16_MIN);
+			break;
 		case eOperandType::Int32:
-			Value = this->modulo(this->_value_str, tmpOperand.toString());
+			Value = this->modulo(this->_value_str, tmpOperand.toString(), INT32_MIN);
 			break;
 		case eOperandType::Float:
 		case eOperandType::Double:

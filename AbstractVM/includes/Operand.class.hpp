@@ -69,10 +69,10 @@ private:
 	std::string				mulInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
 	std::string				mulFloating (std::string const &lhs, std::string const &rhs, double min, double max, bool isFloat) const;
 
-	std::string				divInteger (std::string const &lhs, std::string const &rhs) const;
+	std::string				divInteger (std::string const &lhs, std::string const &rhs, signed long min) const;
 	std::string				divFloating (std::string const &lhs, std::string const &rhs, double min, double max, bool isFloat) const;
 
-	std::string				modulo (std::string const &lhs, std::string const &rhs) const;
+	std::string				modulo (std::string const &lhs, std::string const &rhs, signed long min) const;
 
 
 public:
