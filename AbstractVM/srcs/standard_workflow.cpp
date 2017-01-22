@@ -4,7 +4,6 @@ void 	standard_workflow ()
 {
 	bool run;
 	std::string line;
-	char const *str;
 	eInstruction instruction;
 	Stack stack;
 	eOperandType operand;
@@ -14,12 +13,8 @@ void 	standard_workflow ()
 	while (run)
 	{
 		std::getline (std::cin, line);
-		str = line.c_str();
-		if (strcmp (str, ";;") == 0)
-		{
-			run = false;
+		if ((line.length() == 0) || (line.find (";") == 0))
 			continue;
-		}
 
 		instruction = get_instruction (line);
 		switch (instruction)
@@ -56,6 +51,8 @@ void 	standard_workflow ()
 			case eInstruction::Print:
 				std::cout << stack.print() << std::endl;
 				break;
+			case eInstruction::Exit:
+				return;
 			default:	//Unknown
 				throw UnknownInstructionException(line);
 				continue;

@@ -45,9 +45,10 @@ std::string				UnknownInstructionException::getMessage() const
 */
 const char				*UnknownInstructionException::what() const throw()
 {
-	std::string outmessage = "Unknown Instruction: ";
+	std::string outmessage = "Unknown Instruction: \"";
 
 	outmessage.append(this->_message);
+	outmessage.append("\"");
 
 	return outmessage.c_str();
 }
