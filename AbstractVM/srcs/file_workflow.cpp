@@ -5,11 +5,12 @@ void	file_workflow(char const *filename)
 	std::fstream file;
 	std::string line;
 	bool exit = false;
-	int lineNB = -1;
+	int lineNB = 0;
 	Stack stack;
 	eInstruction instruction;
 	eOperandType operand;
 	std::string value;
+	std::string message = "";
 
 	file.open (filename, std::fstream::in);
 	if (file.fail())
@@ -28,17 +29,17 @@ void	file_workflow(char const *filename)
 			{
 				case eInstruction::Push:
 					getPushData (line, operand, value);
-					stack.push(Operand (operand, value));
+					stack.push(operand, value);
 					break;
 				case eInstruction::Pop:
 					stack.pop();
 					break;
 				case eInstruction::Dump:
-					std::cout << stack.dump();
+					message.append (stack.dump());
 					break;
 				case eInstruction::Assert:
 					getAssertData (line, operand, value);
-					stack.assert(Operand (operand, value));
+					stack.assert(operand, value);
 					break;
 				case eInstruction::Add:
 					stack.add();
@@ -56,7 +57,8 @@ void	file_workflow(char const *filename)
 					stack.mod();
 					break;
 				case eInstruction::Print:
-					std::cout << stack.print() << std::endl;
+					message += stack.print();
+					message += '\n';
 					break;
 				case eInstruction::Exit:
 					exit = true;
@@ -75,4 +77,6 @@ void	file_workflow(char const *filename)
 		throw FileStreamException ("An unknown error occurred during the reading of the file");
 	if (!exit && file.eof())
 		throw FileStreamException ("Missing \"Exit\" instruction at the end of the file");
+
+	std::cout << message;
 }

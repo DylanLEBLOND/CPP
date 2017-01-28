@@ -1,5 +1,12 @@
 #include <Operand.class.hpp>
 
+
+Operand::t_pfunc		Operand::pointerFunctionArray[] = { &Operand::createInt8,
+															&Operand::createInt16,
+															&Operand::createInt32,
+															&Operand::createFloat,
+															&Operand::createDouble };
+
 /*
  * Constructors
  */
@@ -295,6 +302,31 @@ double					Operand::getValueFloating (std::string const &str, double min, double
 	return std::stod(str);
 }
 
+IOperand const			*Operand::createInt8(std::string const & value) const
+{
+	return new Operand(eOperandType::Int8, value);
+}
+
+IOperand const			*Operand::createInt16(std::string const & value) const
+{
+	return new Operand(eOperandType::Int16, value);
+}
+
+IOperand const			*Operand::createInt32(std::string const & value) const
+{
+	return new Operand(eOperandType::Int32, value);
+}
+
+IOperand const			*Operand::createFloat(std::string const & value) const
+{
+	return new Operand(eOperandType::Float, value);
+}
+
+IOperand const			*Operand::createDouble(std::string const & value) const
+{
+	return new Operand(eOperandType::Double, value);
+}
+
 std::string				Operand::addInteger(std::string const &lhs, std::string const &rhs, signed long min, signed long max) const
 {
 	signed long a;
@@ -537,6 +569,24 @@ std::string				Operand::modulo(std::string const &lhs, std::string const &rhs, s
 /*
  * Public
  */
+IOperand const			*Operand::createOperand(eOperandType type, std::string const & value) const
+{
+	switch (type)
+	{
+		case eOperandType::Int8:
+		case eOperandType::Int16:
+		case eOperandType::Int32:
+		case eOperandType::Float:
+		case eOperandType::Double:
+			break;
+		default:
+			throw InvalidArgumentException("Unknown Type");
+			break;
+	}
+
+	return (this->*pointerFunctionArray[static_cast<unsigned int>(type)])(value);
+}
+
 IOperand const			*Operand::operator+(IOperand const &rhs) const
 {
 	eOperandType Type;
@@ -569,7 +619,7 @@ IOperand const			*Operand::operator+(IOperand const &rhs) const
 			break;
 	}
 
-	return new Operand(Type, Value);
+	return Operand::Get()->createOperand(Type, Value);
 }
 
 IOperand const			*Operand::operator-(IOperand const &rhs) const
@@ -604,7 +654,7 @@ IOperand const			*Operand::operator-(IOperand const &rhs) const
 			break;
 	}
 
-	return new Operand(Type, Value);
+	return Operand::Get()->createOperand(Type, Value);
 }
 
 IOperand const			*Operand::operator*(IOperand const &rhs) const
@@ -639,7 +689,7 @@ IOperand const			*Operand::operator*(IOperand const &rhs) const
 			break;
 	}
 
-	return new Operand(Type, Value);
+	return Operand::Get()->createOperand(Type, Value);
 }
 
 IOperand const			*Operand::operator/(IOperand const &rhs) const
@@ -674,7 +724,7 @@ IOperand const			*Operand::operator/(IOperand const &rhs) const
 			break;
 	}
 
-	return new Operand(Type, Value);
+	return Operand::Get()->createOperand(Type, Value);
 }
 
 IOperand const			*Operand::operator%(IOperand const &rhs) const
@@ -707,6 +757,6 @@ IOperand const			*Operand::operator%(IOperand const &rhs) const
 			break;
 	}
 
-	return new Operand(Type, Value);
+	return Operand::Get()->createOperand(Type, Value);
 }
 

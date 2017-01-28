@@ -53,12 +53,19 @@ private:
 	std::string _value_str;
 
 	Operand(void);
+	Operand(eOperandType type, std::string const &value_str);
 
 	bool					stringIsInteger (std::string const &str) const;
 	bool					stringIsFloating (std::string const &str) const;
 
 	signed long				getValueInteger (std::string const &str, signed long min, signed long max) const;
 	double					getValueFloating (std::string const &str, double min, double max, bool isFloat) const;
+
+	IOperand const			*createInt8(std::string const &value) const;
+	IOperand const			*createInt16(std::string const &value) const;
+	IOperand const			*createInt32(std::string const &value) const;
+	IOperand const			*createFloat(std::string const &value) const;
+	IOperand const			*createDouble(std::string const &value) const;
 
 	std::string				addInteger (std::string const &lhs, std::string const &rhs, signed long min, signed long max) const;
 	std::string				addFloating (std::string const &lhs, std::string const &rhs, double min, double max, bool isFloat) const;
@@ -77,7 +84,9 @@ private:
 
 public:
 
-	Operand(eOperandType type, std::string const &value_str);
+	typedef IOperand const * (Operand::*t_pfunc) (std::string const &value) const;
+	static t_pfunc pointerFunctionArray[5];
+
 	Operand(IOperand const &src);
 	Operand(Operand const &src);
 	~Operand(void);
@@ -88,6 +97,13 @@ public:
 	eOperandType			getType(void) const;
 
 	std::string const		&toString(void) const;		// return _value_str
+
+	static Operand *Get()
+	{
+		static Operand instance;
+		return &instance;
+	}
+	IOperand const			*createOperand(eOperandType type, std::string const &value) const;
 
 	IOperand const			*operator+(IOperand const &rhs) const;
 	IOperand const			*operator-(IOperand const &rhs) const;

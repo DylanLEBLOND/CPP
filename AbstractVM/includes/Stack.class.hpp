@@ -9,7 +9,7 @@ class Stack
 {
 private:
 
-	std::vector<Operand> _stack;
+	std::vector<IOperand const *> _stack;
 
 	Stack(Stack const &src);
 	Stack &operator=(Stack const &src);
@@ -19,13 +19,13 @@ public:
 	Stack(void);
 	~Stack(void);
 
-	std::vector<Operand> const *getStack() const;
+	std::vector<IOperand const *> const *getStack() const;
 
 	bool			isEmpty(void) const;
-	void			push(Operand const &elem);
+	void			push(eOperandType operand, std::string const &value);
 	void			pop();
 	std::string		dump() const;
-	void			assert(Operand const &elem) const;
+	void			assert(eOperandType operand, std::string const &value) const;
 	void			add();
 	void			sub();
 	void			mul();

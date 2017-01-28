@@ -5,7 +5,7 @@
 */
 Stack::Stack ()
 {
-	this->_stack = std::vector<Operand> ();
+	this->_stack = std::vector<IOperand const *> ();
 }
 
 Stack::Stack (Stack const &src)
@@ -16,7 +16,16 @@ Stack::Stack (Stack const &src)
 /*
 ** Destructors
 */
-Stack::~Stack() {}
+Stack::~Stack()
+{
+	size_t i;
+
+	for (i = this->_stack.size() - 1; !this->_stack.empty(); i--)
+	{
+		delete this->_stack[i];
+		this->_stack.pop_back();
+	}
+}
 
 /*
 ** Operator "=" Overload
@@ -32,7 +41,7 @@ Stack	&Stack::operator=(Stack const &src)
 ** Public
 */
 
-std::vector<Operand> const	*Stack::getStack() const
+std::vector<IOperand const *> const	*Stack::getStack() const
 {
 	return &this->_stack;
 }
@@ -42,9 +51,11 @@ bool	Stack::isEmpty() const
 	return this->_stack.empty();
 }
 
-void	Stack::push(Operand const &elem)
+void	Stack::push(eOperandType operand, std::string const &value)
 {
-	this->_stack.push_back(elem);
+	IOperand const *pushOp = Operand::Get()->createOperand(operand, value);
+
+	this->_stack.push_back(pushOp);
 }
 
 void	Stack::pop()
@@ -52,6 +63,7 @@ void	Stack::pop()
 	if (this->_stack.size() < 1)
 		throw StackException ("Pop on empty stack");
 
+	delete this->_stack.back();
 	this->_stack.pop_back();
 }
 
@@ -61,30 +73,32 @@ std::string		Stack::dump() const
 		throw StackException ("Dump on empty stack");
 
 	std::string mess;
-	Operand const *op;
+	IOperand const *op;
 	size_t i;
 
 	for (i = this->_stack.size() - 1; i > 0; i--)
 	{
-		op = &this->_stack[i];
+		op = this->_stack[i];
 		mess = mess + ((*op).toString()) + "\n";
 	}
-	op = &this->_stack[0];
+	op = this->_stack[0];
 	mess = mess + ((*op).toString()) + "\n";
 
 	return mess;
 }
 
-void			Stack::assert(Operand const &elem) const
+void			Stack::assert(eOperandType operand, std::string const &value) const
 {
 	if (this->_stack.size() < 1)
 		throw StackException ("Assert on empty stack");
 
-	Operand const *op;
+	IOperand const *op = this->_stack[this->_stack.size() - 1];
+	IOperand const *assertOp =  Operand::Get()->createOperand(operand, value);
 
-	op = &this->_stack[this->_stack.size() - 1];
-	if ((*op).getType() != elem.getType() || (*op).toString() != elem.toString())
-		throw StackException ("An assert instruction is not true: " + elem.toString() + " != " + (*op).toString());
+	if ((*op).getType() != (*assertOp).getType() || (*op).toString() != (*assertOp).toString())
+		throw StackException ("An assert instruction is not true: " + (*assertOp).toString() + " != " + (*op).toString());
+
+	delete assertOp;
 }
 
 void			Stack::add()
@@ -92,10 +106,10 @@ void			Stack::add()
 	if (this->_stack.size() < 2)
 		throw StackException ("The stack is composed of strictly less that two values when an arithmetic instruction is executed: Add");
 
-	Operand op (*(this->_stack[this->_stack.size() - 1] + this->_stack[this->_stack.size() - 2]));
+	IOperand const *op  = *(this->_stack[this->_stack.size() - 1]) + *(this->_stack[this->_stack.size() - 2]);
 
-	this->_stack.pop_back();
-	this->_stack.pop_back();
+	this->pop();
+	this->pop();
 	this->_stack.push_back(op);
 }
 
@@ -104,10 +118,10 @@ void			Stack::sub()
 	if (this->_stack.size() < 2)
 		throw StackException ("The stack is composed of strictly less that two values when an arithmetic instruction is executed: Sub");
 
-	Operand op (*(this->_stack[this->_stack.size() - 1] - this->_stack[this->_stack.size() - 2]));
+	IOperand const *op  = *(this->_stack[this->_stack.size() - 1]) - *(this->_stack[this->_stack.size() - 2]);
 
-	this->_stack.pop_back();
-	this->_stack.pop_back();
+	this->pop();
+	this->pop();
 	this->_stack.push_back(op);
 }
 
@@ -116,10 +130,10 @@ void			Stack::mul()
 	if (this->_stack.size() < 2)
 		throw StackException ("The stack is composed of strictly less that two values when an arithmetic instruction is executed: Mul");
 
-	Operand op (*(this->_stack[this->_stack.size() - 1] * this->_stack[this->_stack.size() - 2]));
+	IOperand const *op = *(this->_stack[this->_stack.size() - 1]) * *(this->_stack[this->_stack.size() - 2]);
 
-	this->_stack.pop_back();
-	this->_stack.pop_back();
+	this->pop();
+	this->pop();
 	this->_stack.push_back(op);
 }
 
@@ -128,10 +142,10 @@ void			Stack::div()
 	if (this->_stack.size() < 2)
 		throw StackException ("The stack is composed of strictly less that two values when an arithmetic instruction is executed: Div");
 
-	Operand op (*(this->_stack[this->_stack.size() - 1] / this->_stack[this->_stack.size() - 2]));
+	IOperand const *op = *(this->_stack[this->_stack.size() - 1]) / *(this->_stack[this->_stack.size() - 2]);
 
-	this->_stack.pop_back();
-	this->_stack.pop_back();
+	this->pop();
+	this->pop();
 	this->_stack.push_back(op);
 }
 
@@ -140,10 +154,10 @@ void			Stack::mod()
 	if (this->_stack.size() < 2)
 		throw StackException ("The stack is composed of strictly less that two values when an arithmetic instruction is executed: Mod");
 
-	Operand op (*(this->_stack[this->_stack.size() - 1] % this->_stack[this->_stack.size() - 2]));
+	IOperand const *op = *(this->_stack[this->_stack.size() - 1]) % *(this->_stack[this->_stack.size() - 2]);
 
-	this->_stack.pop_back();
-	this->_stack.pop_back();
+	this->pop();
+	this->pop();
 	this->_stack.push_back(op);
 }
 
@@ -152,7 +166,7 @@ char			Stack::print() const
 	if (this->_stack.size() < 1)
 		throw StackException ("Print on empty stack");
 
-	Operand const *op = &this->_stack[this->_stack.size() - 1];
+	IOperand const *op = this->_stack[this->_stack.size() - 1];
 
 	if ((*op).getType() != eOperandType::Int8)
 		throw StackException ("Print instruction not true:" + (*op).toString() + " is not a Int8");

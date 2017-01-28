@@ -8,24 +8,24 @@ int main ()
 	{
 		Stack stack;
 
-		stack.push (Operand (eOperandType::Int32, "42"));
+		stack.push (eOperandType::Int32, "42");
 		std::cout << "Stack Push (Int32, 42)" << std::endl;
-		stack.push (Operand (eOperandType::Int32, "33"));
+		stack.push (eOperandType::Int32, "33");
 		std::cout << "Stack Push (Int32, 33)" << std::endl;
 		stack.add();
 		std::cout << "Stack Add" << std::endl;
-		stack.push (Operand (eOperandType::Float, "44.55"));
+		stack.push (eOperandType::Float, "44.55");
 		std::cout << "Stack Push (Float, 44.55)" << std::endl;
 		stack.mul();
 		std::cout << "Stack Mul" << std::endl;
-		stack.push (Operand (eOperandType::Double, "42.42"));
+		stack.push (eOperandType::Double, "42.42");
 		std::cout << "Stack Push (Double, 42.42)" << std::endl;
-		stack.push (Operand (eOperandType::Int32, "42"));
+		stack.push (eOperandType::Int32, "42");
 		std::cout << "Stack Push (Int32, 42)" << std::endl;
 		std::cout << "Stack Dump:\n" << stack.dump();
 		stack.pop();
 		std::cout << "Stack Pop" << std::endl;
-		stack.assert(Operand (eOperandType::Double, "42.42"));
+		stack.assert(eOperandType::Double, "42.42");
 		std::cout << "Stack Assert (Double, 42.42)" << std::endl;
 
 		std::cout << "******** END ********\nStack Dump:\n" << stack.dump();
