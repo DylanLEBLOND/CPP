@@ -1,22 +1,16 @@
-#include "SyntacticException.class.hpp"
+#include <exceptions/SyntacticException.class.hpp>
 
 /*
 ** Constructors
 */
-SyntacticException::SyntacticException(eInstruction instruction)
+SyntacticException::SyntacticException(std::string const &message)
 {
-	switch (instruction)
-	{
-		case eInstruction::Push:
-			this->_instruction = "Push";
-			break;
-		case eInstruction::Assert:
-			this->_instruction = "Assert";
-			break;
-		default:		//Unknown
-			this->_instruction = "Unknown";
-			break;
-	}
+	_message = message;
+}
+
+SyntacticException::SyntacticException(const char *message)
+{
+	_message = message;
 }
 
 SyntacticException::SyntacticException(SyntacticException const &src)
@@ -34,27 +28,26 @@ SyntacticException::~SyntacticException() {}
 */
 SyntacticException		&SyntacticException::operator=(SyntacticException const &src)
 {
-	this->_instruction = src.getInstruction();
+	this->_message = src.getMessage();
 	return *this;
 }
 
 /*
 ** Getter
 */
-std::string				SyntacticException::getInstruction() const
+std::string				SyntacticException::getMessage() const
 {
-	return this->_instruction;
+	return this->_message;
 }
 
 /*
 ** Public
 */
-virtual const char		*SyntacticException::what() const throw()
+const char				*SyntacticException::what() const throw()
 {
-	std::string message = "Bad syntax for:";
+	std::string outmessage = "Syntactic Error: ";
 
-	message.append(this->_instruction);
-	message.append("> Instruction");
+	outmessage.append(this->_message);
 
-	return message.c_str();
+	return outmessage.c_str();
 }

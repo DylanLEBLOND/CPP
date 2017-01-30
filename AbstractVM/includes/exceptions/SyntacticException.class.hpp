@@ -1,28 +1,28 @@
 #ifndef SYNTACTICEXCEPTION_CLASS_HPP
 # define SYNTACTICEXCEPTION_CLASS_HPP
 
-# include <exception>
-
-#include "common.hpp"
+# include <exception>		// std::exception
+# include <string>			// std::string
 
 class SyntacticException : public std::exception
 {
 private:
 
-	std::string _instruction;
+	std::string _message;
 	SyntacticException();
 
 public:
 
-	SyntacticException(eInstruction instruction);
+	SyntacticException(std::string const &message);
+	SyntacticException(const char *message);
 	SyntacticException(SyntacticException const &src);
 	~SyntacticException();
 
 	SyntacticException		&operator=(SyntacticException const &src);
 
-	virtual const char*		what() const throw();
+	const char*				what() const throw();
 
-	std::string				getInstruction() const;
+	std::string				getMessage() const;
 };
 
 #endif // SYNTACTICEXCEPTION_CLASS_HPP

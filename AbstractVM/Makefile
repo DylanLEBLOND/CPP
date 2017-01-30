@@ -26,10 +26,13 @@ SRC = main.cpp \
 	  exceptions/DivModByZeroException.class.cpp \
 	  exceptions/FileStreamException.class.cpp \
 	  exceptions/InvalidArgumentException.class.cpp \
+	  exceptions/LexicalException.class.cpp \
 	  exceptions/ModuloFloatingException.class.cpp \
 	  exceptions/OverflowException.class.cpp \
+	  exceptions/SemanticException.class.cpp \
 	  exceptions/ShouldNeverOccurException.class.cpp \
 	  exceptions/StackException.class.cpp \
+	  exceptions/SyntacticException.class.cpp \
 	  exceptions/UnderflowException.class.cpp \
 	  exceptions/UnknownInstructionException.class.cpp
 

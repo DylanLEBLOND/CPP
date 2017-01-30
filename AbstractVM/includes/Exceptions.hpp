@@ -7,6 +7,7 @@
 #include <exceptions/LexicalException.class.hpp>
 #include <exceptions/ModuloFloatingException.class.hpp>
 #include <exceptions/OverflowException.class.hpp>
+#include <exceptions/SemanticException.class.hpp>
 #include <exceptions/ShouldNeverOccurException.class.hpp>
 #include <exceptions/StackException.class.hpp>
 #include <exceptions/SyntacticException.class.hpp>

@@ -16,7 +16,7 @@ void			getPushData(std::string const &line, eOperandType &operand, std::string &
 	value = "null";
 
 	if (! std::regex_match(line, check_syntax))
-		std::cout << "syntax error" << std::endl;
+		throw SyntacticException("syntactic TODO");		//TEMP TODO
 
 	if (std::regex_search(line.begin(), line.end(), match, check_lexic_operand))
 	{
@@ -32,7 +32,7 @@ void			getPushData(std::string const &line, eOperandType &operand, std::string &
 			operand = eOperandType::Double;
 	}
 	else
-		std::cout << "lexical error: operand" << std::endl;
+		throw LexicalException("lexical TODO");		//TEMP TODO
 
 	if (std::regex_search(line.begin(), line.end(), match, check_lexic_value))
 	{
@@ -41,19 +41,18 @@ void			getPushData(std::string const &line, eOperandType &operand, std::string &
 			if (std::regex_match(line, check_sementic_decimal))
 				value = match[2];
 			else
-				std::cout << "sementic error: expecting decimal value, but value is integer" << std::endl;
+				throw SemanticException ("Expecting decimal value, but value is integer");
 		}
 		else
 		{
 			if (std::regex_match(line, check_sementic_integer))
 				value = match[2];
 			else
-				std::cout << "sementic error: expecting integer value, but value is decimal" << std::endl;
+				throw SemanticException ("Expecting integer value, but value is decimal");
 		}
-		std::cout << value << std::endl; /* remove this line */
 	}
 	else
-		std::cout << "lexical error: value" << std::endl;
+		throw LexicalException("lexical TODO");		//TEMP TODO
 }
 
 void			getAssertData(std::string const &line, eOperandType &operand, std::string &value)
@@ -72,7 +71,7 @@ void			getAssertData(std::string const &line, eOperandType &operand, std::string
 	value = "null";
 
 	if (! std::regex_match(line, check_syntax))
-		std::cout << "syntax error" << std::endl;
+		throw SyntacticException("syntactic TODO");		//TEMP TODO
 
 	if (std::regex_search(line.begin(), line.end(), match, check_lexic_operand))
 	{
@@ -88,7 +87,7 @@ void			getAssertData(std::string const &line, eOperandType &operand, std::string
 			operand = eOperandType::Double;
 	}
 	else
-		std::cout << "lexical error: operand" << std::endl;
+		throw LexicalException("invalid Operand");
 
 	if (std::regex_search(line.begin(), line.end(), match, check_lexic_value))
 	{
@@ -97,19 +96,18 @@ void			getAssertData(std::string const &line, eOperandType &operand, std::string
 			if (std::regex_match(line, check_sementic_decimal))
 				value = match[2];
 			else
-				std::cout << "sementic error: expecting decimal value, but value is integer" << std::endl;
+				throw SemanticException ("Expecting decimal value, but value is integer");
 		}
 		else
 		{
 			if (std::regex_match(line, check_sementic_integer))
 				value = match[2];
 			else
-				std::cout << "sementic error: expecting integer value, but value is decimal" << std::endl;
+				throw SemanticException ("Expecting integer value, but value is decimal");
 		}
-		std::cout << value << std::endl; /* remove this line */
 	}
 	else
-		std::cout << "lexical error: value" << std::endl;
+		throw LexicalException("lexical TODO");		//TEMP TODO
 }
 
 eInstruction	get_instruction(std::string const &line)
