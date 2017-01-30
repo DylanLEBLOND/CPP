@@ -20,7 +20,7 @@ FLAGS = -Wall -Wextra -Werror
 
 INC = -I ./includes
 
-SRC = test.cpp \
+SRC = main.cpp \
 	  standard_workflow.cpp file_workflow.cpp skeleton.cpp \
 	  Operand.class.cpp Stack.class.cpp \
 	  exceptions/DivModByZeroException.class.cpp \

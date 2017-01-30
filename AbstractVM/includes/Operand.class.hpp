@@ -29,6 +29,7 @@
 #include <cmath>		// fabs isnan
 #include <iomanip>		// setprecision
 #include <sstream>		// stringstream
+#include <stdexcept>	// std::out_of_range
 
 /*
  * PRECISION:

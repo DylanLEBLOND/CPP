@@ -5,6 +5,7 @@
 # include <fstream>
 # include <cstdlib>
 # include <cstring>
+# include <regex>
 
 # include <common.hpp>
 # include <Exceptions.hpp>
