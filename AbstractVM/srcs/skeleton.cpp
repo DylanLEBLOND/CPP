@@ -6,11 +6,10 @@ void			getPushData(std::string const &line, eOperandType &operand, std::string &
 	std::string	integer_type("(int8|int16|int32)");
 	std::string	decimal_type("(float|double)");
 	std::regex	check_syntax("push [[:alnum:]]+\\(.*\\)( ;.*)?");
-	std::regex	check_lexic_operand("push " + type + "\\(.*\\)( ;.*)?");
-	std::regex	check_lexic_value("push " + type + "\\(-?[[:digit:]]+(\\.[[:digit:]]+)?\\)( ;.*)?");
-	std::regex	check_sementic_1("push " + integer_type + "\\(-?[[:digit:]]+\\)( ;.*)?");
-	std::regex	check_sementic_2("push " + decimal_type + "\\(-?[[:digit:]]+\\.[[:digit:]]+\\)( ;.*)?");
-	std::regex	correct_line("push " + type + "\\((-?[[:digit:]]+(\\.[[:digit:]]+)?)\\)( ;.*)?$");
+	std::regex	check_lexic_operand("^push " + type + "\\(.*\\)( ;.*)?$");
+	std::regex	check_lexic_value("^push " + type + "\\((-?[[:digit:]]+(\\.[[:digit:]]+)?)\\)( ;.*)?$");
+	std::regex	check_sementic_integer("push " + integer_type + "\\(-?[[:digit:]]+\\)( ;.*)?");
+	std::regex	check_sementic_decimal("push " + decimal_type + "\\(-?[[:digit:]]+\\.[[:digit:]]+\\)( ;.*)?");
 	std::smatch	match;
 
 	operand = eOperandType::Unknown;
@@ -19,16 +18,7 @@ void			getPushData(std::string const &line, eOperandType &operand, std::string &
 	if (! std::regex_match(line, check_syntax))
 		std::cout << "syntax error" << std::endl;
 
-	if (! std::regex_match(line, check_lexic_operand))
-		std::cout << "operand: lexical error" << std::endl;
-
-	if (! std::regex_match(line, check_lexic_value))
-		std::cout << "value: lexical error" << std::endl;
-
-	if (! std::regex_match(line, check_sementic_1) && ! std::regex_match(line, check_sementic_2))
-		std::cout << "value: sementic error" << std::endl;
-
-	if (std::regex_search(line.begin(), line.end(), match, correct_line))
+	if (std::regex_search(line.begin(), line.end(), match, check_lexic_operand))
 	{
 		if (! match[1].compare("int8"))
 			operand = eOperandType::Int8;
@@ -40,12 +30,30 @@ void			getPushData(std::string const &line, eOperandType &operand, std::string &
 			operand = eOperandType::Float;
 		else if (! match[1].compare("double"))
 			operand = eOperandType::Double;
-
-		value	= match[2];
-		std::cout << value << std::endl;
 	}
 	else
-		std::cout << "syntax error" << std::endl;
+		std::cout << "lexical error: operand" << std::endl;
+
+	if (std::regex_search(line.begin(), line.end(), match, check_lexic_value))
+	{
+		if (operand == eOperandType::Float || operand == eOperandType::Double)
+		{
+			if (std::regex_match(line, check_sementic_decimal))
+				value = match[2];
+			else
+				std::cout << "sementic error: expecting decimal value, but value is integer" << std::endl;
+		}
+		else
+		{
+			if (std::regex_match(line, check_sementic_integer))
+				value = match[2];
+			else
+				std::cout << "sementic error: expecting integer value, but value is decimal" << std::endl;
+		}
+		std::cout << value << std::endl; /* remove this line */
+	}
+	else
+		std::cout << "lexical error: value" << std::endl;
 }
 
 void			getAssertData(std::string const &line, eOperandType &operand, std::string &value)
@@ -54,11 +62,10 @@ void			getAssertData(std::string const &line, eOperandType &operand, std::string
 	std::string	integer_type("(int8|int16|int32)");
 	std::string	decimal_type("(float|double)");
 	std::regex	check_syntax("assert [[:alnum:]]+\\(.*\\)( ;.*)?");
-	std::regex	check_lexic_operand("assert " + type + "\\(.*\\)( ;.*)?");
-	std::regex	check_lexic_value("assert " + type + "\\(-?[[:digit:]]+(\\.[[:digit:]]+)?\\)( ;.*)?");
-	std::regex	check_sementic_1("assert " + integer_type + "\\(-?[[:digit:]]+\\)( ;.*)?");
-	std::regex	check_sementic_2("assert " + decimal_type + "\\(-?[[:digit:]]+\\.[[:digit:]]+\\)( ;.*)?");
-	std::regex	correct_line("assert " + type + "\\((-?[[:digit:]]+(\\.[[:digit:]]+)?)\\)( ;.*)?$");
+	std::regex	check_lexic_operand("^assert " + type + "\\(.*\\)( ;.*)?$");
+	std::regex	check_lexic_value("^assert " + type + "\\((-?[[:digit:]]+(\\.[[:digit:]]+)?)\\)( ;.*)?$");
+	std::regex	check_sementic_integer("assert " + integer_type + "\\(-?[[:digit:]]+\\)( ;.*)?");
+	std::regex	check_sementic_decimal("assert " + decimal_type + "\\(-?[[:digit:]]+\\.[[:digit:]]+\\)( ;.*)?");
 	std::smatch	match;
 
 	operand = eOperandType::Unknown;
@@ -67,16 +74,7 @@ void			getAssertData(std::string const &line, eOperandType &operand, std::string
 	if (! std::regex_match(line, check_syntax))
 		std::cout << "syntax error" << std::endl;
 
-	if (! std::regex_match(line, check_lexic_operand))
-		std::cout << "operand: lexical error" << std::endl;
-
-	if (! std::regex_match(line, check_lexic_value))
-		std::cout << "value: lexical error" << std::endl;
-
-	if (! std::regex_match(line, check_sementic_1) && ! std::regex_match(line, check_sementic_2))
-		std::cout << "value: sementic error" << std::endl;
-
-	if (std::regex_search(line.begin(), line.end(), match, correct_line))
+	if (std::regex_search(line.begin(), line.end(), match, check_lexic_operand))
 	{
 		if (! match[1].compare("int8"))
 			operand = eOperandType::Int8;
@@ -88,12 +86,30 @@ void			getAssertData(std::string const &line, eOperandType &operand, std::string
 			operand = eOperandType::Float;
 		else if (! match[1].compare("double"))
 			operand = eOperandType::Double;
-
-		value	= match[2];
-		std::cout << value << std::endl;
 	}
 	else
-		std::cout << "syntax error" << std::endl;
+		std::cout << "lexical error: operand" << std::endl;
+
+	if (std::regex_search(line.begin(), line.end(), match, check_lexic_value))
+	{
+		if (operand == eOperandType::Float || operand == eOperandType::Double)
+		{
+			if (std::regex_match(line, check_sementic_decimal))
+				value = match[2];
+			else
+				std::cout << "sementic error: expecting decimal value, but value is integer" << std::endl;
+		}
+		else
+		{
+			if (std::regex_match(line, check_sementic_integer))
+				value = match[2];
+			else
+				std::cout << "sementic error: expecting integer value, but value is decimal" << std::endl;
+		}
+		std::cout << value << std::endl; /* remove this line */
+	}
+	else
+		std::cout << "lexical error: value" << std::endl;
 }
 
 eInstruction	get_instruction(std::string const &line)
