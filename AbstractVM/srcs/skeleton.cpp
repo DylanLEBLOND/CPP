@@ -2,12 +2,10 @@
 
 void			getPushData(std::string const &line, eOperandType &operand, std::string &value)
 {
-	std::string	type("(int8|int16|int32|float|double)");
 	std::string	integer_type("(int8|int16|int32)");
 	std::string	decimal_type("(float|double)");
-	std::regex	check_syntax("push [[:alnum:]]+\\(.*\\)( ;.*)?");
-	std::regex	check_lexic_operand("^push " + type + "\\(.*\\)( ;.*)?$");
-	std::regex	check_lexic_value("^push " + type + "\\((-?[[:digit:]]+(\\.[[:digit:]]+)?)\\)( ;.*)?$");
+	std::regex	check_syntax("^push ([[:alnum:]]+)\\((.*)\\)( ;.*)?$");
+	std::regex	check_lexic_value("-?[[:digit:]]+(\\.[[:digit:]]+)?");
 	std::regex	check_sementic_integer("push " + integer_type + "\\(-?[[:digit:]]+\\)( ;.*)?");
 	std::regex	check_sementic_decimal("push " + decimal_type + "\\(-?[[:digit:]]+\\.[[:digit:]]+\\)( ;.*)?");
 	std::smatch	match;
@@ -15,10 +13,7 @@ void			getPushData(std::string const &line, eOperandType &operand, std::string &
 	operand = eOperandType::Unknown;
 	value = "null";
 
-	if (! std::regex_match(line, check_syntax))
-		throw SyntacticException("syntactic TODO");		//TEMP TODO
-
-	if (std::regex_search(line.begin(), line.end(), match, check_lexic_operand))
+	if (std::regex_search(line.begin(), line.end(), match, check_syntax))
 	{
 		if (! match[1].compare("int8"))
 			operand = eOperandType::Int8;
@@ -30,39 +25,39 @@ void			getPushData(std::string const &line, eOperandType &operand, std::string &
 			operand = eOperandType::Float;
 		else if (! match[1].compare("double"))
 			operand = eOperandType::Double;
-	}
-	else
-		throw LexicalException("lexical TODO");		//TEMP TODO
+		else
+			throw LexicalException("expecting int8, int16, int32, float or double, but operand is : \"" + match.str(1) + "\"");
 
-	if (std::regex_search(line.begin(), line.end(), match, check_lexic_value))
-	{
-		if (operand == eOperandType::Float || operand == eOperandType::Double)
+		if (std::regex_match(match.str(2), check_lexic_value))
 		{
-			if (std::regex_match(line, check_sementic_decimal))
-				value = match[2];
+			if (operand == eOperandType::Float || operand == eOperandType::Double)
+			{
+				if (std::regex_match(line, check_sementic_decimal))
+					value = match[2];
+				else
+					throw SemanticException ("expecting decimal value, but value is integer : \"" + match.str(2) + "\"");
+			}
 			else
-				throw SemanticException ("Expecting decimal value, but value is integer");
+			{
+				if (std::regex_match(line, check_sementic_integer))
+				value = match[2];
+				else
+					throw SemanticException ("expecting integer value, but value is decimal : \"" + match.str(2) + "\"");
+			}
 		}
 		else
-		{
-			if (std::regex_match(line, check_sementic_integer))
-				value = match[2];
-			else
-				throw SemanticException ("Expecting integer value, but value is decimal");
-		}
+			throw LexicalException("expecting real number, but value is : \"" + match.str(2) + "\"");
 	}
 	else
-		throw LexicalException("lexical TODO");		//TEMP TODO
+		throw SyntacticException("correct syntax is : \"push operand(value)\"");
 }
 
 void			getAssertData(std::string const &line, eOperandType &operand, std::string &value)
 {
-	std::string	type("(int8|int16|int32|float|double)");
 	std::string	integer_type("(int8|int16|int32)");
 	std::string	decimal_type("(float|double)");
-	std::regex	check_syntax("assert [[:alnum:]]+\\(.*\\)( ;.*)?");
-	std::regex	check_lexic_operand("^assert " + type + "\\(.*\\)( ;.*)?$");
-	std::regex	check_lexic_value("^assert " + type + "\\((-?[[:digit:]]+(\\.[[:digit:]]+)?)\\)( ;.*)?$");
+	std::regex	check_syntax("^assert ([[:alnum:]]+)\\((.*)\\)( ;.*)?$");
+	std::regex	check_lexic_value("-?[[:digit:]]+(\\.[[:digit:]]+)?");
 	std::regex	check_sementic_integer("assert " + integer_type + "\\(-?[[:digit:]]+\\)( ;.*)?");
 	std::regex	check_sementic_decimal("assert " + decimal_type + "\\(-?[[:digit:]]+\\.[[:digit:]]+\\)( ;.*)?");
 	std::smatch	match;
@@ -70,10 +65,7 @@ void			getAssertData(std::string const &line, eOperandType &operand, std::string
 	operand = eOperandType::Unknown;
 	value = "null";
 
-	if (! std::regex_match(line, check_syntax))
-		throw SyntacticException("syntactic TODO");		//TEMP TODO
-
-	if (std::regex_search(line.begin(), line.end(), match, check_lexic_operand))
+	if (std::regex_search(line.begin(), line.end(), match, check_syntax))
 	{
 		if (! match[1].compare("int8"))
 			operand = eOperandType::Int8;
@@ -85,29 +77,31 @@ void			getAssertData(std::string const &line, eOperandType &operand, std::string
 			operand = eOperandType::Float;
 		else if (! match[1].compare("double"))
 			operand = eOperandType::Double;
-	}
-	else
-		throw LexicalException("invalid Operand");
+		else
+			throw LexicalException("expecting int8, int16, int32, float or double, but operand is : \"" + match.str(1) + "\"");
 
-	if (std::regex_search(line.begin(), line.end(), match, check_lexic_value))
-	{
-		if (operand == eOperandType::Float || operand == eOperandType::Double)
+		if (std::regex_match(match.str(2), check_lexic_value))
 		{
-			if (std::regex_match(line, check_sementic_decimal))
-				value = match[2];
+			if (operand == eOperandType::Float || operand == eOperandType::Double)
+			{
+				if (std::regex_match(line, check_sementic_decimal))
+					value = match[2];
+				else
+					throw SemanticException ("expecting decimal value, but value is integer : \"" + match.str(2) + "\"");
+			}
 			else
-				throw SemanticException ("Expecting decimal value, but value is integer");
+			{
+				if (std::regex_match(line, check_sementic_integer))
+				value = match[2];
+				else
+					throw SemanticException ("expecting integer value, but value is decimal : \"" + match.str(2) + "\"");
+			}
 		}
 		else
-		{
-			if (std::regex_match(line, check_sementic_integer))
-				value = match[2];
-			else
-				throw SemanticException ("Expecting integer value, but value is decimal");
-		}
+			throw LexicalException("expecting real number, but value is : \"" + match.str(2) + "\"");
 	}
 	else
-		throw LexicalException("lexical TODO");		//TEMP TODO
+		throw SyntacticException("correct syntax is : \"assert operand(value)\"");
 }
 
 eInstruction	get_instruction(std::string const &line)
