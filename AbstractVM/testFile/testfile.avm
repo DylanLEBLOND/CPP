@@ -4,13 +4,22 @@
 
 push int32(42)
 push int32(33)
+
 add
-push float(44.55)
-;;commentaire
+
+push float(44.55) ;;commentaire
+
 mul
+
+;;commentaire aussi
+
 push double(42.42)
 push int32(42)
+
 dump
+
 pop
+
 assert double(42.42)
+
 exit
