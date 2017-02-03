@@ -1,0 +1,24 @@
+; ----------
+; misc.avm -
+; ----------
+
+push int32(42) ;commentary
+push int16(10)
+
+add
+
+push float(12.34)
+
+mul
+
+push double(42.42)
+push int32(42)
+
+dump
+
+pop
+assert double(42.42)
+
+exit
+
+push int24(lol) ; this instruction will never be reached

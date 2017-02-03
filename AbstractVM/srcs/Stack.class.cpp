@@ -106,7 +106,7 @@ void			Stack::add()
 	if (this->_stack.size() < 2)
 		throw StackException ("The stack is composed of strictly less that two values when an arithmetic instruction is executed: Add");
 
-	IOperand const *op  = *(this->_stack[this->_stack.size() - 1]) + *(this->_stack[this->_stack.size() - 2]);
+	IOperand const *op  = *(this->_stack[this->_stack.size() - 2]) + *(this->_stack[this->_stack.size() - 1]);
 
 	this->pop();
 	this->pop();
@@ -118,7 +118,7 @@ void			Stack::sub()
 	if (this->_stack.size() < 2)
 		throw StackException ("The stack is composed of strictly less that two values when an arithmetic instruction is executed: Sub");
 
-	IOperand const *op  = *(this->_stack[this->_stack.size() - 1]) - *(this->_stack[this->_stack.size() - 2]);
+	IOperand const *op  = *(this->_stack[this->_stack.size() - 2]) - *(this->_stack[this->_stack.size() - 1]);
 
 	this->pop();
 	this->pop();
@@ -130,7 +130,7 @@ void			Stack::mul()
 	if (this->_stack.size() < 2)
 		throw StackException ("The stack is composed of strictly less that two values when an arithmetic instruction is executed: Mul");
 
-	IOperand const *op = *(this->_stack[this->_stack.size() - 1]) * *(this->_stack[this->_stack.size() - 2]);
+	IOperand const *op = *(this->_stack[this->_stack.size() - 2]) * *(this->_stack[this->_stack.size() - 1]);
 
 	this->pop();
 	this->pop();
@@ -142,7 +142,7 @@ void			Stack::div()
 	if (this->_stack.size() < 2)
 		throw StackException ("The stack is composed of strictly less that two values when an arithmetic instruction is executed: Div");
 
-	IOperand const *op = *(this->_stack[this->_stack.size() - 1]) / *(this->_stack[this->_stack.size() - 2]);
+	IOperand const *op = *(this->_stack[this->_stack.size() - 2]) / *(this->_stack[this->_stack.size() - 1]);
 
 	this->pop();
 	this->pop();
@@ -154,7 +154,7 @@ void			Stack::mod()
 	if (this->_stack.size() < 2)
 		throw StackException ("The stack is composed of strictly less that two values when an arithmetic instruction is executed: Mod");
 
-	IOperand const *op = *(this->_stack[this->_stack.size() - 1]) % *(this->_stack[this->_stack.size() - 2]);
+	IOperand const *op = *(this->_stack[this->_stack.size() - 2]) % *(this->_stack[this->_stack.size() - 1]);
 
 	this->pop();
 	this->pop();

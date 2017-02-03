@@ -1,0 +1,318 @@
+; ------------------------
+; test int8 a = max && b = max
+; ------------------------
+
+push int8(127)
+push int8(127)
+add ; expected overflow
+mul ; expected overflow
+sub
+dump
+pop
+
+push int8(127)
+push int8(127)
+div
+dump
+pop
+
+push int8(127)
+push int8(127)
+mod
+dump
+pop
+
+;; dump = 0 1 0
+
+; ------------------------
+; test int8 a = min && b = min
+; ------------------------
+
+push int8(-128)
+push int8(-128)
+add ; expected overflow
+mul ; expected overflow
+sub
+dump
+pop
+
+push int8(-128)
+push int8(-128)
+div
+dump
+pop
+
+push int8(-128)
+push int8(-128)
+mod
+dump
+pop
+
+;; dump = 0 1 0
+
+; ------------------------
+; test int8 a = min && b = max
+; ------------------------
+
+push int8(-128)
+push int8(127)
+sub ; expected overflow
+mul ; expected overflow
+add
+dump
+pop
+
+push int8(-128)
+push int8(127)
+div
+dump
+pop
+
+push int8(-128)
+push int8(127)
+mod
+dump
+pop
+
+;; dump = -1 0 127
+
+; ------------------------
+; test int8 a = max && b = min
+; ------------------------
+
+push int8(127)
+push int8(-128)
+sub ; expected overflow
+mul ; expected overflow
+add
+dump
+pop
+
+push int8(127)
+push int8(-128)
+div
+dump
+pop
+
+push int8(127)
+push int8(-128)
+mod
+dump
+pop
+
+;; dump = -1 -1 -1
+
+; --------------------------------------------------------------------------------------------
+
+; ------------------------
+; test int16 a = max && b = max
+; ------------------------
+
+push int16(32767)
+push int16(32767)
+add ; expected overflow
+mul ; expected overflow
+sub
+dump
+pop
+
+push int16(32767)
+push int16(32767)
+div
+dump
+pop
+
+push int16(32767)
+push int16(32767)
+mod
+dump
+pop
+
+;; dump = 0 1 0
+
+; ------------------------
+; test int16 a = min && b = min
+; ------------------------
+
+push int16(-32768)
+push int16(-32768)
+add ; expected overflow
+mul ; expected overflow
+sub
+dump
+pop
+
+push int16(-32768)
+push int16(-32768)
+div
+dump
+pop
+
+push int16(-32768)
+push int16(-32768)
+mod
+dump
+pop
+
+;; dump = 0 1 0
+
+; ------------------------
+; test int16 a = min && b = max
+; ------------------------
+
+push int16(-32768)
+push int16(32767)
+sub ; expected overflow
+mul ; expected overflow
+add
+dump
+pop
+
+push int16(-32768)
+push int16(32767)
+div
+dump
+pop
+
+push int16(-32768)
+push int16(32767)
+mod
+dump
+pop
+
+;; dump = -1 0 32767
+
+; ------------------------
+; test int16 a = max && b = min
+; ------------------------
+
+push int16(32767)
+push int16(-32768)
+sub ; expected overflow
+mul ; expected overflow
+add
+dump
+pop
+
+push int16(32767)
+push int16(-32768)
+div
+dump
+pop
+
+push int16(32767)
+push int16(-32768)
+mod
+dump
+pop
+
+;; dump = -1 -1 -1
+
+; --------------------------------------------------------------------------------------------
+
+; ------------------------
+; test int32 a = max && b = max
+; ------------------------
+
+push int32(2147483647)
+push int32(2147483647)
+add ; expected overflow
+mul ; expected overflow
+sub
+dump
+pop
+
+push int32(2147483647)
+push int32(2147483647)
+div
+dump
+pop
+
+push int32(2147483647)
+push int32(2147483647)
+mod
+dump
+pop
+
+;; dump = 0 1 0
+
+; ------------------------
+; test int32 a = min && b = min
+; ------------------------
+
+push int32(-2147483648)
+push int32(-2147483648)
+add ; expected overflow
+mul ; expected overflow
+sub
+dump
+pop
+
+push int32(-2147483648)
+push int32(-2147483648)
+div
+dump
+pop
+
+push int32(-2147483648)
+push int32(-2147483648)
+mod
+dump
+pop
+
+;; dump = 0 1 0
+
+; ------------------------
+; test int32 a = min && b = max
+; ------------------------
+
+push int32(-2147483648)
+push int32(2147483647)
+sub ; expected overflow
+mul ; expected overflow
+add
+dump
+pop
+
+push int32(-2147483648)
+push int32(2147483647)
+div
+dump
+pop
+
+push int32(-2147483648)
+push int32(2147483647)
+mod
+dump
+pop
+
+;; dump = -1 0 2147483647
+
+; ------------------------
+; test int32 a = max && b = min
+; ------------------------
+
+push int32(2147483647)
+push int32(-2147483648)
+sub ; expected overflow
+mul ; expected overflow
+add
+dump
+pop
+
+push int32(2147483647)
+push int32(-2147483648)
+div
+dump
+pop
+
+push int32(2147483647)
+push int32(-2147483648)
+mod
+dump
+pop
+
+;; dump = -1 -1 -1
+
+
+exit

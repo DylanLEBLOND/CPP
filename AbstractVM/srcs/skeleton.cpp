@@ -46,7 +46,7 @@ void			getPushData(std::string const &line, eOperandType &operand, std::string &
 			}
 		}
 		else
-			throw LexicalException("expecting real number, but value is : \"" + match.str(2) + "\"");
+			throw LexicalException("expecting number, but value is : \"" + match.str(2) + "\"");
 	}
 	else
 		throw SyntacticException("correct syntax is : \"push operand(value)\"");

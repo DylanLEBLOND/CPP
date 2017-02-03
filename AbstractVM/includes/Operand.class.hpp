@@ -99,11 +99,7 @@ public:
 
 	std::string const		&toString(void) const;		// return _value_str
 
-	static Operand *Get()
-	{
-		static Operand instance;
-		return &instance;
-	}
+	static Operand			*Get();
 	IOperand const			*createOperand(eOperandType type, std::string const &value) const;
 
 	IOperand const			*operator+(IOperand const &rhs) const;

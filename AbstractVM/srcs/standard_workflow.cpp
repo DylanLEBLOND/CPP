@@ -11,15 +11,16 @@ void 	standard_workflow ()
 	eInstruction instruction;
 	eOperandType operand;
 	std::string value;
-	std::string message = "";
+	std::string message;
 
+	message.clear();
 	run = true;
 	while (run)
 	{
 		lineNB++;
 
 		std::getline (std::cin, line);
-		if ((line.length() == 2) || (line.compare (";;") == 0))
+		if ((line.length() == 2) && (line.compare (";;") == 0))
 		{
 			run = false;
 			continue;
@@ -32,7 +33,6 @@ void 	standard_workflow ()
 			continue;
 
 		instruction = get_instruction (line);
-
 		try
 		{
 			switch (instruction)
@@ -80,10 +80,12 @@ void 	standard_workflow ()
 		}
 		catch (std::exception &e)
 		{
-			message.append ("Line ");
-			message.append (std::to_string(lineNB));
+			message += "Line ";
+			message +=  std::to_string (lineNB);
 			message.append (" : Error : ");
-			message += e.what();
+
+			std::string tmp = e.what();
+			message += tmp;
 			message += '\n';
 			error_occured = true;
 		}

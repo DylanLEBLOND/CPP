@@ -1,5 +1,5 @@
 ; -------------
-; sample.avm -
+; fullerror.avm -
 ; -------------
 
 push int32(42.15)

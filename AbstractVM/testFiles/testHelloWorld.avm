@@ -1,0 +1,53 @@
+; -------------
+; helloworld.avm -
+; -------------
+
+;; H
+push int8(72)
+print
+
+;; e
+push int8(101)
+print
+
+;; l
+push int8(108)
+print
+
+;; l
+push int8(108)
+print
+
+;; o
+push int8(111)
+print
+
+;; Space
+push int8(32)
+print
+
+;; w
+push int8(119)
+print
+
+;; o
+push int8(111)
+print
+
+;; r
+push int8(114)
+print
+
+;; l
+push int8(108)
+print
+
+;; d
+push int8(100)
+print
+
+;; !
+push int8(33)
+print
+
+exit
