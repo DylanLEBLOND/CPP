@@ -30,7 +30,7 @@ public:
 
 	virtual ~IGUI (void) {};
 
-	virtual bool			start (void) = 0;
+	virtual bool			start (int size) = 0;
 	virtual eGUISwitch		getGUISwitch (void) const = 0;
 
 };

@@ -22,7 +22,7 @@ DEFINE = # -D PROJ_DEBUG
 
 INC = -I ./includes
 
-LINK = -L./libs -ldl 
+LINK = -L./libs -ldl
 
 LIB_OPENGL_REQUIREMENT = freeglut3-dev
 
@@ -57,10 +57,10 @@ packages:
 			exit 1;																										\
 		fi																												\
 	fi
-	
+
 createlibs:
 	@make -C ./libs/openGL
-	
+
 destroylibs:
 	@make fclean -C ./libs/openGL
 

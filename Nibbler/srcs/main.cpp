@@ -42,7 +42,7 @@ int main (int ac, char **av)
 	}
 	std::cout << "createGUI GUIopenGL Success" << std::endl;
 
-	if (! currentGUI->start())
+	if (! currentGUI->start (std::stoi (av[1])))
 	{
 		std::cerr << "start GUIopenGL Failed" << std::endl;
 		exit (0);

@@ -45,7 +45,8 @@ public:
 	~GUIOpenGL (void);
 
 	static void		drawTriangle (void);
-	bool			start (void);
+	static void		resizeWindows (int width, int height);
+	bool			start (int size);
 	eGUISwitch		getGUISwitch (void) const;
 };
 
