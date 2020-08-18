@@ -24,6 +24,8 @@ INC = -I ./includes
 
 LINK = -L./libs -ldl
 
+LIB_SDL_REQUIREMENT = libsdl2-dev
+
 LIB_OPENGL_REQUIREMENT = freeglut3-dev
 
 SRC = main.cpp Board.class.cpp Snake.class.cpp
@@ -45,7 +47,22 @@ BASIC =		\033[0m
 
 all : info packages createlibs $(NAME)
 
-packages:
+packages: packagesSDL packagesOpenGL
+
+packagesSDL:
+	@if ! (dpkg --get-selections | grep -q "^$(LIB_SDL_REQUIREMENT)" >/dev/null);									\
+	then																												\
+		echo "$(BLUE) package $(LIB_SDL_REQUIREMENT)$(RED) missing$(BASIC) ... starting installation$(BASIC)";		\
+		if (sudo apt install $(LIB_SDL_REQUIREMENT));																\
+		then																											\
+			echo "$(GREEN)Successfully installed $(LIB_SDL_REQUIREMENT)$(BASIC)";									\
+		else																											\
+			echo "$(RED)Error installing $(LIB_SDL_REQUIREMENT)... $(GREEN)Cannot continue exit$(BASIC)";			\
+			exit 1;																										\
+		fi																												\
+	fi
+
+packagesOpenGL:
 	@if ! (dpkg --get-selections | grep -q "^$(LIB_OPENGL_REQUIREMENT)" >/dev/null);									\
 	then																												\
 		echo "$(BLUE) package $(LIB_OPENGL_REQUIREMENT)$(RED) missing$(BASIC) ... starting installation$(BASIC)";		\
@@ -58,10 +75,20 @@ packages:
 		fi																												\
 	fi
 
-createlibs:
+createlibs: createlibSDL createlibOpenGL
+
+createlibSDL:
+	@make -C ./libs/SDL
+
+createlibOpenGL:
 	@make -C ./libs/openGL
 
-destroylibs:
+destroylibs: destroylibSDL destroylibOpenGL
+
+destroylibSDL:
+	@make fclean -C ./libs/SDL
+
+destroylibOpenGL:
 	@make fclean -C ./libs/openGL
 
 info :
@@ -88,11 +115,11 @@ $(NAME) : $(OBJS)
 print :
 	@echo $(OBJS)
 
-clean : destroylibs
+clean :
 	@rm -f $(OBJS)
 	@echo "$(BLUE) objs $(WHITE)->$(RED) DELETED $(BASIC)"
 
-fclean: clean
+fclean: clean destroylibs
 	@rm -f $(NAME)
 	@echo "$(BLUE) $(NAME) $(WHITE)->$(RED) DELETED $(BASIC)"
 

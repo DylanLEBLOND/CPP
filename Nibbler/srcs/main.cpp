@@ -2,23 +2,23 @@
 
 int main (int ac, char **av)
 {
-	void *handle_GUIopenGL;
+	void *handle_GUISDL;
 	Board board;
-	Snake snake;
+	Snake snake (10, 10);
 	IGUI *currentGUI;
 
-	IGUI *(*createGUI)(Board, Snake, int *, char **);
+	IGUI *(*createGUI)(Board *, Snake *, int *, char **);
 	void (*destroyGUI)(IGUI *);
 
-	handle_GUIopenGL = dlopen ("./libs/openGL/lib/libguiopengl.so", RTLD_LAZY);
-	if (handle_GUIopenGL == NULL)
+	handle_GUISDL = dlopen ("./libs/SDL/lib/libguisdl.so", RTLD_LAZY);
+	if (handle_GUISDL == NULL)
 	{
-		std::cerr << "dlopen GUIopenGL Failed" << std::endl;
+		std::cerr << "dlopen GUISDL Failed" << std::endl;
 		exit (0);
 	}
-	std::cout << "dlopen GUIopenGL Success" << std::endl;
+	std::cout << "dlopen GUISDL Success" << std::endl;
 
-	createGUI = (IGUI *(*)(Board, Snake, int *, char **)) dlsym (handle_GUIopenGL, "createGUI");
+	createGUI = (IGUI *(*)(Board *, Snake *, int *, char **)) dlsym (handle_GUISDL, "createGUI");
 	if (createGUI == NULL)
 	{
 		std::cerr << "dlsym createGUI Failed" << std::endl;
@@ -26,7 +26,7 @@ int main (int ac, char **av)
 	}
 	std::cout << "dlsym createGUI Success" << std::endl;
 
-	destroyGUI = (void (*)(IGUI *)) dlsym (handle_GUIopenGL, "destroyGUI");
+	destroyGUI = (void (*)(IGUI *)) dlsym (handle_GUISDL, "destroyGUI");
 	if (destroyGUI == NULL)
 	{
 		std::cerr << "dlsym destroyGUI Failed" << std::endl;
@@ -34,24 +34,25 @@ int main (int ac, char **av)
 	}
 	std::cout << "dlsym destroyGUI Success" << std::endl;
 
-	currentGUI = createGUI (board, snake, &ac, av);
+	currentGUI = createGUI (&board, &snake, &ac, av);
 	if (currentGUI == NULL)
 	{
-		std::cerr << "createGUI GUIopenGL Failed" << std::endl;
+		std::cerr << "createGUI GUISDL Failed" << std::endl;
 		exit (0);
 	}
-	std::cout << "createGUI GUIopenGL Success" << std::endl;
+	std::cout << "createGUI GUISDL Success" << std::endl;
 
-	if (! currentGUI->start (std::stoi (av[1])))
-	{
-		std::cerr << "start GUIopenGL Failed" << std::endl;
-		exit (0);
-	}
-	std::cout << "start GUIopenGL Success" << std::endl;
+	currentGUI->start (std::stoi (av[1]));
+
+	std::cout << "start GUISDL Success" << std::endl;
+
+	while (currentGUI->run());
 
 	destroyGUI (currentGUI);
 
-	dlclose (handle_GUIopenGL);
+	std::cout << "MAIN Snake pos x = " << snake.getPositionX() << " | y = " << snake.getPositionY() << std::endl;
+
+	dlclose (handle_GUISDL);
 
 	switch (ac)
 	{

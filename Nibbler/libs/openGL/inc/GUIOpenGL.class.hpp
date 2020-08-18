@@ -29,30 +29,38 @@ class GUIOpenGL : public IGUI
 {
 private:
 
-	Board _board;
-	Snake _snake;
-	int *_ac;
-	char **_av;
-	eGUISwitch _GUISwitch;
+	/* common */
+	Board*			_board;
+	Snake*			_snake;
+	eGUISwitch		_GUISwitch;
+
+	/* openGL */
+	int				*_ac;
+	char**			_av;
 
 	GUIOpenGL (void);
+	GUIOpenGL (GUIOpenGL const &src);
+
+	GUIOpenGL		&operator=(GUIOpenGL const &src);
 
 	void			snakeAnimation (void);
 
 public:
 
-	GUIOpenGL (Board &board, Snake &snake, int *ac, char **av);
+	GUIOpenGL (Board *board, Snake *snake, int *ac, char **av);
 	~GUIOpenGL (void);
 
 	static void		drawTriangle (void);
 	static void		resizeWindows (int width, int height);
-	bool			start (int size);
+	void			start (int size);
+	bool			run (void);
+	void			stop (void);
 	eGUISwitch		getGUISwitch (void) const;
 };
 
 extern "C" {
 
-	GUIOpenGL		*createGUI (Board &board, Snake &snake, int *ac, char **av);
+	GUIOpenGL		*createGUI (Board *board, Snake *snake, int *ac, char **av);
 	void			destroyGUI (GUIOpenGL* GUI);
 }
 

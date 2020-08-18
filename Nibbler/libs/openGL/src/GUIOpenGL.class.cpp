@@ -5,8 +5,8 @@ static int _size;
 /*
  * Constructors
  */
-GUIOpenGL::GUIOpenGL(Board &board, Snake &snake, int *ac, char **av)
-	: _board (board), _snake (snake), _ac (ac), _av (av), _GUISwitch (eGUISwitch::openGL) { }
+GUIOpenGL::GUIOpenGL(Board *board, Snake *snake, int *ac, char **av)
+	: _board (board), _snake (snake), _GUISwitch (eGUISwitch::openGL), _ac (ac), _av (av) { }
 
 /*
  * Destructor
@@ -67,7 +67,7 @@ void			GUIOpenGL::resizeWindows (int width, int height)
 /*
  * Public
  */
-bool			GUIOpenGL::start (int size)
+void			GUIOpenGL::start (int size)
 {
 	_size = size;
 
@@ -81,8 +81,16 @@ bool			GUIOpenGL::start (int size)
 	glutReshapeFunc (resizeWindows);
 	glutMainLoop ();
 	//	glutIdleFunc (snakeAnimation);
+}
 
-	return true;
+bool			GUIOpenGL::run (void)
+{
+	return false;
+}
+
+void			GUIOpenGL::stop (void)
+{
+
 }
 
 eGUISwitch		GUIOpenGL::getGUISwitch (void) const
@@ -93,7 +101,7 @@ eGUISwitch		GUIOpenGL::getGUISwitch (void) const
 /*
  * Extern
  */
-GUIOpenGL		*createGUI (Board &board, Snake &snake, int *ac, char **av)
+GUIOpenGL		*createGUI (Board *board, Snake *snake, int *ac, char **av)
 {
 	return new GUIOpenGL (board, snake, ac, av);
 }
