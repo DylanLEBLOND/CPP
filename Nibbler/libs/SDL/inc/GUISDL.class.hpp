@@ -1,7 +1,7 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   GUIOpenGL.class.hpp                                :+:      :+:    :+:   //
+//   GUISDL.class.hpp                                   :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: dle-blon <marvin@42.fr>                    +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
@@ -10,14 +10,13 @@
 //                                                                            //
 // ************************************************************************** //
 
-#ifndef GUIOPENGL_CLASS_HPP
+#ifndef GUISDL_CLASS_HPP
 # define GUIOPENGL_CLASS_HPP
 
 /*
  * Personals Includes
  */
-# include <GL/glut.h>
-# include <GL/gl.h>
+#include <SDL2/SDL.h>
 # include <common.hpp>
 
 /*
@@ -25,7 +24,7 @@
  */
 
 
-class GUIOpenGL : public IGUI
+class GUISDL : public IGUI
 {
 private:
 
@@ -34,24 +33,23 @@ private:
 	Snake*			_snake;
 	eGUISwitch		_GUISwitch;
 
-	/* openGL */
-	int				*_ac;
-	char**			_av;
+	/* SDL */
+	SDL_Window*		_window;
+	SDL_Renderer*	_boardRenderer;
 
-	GUIOpenGL (void);
-	GUIOpenGL (GUIOpenGL const &src);
+	GUISDL (void);
+	GUISDL (GUISDL const &src);
 
-	GUIOpenGL		&operator=(GUIOpenGL const &src);
+	GUISDL			&operator=(GUISDL const &src);
 
-	void			snakeAnimation (void);
+	void			drawSnake (void);
+	void			drawTriangle (void);
 
 public:
 
-	GUIOpenGL (Board *board, Snake *snake, int *ac, char **av);
-	~GUIOpenGL (void);
+	GUISDL (Board *board, Snake *snake);
+	~GUISDL (void);
 
-	static void		drawTriangle (void);
-	static void		resizeWindows (int width, int height);
 	void			start (void);
 	bool			run (void);
 	void			stop (void);
@@ -60,8 +58,8 @@ public:
 
 extern "C" {
 
-	GUIOpenGL		*createGUI (Board *board, Snake *snake, int *ac, char **av);
-	void			destroyGUI (GUIOpenGL* GUI);
+	GUISDL			*createGUI (Board *board, Snake *snake, int *ac, char **av);
+	void			destroyGUI (GUISDL* GUI);
 }
 
-#endif /* GUIOPENGL_CLASS_HPP */
+#endif /* GUISDL_CLASS_HPP */

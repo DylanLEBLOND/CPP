@@ -21,7 +21,13 @@
  * System Includes
  */
 # include <iostream>
+# include <algorithm>
 # include <list>
+
+/*
+ * Enumerations
+ */
+enum class eSnakeDirection { North, South, East, West, Unknown };
 
 /*
  * Structures
@@ -30,14 +36,22 @@ typedef struct s_cell
 {
 	int positionX;
 	int positionY;
+
+	bool operator== (const s_cell &rhs)
+	{
+		return this->positionX == rhs.positionX && this->positionY == rhs.positionY;
+	}
 }				t_cell;
 
 class Snake
 {
 private:
 	std::list<t_cell>		_snakeCells;
-	int						_currrentSize;
+	eSnakeDirection			_currentDirection;
 	bool					_canPassThroughWall;
+	unsigned int			_mapSize;
+	int						_eatCounter;
+	bool					_isAlive;
 
 public:
 
@@ -46,17 +60,23 @@ public:
 	Snake (Snake const &src);
 	~Snake (void);
 
-	Snake		&operator= (Snake const &src);
+	Snake					&operator= (Snake const &src);
 
-	bool		getCanPassThroughWall (void) const;
-	void		getHeadPosition (int *positionX, int *positionY) const;
+	bool					getIsAlive (void) const;
+	std::list<t_cell>		getSnakeCells (void) const;
+	eSnakeDirection			getCurrentDirection (void) const;
+	bool					getCanPassThroughWall (void) const;
+	unsigned int			getMapSize (void) const;
 
-	void		grow (int value);
-	void		passThroughWall (bool active);
-	void		moveLeft (void);
-	void		moveRight (void);
-	void		moveUp (void);
-	void		moveDown (void);
+	void					setMapSize (unsigned int newSize);
+
+	void					passThroughWall (bool active);
+	void					eat (int value);
+	void					goLeft (void);
+	void					goRight (void);
+	void					goUp (void);
+	void					goDown (void);
+	void					moveStraight (void);
 };
 
 #endif /* SNAKE_CLASS_HPP */

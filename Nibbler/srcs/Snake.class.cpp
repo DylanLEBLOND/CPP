@@ -3,7 +3,7 @@
 /*
  * Constructors
  */
-Snake::Snake (void) : _currrentSize (3), _canPassThroughWall (true)
+Snake::Snake (void) : _currentDirection (eSnakeDirection::East), _canPassThroughWall (true), _mapSize (400), _eatCounter (0), _isAlive (true)
 {
 	t_cell cur_cell;
 
@@ -23,10 +23,10 @@ Snake::Snake (void) : _currrentSize (3), _canPassThroughWall (true)
 }
 
 Snake::Snake (unsigned int initPosX, unsigned int initPosY, unsigned int initSize, bool canPassThroughWall)
-	: _canPassThroughWall (canPassThroughWall)
+	: _currentDirection (eSnakeDirection::East), _canPassThroughWall (canPassThroughWall), _mapSize (400), _eatCounter (0), _isAlive (true)
 {
 	t_cell cur_cell;
-	int i;
+	unsigned int i;
 
 	if (initSize > 100 || (int)(initPosX - initSize) < 0)
 	{
@@ -34,19 +34,17 @@ Snake::Snake (unsigned int initPosX, unsigned int initPosY, unsigned int initSiz
 		exit (0);
 	}
 
-	this->_snameCells = std::list<t_cell> ();
+	this->_snakeCells = std::list<t_cell> ();
 
 	cur_cell.positionX = initPosX;
 	cur_cell.positionY = initPosY;
-	this->_snameCells.push_front (cur_cell);
+	this->_snakeCells.push_front (cur_cell);
 
 	for (i = 1; i < initSize; i++)
 	{
 		cur_cell.positionX = initPosX - i;
-		this->_snameCells.push_back (cur_cell);
+		this->_snakeCells.push_back (cur_cell);
 	}
-
-	this->_currrentSize = initSize;
 }
 
 Snake::Snake (Snake const &src)
@@ -62,10 +60,14 @@ Snake::~Snake(void) {}
 /*
  * Operator "=" Overload
  */
-Snake		&Snake::operator=(Snake const &src)
+Snake					&Snake::operator=(Snake const &src)
 {
-	this->_x = src.getPositionX();
-	this->_y = src.getPositionY();
+	this->_snakeCells = src.getSnakeCells ();
+	this->_currentDirection = src.getCurrentDirection ();
+	this->_canPassThroughWall = src.getCanPassThroughWall ();
+	this->_mapSize = src.getMapSize ();
+	this->_eatCounter = 0;		/* always start with a eatCounter of 0 */
+	this->_isAlive = src.getIsAlive ();
 
 	return *this;
 }
@@ -73,14 +75,40 @@ Snake		&Snake::operator=(Snake const &src)
 /*
  * Getter
  */
-int			Snake::getPositionX (void) const
+bool					Snake::getIsAlive (void) const
 {
-	return this->_x;
+	return this->_isAlive;
 }
 
-int			Snake::getPositionY (void) const
+std::list<t_cell>		Snake::getSnakeCells (void) const
 {
-	return this->_y;
+	return this->_snakeCells;
+}
+
+eSnakeDirection			Snake::getCurrentDirection (void) const
+{
+	return this->_currentDirection;
+}
+
+bool					Snake::getCanPassThroughWall (void) const
+{
+	return this->_canPassThroughWall;
+}
+
+unsigned int			Snake::getMapSize (void) const
+{
+	return this->_mapSize;
+}
+
+/*
+ * Setter
+ */
+void					Snake::setMapSize (unsigned int newSize)
+{
+	if (! this->_isAlive)
+		return;
+
+	this->_mapSize = newSize;
 }
 
 /*
@@ -90,27 +118,120 @@ int			Snake::getPositionY (void) const
 /*
  * Public
  */
-void		Snake::passThroughWall (bool active)
+void					Snake::passThroughWall (bool active)
 {
+	if (! this->_isAlive)
+		return;
+
 	this->_canPassThroughWall = active;
 }
 
-void		Snake::moveLeft (void)
+void					Snake::eat (int value)
 {
-	this->_x--;
+	if (! this->_isAlive)
+		return;
+
+	this->_eatCounter += value;
 }
 
-void		Snake::moveRight (void)
+void					Snake::goLeft (void)
 {
-	this->_x++;
+	if (! this->_isAlive)
+		return;
+
+	if (this->_currentDirection == eSnakeDirection::East)
+		return;		/* cannot turn around */
+
+	this->_currentDirection = eSnakeDirection::West;
 }
 
-void		Snake::moveUp (void)
+void					Snake::goRight (void)
 {
-	this->_y--;
+	if (! this->_isAlive)
+		return;
+
+	if (this->_currentDirection == eSnakeDirection::West)
+		return;		/* cannot turn around */
+
+	this->_currentDirection = eSnakeDirection::East;
 }
 
-void		Snake::moveDown (void)
+void					Snake::goUp (void)
 {
-	this->_y++;
+	if (! this->_isAlive)
+		return;
+
+	if (this->_currentDirection == eSnakeDirection::South)
+		return;		/* cannot turn around */
+
+	this->_currentDirection = eSnakeDirection::North;
+}
+
+void					Snake::goDown (void)
+{
+	if (! this->_isAlive)
+		return;
+
+	if (this->_currentDirection == eSnakeDirection::North)
+		return;		/* cannot turn around */
+
+	this->_currentDirection = eSnakeDirection::South;
+}
+
+void					Snake::moveStraight (void)
+{
+	std::list<t_cell>::iterator it;
+	t_cell current_head;
+	t_cell new_head;
+
+	if (! this->_isAlive)
+		return;
+
+	current_head = this->_snakeCells.front ();
+	switch (this->_currentDirection)
+	{
+		case eSnakeDirection::West:
+			new_head.positionX = current_head.positionX - 1;
+			new_head.positionY = current_head.positionY;
+			if (this->_canPassThroughWall && new_head.positionX < 0)
+				new_head.positionX = this->_mapSize - 1;
+			break;
+		case eSnakeDirection::East:
+			new_head.positionX = current_head.positionX + 1;
+			new_head.positionY = current_head.positionY;
+			if (this->_canPassThroughWall && new_head.positionX >= (int)this->_mapSize)
+				new_head.positionX = 0;
+			break;
+		case eSnakeDirection::North:
+			new_head.positionX = current_head.positionX;
+			new_head.positionY = current_head.positionY - 1;
+			if (this->_canPassThroughWall && new_head.positionY < 0)
+				new_head.positionY = this->_mapSize - 1;
+			break;
+		case eSnakeDirection::South:
+			new_head.positionX = current_head.positionX;
+			new_head.positionY = current_head.positionY + 1;
+			if (this->_canPassThroughWall && new_head.positionY >= (int)this->_mapSize)
+				new_head.positionY = 0;
+			break;
+		default:
+			/* should never occur */
+			//THOW EXCEPTION HERE
+			return;
+	}
+
+	it = std::find (this->_snakeCells.begin(), this->_snakeCells.end(), new_head);
+	if (it != this->_snakeCells.end())
+	{
+		/* new_head match another cell, which mean that the snake eat himself */
+		this->_isAlive = false;
+		return;
+	}
+
+	this->_snakeCells.push_front (new_head);
+
+	if (this->_eatCounter > 0)
+		this->_eatCounter--;
+	else
+		this->_snakeCells.pop_back ();
 }

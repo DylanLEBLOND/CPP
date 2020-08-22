@@ -67,9 +67,9 @@ void			GUIOpenGL::resizeWindows (int width, int height)
 /*
  * Public
  */
-void			GUIOpenGL::start (int size)
+void			GUIOpenGL::start (void)
 {
-	_size = size;
+	_size = this->_board->getSize() * 10;
 
 	std::cout << "GUIOpenGL::start" << std::endl;
 	glutInit (this->_ac, this->_av);

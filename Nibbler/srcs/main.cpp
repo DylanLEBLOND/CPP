@@ -3,8 +3,8 @@
 int main (int ac, char **av)
 {
 	void *handle_GUISDL;
-	Board board;
-	Snake snake (10, 10);
+	Board board (std::stoi (av[1]));
+	Snake snake (10, 10, 3, true);
 	IGUI *currentGUI;
 
 	IGUI *(*createGUI)(Board *, Snake *, int *, char **);
@@ -42,7 +42,7 @@ int main (int ac, char **av)
 	}
 	std::cout << "createGUI GUISDL Success" << std::endl;
 
-	currentGUI->start (std::stoi (av[1]));
+	currentGUI->start();
 
 	std::cout << "start GUISDL Success" << std::endl;
 
@@ -50,7 +50,7 @@ int main (int ac, char **av)
 
 	destroyGUI (currentGUI);
 
-	std::cout << "MAIN Snake pos x = " << snake.getPositionX() << " | y = " << snake.getPositionY() << std::endl;
+//	std::cout << "MAIN Snake pos x = " << snake.getPositionX() << " | y = " << snake.getPositionY() << std::endl;
 
 	dlclose (handle_GUISDL);
 
