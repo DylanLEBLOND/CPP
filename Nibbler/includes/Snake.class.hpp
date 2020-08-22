@@ -16,6 +16,7 @@
 /*
  * Personals Includes
  */
+# include <Exceptions.hpp>
 
 /*
  * System Includes

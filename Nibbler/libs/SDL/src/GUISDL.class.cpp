@@ -6,9 +6,12 @@ static int _size;
  * Constructors
  */
 GUISDL::GUISDL (Board *board, Snake *snake)
-	: _board (board), _snake (snake), _window (NULL), _boardRenderer (NULL), _GUISwitch (eGUISwitch::SDL)
+	: _board (board), _snake (snake), _window (NULL), _boardRenderer (NULL), _wantedGUI (eGUI::SDL)
 {
-	SDL_Init (SDL_INIT_VIDEO);
+	if (SDL_Init (SDL_INIT_VIDEO))
+	{
+		throw GUIException (this->_GUIName, "SDL_Init");
+	}
 	this->_snake->setMapSize (this->_board->getSize());
 }
 
@@ -38,7 +41,10 @@ void			GUISDL::drawSnake (void)
 
 	snakeCells = this->_snake->getSnakeCells();
 
-	SDL_SetRenderDrawColor (this->_boardRenderer, 0, 0, 255, 255);
+	if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 0, 255, 255))
+	{
+		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor");
+	}
 
 	for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
 	{
@@ -47,26 +53,22 @@ void			GUISDL::drawSnake (void)
 		snakeCellDraw.w = 10;
 		snakeCellDraw.h = 10;
 
-		SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw);
+		if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
+		{
+			throw GUIException (this->_GUIName, "SDL_RenderFillRect");
+		}
 	}
-}
-
-void			GUISDL::drawTriangle (void)
-{
-	SDL_SetRenderDrawColor (this->_boardRenderer, 255, 255, 255, 255);
-	SDL_RenderClear (this->_boardRenderer);		/* use the RenderDrawColor to clear the Renderer */
-
-	SDL_SetRenderDrawColor (this->_boardRenderer, 0, 0, 255, 255);
-
-	this->drawSnake();
-
-	SDL_RenderPresent (this->_boardRenderer);
 }
 
 
 /*
  * Public
  */
+eGUI			GUISDL::getGUIName (void) const
+{
+	return this->_GUIName;
+}
+
 void			GUISDL::start (void)
 {
 	_size = this->_board->getSize() * 10;
@@ -77,17 +79,13 @@ void			GUISDL::start (void)
 	this->_window = SDL_CreateWindow ("Nibbler (SDL GUI)", 100, 100, _size, _size, SDL_WINDOW_SHOWN);
 	if (this->_window == NULL)
 	{
-		//THROW EXCEPTION ICI
-		std::cerr << "start GUISDL Failed" << std::endl;
-		exit (0);
+		throw GUIException (this->_GUIName, "SDL_CreateWindow");
 	}
 
 	this->_boardRenderer = SDL_CreateRenderer (this->_window, -1, SDL_RENDERER_ACCELERATED);
 	if (this->_boardRenderer == NULL)
 	{
-		//THROW EXCEPTION ICI
-		std::cerr << "start GUISDL Failed" << std::endl;
-		exit (0);
+		throw GUIException (this->_GUIName, "SDL_CreateRenderer");
 	}
 }
 
@@ -95,15 +93,13 @@ void			GUISDL::stop()
 {
 	if (this->_window == NULL)
 	{
-		//THROW EXCEPTION ICI
-		std::cerr << "stop GUISDL Failed" << std::endl;
-		exit (0);
+		throw GUIException (this->_GUIName, "GUISDL::stop => GUISDL wasn't started");
 	}
 
 	SDL_DestroyWindow (this->_window);
 }
 
-bool			GUISDL::run (void)
+eGUIEvent		GUISDL::getEvent (void)
 {
 	SDL_Event events;
 	int x, y;
@@ -111,7 +107,7 @@ bool			GUISDL::run (void)
 	while (SDL_PollEvent (&events))
 	{
 		if (events.type == SDL_QUIT)
-				return false;
+				return eGUIEvent::quitGame;
 		else if (events.type == SDL_KEYDOWN)
 		{
 			switch (events.key.keysym.sym)
@@ -119,85 +115,72 @@ bool			GUISDL::run (void)
 				case SDLK_e:
 					this->_snake->eat (1);
 					break;
+
 				case SDLK_LEFT:
-					this->_snake->goLeft();
-					break;
+					return eGUIEvent::goLeft;
+
 				case SDLK_RIGHT:
-					this->_snake->goRight();
-					break;
+					return eGUIEvent::goRight;
+
 				case SDLK_UP:
-					this->_snake->goUp();
-					break;
+					return eGUIEvent::goUp;
+
 				case SDLK_DOWN:
-					this->_snake->goDown();
-					break;
+					return eGUIEvent::goDown;
+
 				case SDLK_KP_2:
 				case SDLK_2:
-					this-> _GUISwitch = eGUISwitch::MinilibX;
-					return false;
+					this-> _wantedGUI = eGUI::MinilibX;
+					return eGUIEvent::changeGUI;
+
 				case SDLK_KP_3:
 				case SDLK_3:
-					this-> _GUISwitch = eGUISwitch::openGL;
-					return false;
+					this-> _wantedGUI = eGUI::openGL;
+					return eGUIEvent::changeGUI;
+
 				case SDLK_KP_1:
 				case SDLK_1:
 				default:
-					break;
+					return eGUIEvent::nothingTODO;
 			}
 		}
 	}
 
-//	SDL_WaitEvent (&events);
-//
-//	if (events.window.event == SDL_WINDOWEVENT_CLOSE)
-//			return false;
-//
-//	switch (events.key.keysym.sym)
-//	{
-//		case SDLK_LEFT:
-//			this->_snake->moveLeft();
-//			break;
-//		case SDLK_RIGHT:
-//			this->_snake->moveRight();
-//			break;
-//		case SDLK_UP:
-//			this->_snake->moveUp();
-//			break;
-//		case SDLK_DOWN:
-//			this->_snake->moveDown();
-//			break;
-//		case SDLK_KP_2:
-//		case SDLK_2:
-//			this-> _GUISwitch = eGUISwitch::MinilibX;
-//			return false;
-//		case SDLK_KP_3:
-//		case SDLK_3:
-//			this-> _GUISwitch = eGUISwitch::openGL;
-//			return false;
-//		case SDLK_KP_1:
-//		case SDLK_1:
-//		default:
-//			this->_snake->moveStraight();
-//			break;
-//	}
-
-	this->_snake->moveStraight();
-	this->drawTriangle();
-
-	SDL_Delay (100 /* 16 */);		/* ~ 60 FPS */
-
-	return true;
+	return eGUIEvent::nothingTODO;
 }
 
-eGUISwitch		GUISDL::getGUISwitch (void) const
+void			GUISDL::updateGUI (void)
 {
-	return this->_GUISwitch;
+	if (SDL_SetRenderDrawColor (this->_boardRenderer, 255, 255, 255, 255))
+	{
+		throw GUIException (this->_GUIName, "SDL_CreateRenderer");
+	}
+	if (SDL_RenderClear (this->_boardRenderer))		/* use the RenderDrawColor to clear the Renderer */
+	{
+		throw GUIException (this->_GUIName, "SDL_CreateRenderer");
+	}
+
+	if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 0, 255, 255))
+	{
+		throw GUIException (this->_GUIName, "SDL_CreateRenderer");
+	}
+
+	this->drawSnake();
+
+	SDL_RenderPresent (this->_boardRenderer);
+
+	SDL_Delay (100 /* 16 */);		/* ~ 60 FPS */
+}
+
+eGUI			GUISDL::wantedGUI (void) const
+{
+	return this->_wantedGUI;
 }
 
 /*
  * Extern
  */
-GUISDL		*createGUI (Board *board, Snake *snake, int *ac, char **av)
+GUISDL			*createGUI (Board *board, Snake *snake, int *ac, char **av)
 {
 	 (void)ac;
 	 (void)av;

@@ -4,6 +4,7 @@
 /*
  * Personnals Includes
  */
+# include <Exceptions.hpp>
 # include <Board.class.hpp>
 # include <Snake.class.hpp>
 # include <IGUI.class.hpp>

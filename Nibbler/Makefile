@@ -28,7 +28,12 @@ LIB_SDL_REQUIREMENT = libsdl2-dev
 
 LIB_OPENGL_REQUIREMENT = freeglut3-dev
 
-SRC = main.cpp Board.class.cpp Snake.class.cpp
+SRC = main.cpp Board.class.cpp Snake.class.cpp \
+	  exceptions/GUIException.class.cpp \
+	  exceptions/DynamicLoadGUIException.class.cpp \
+	  exceptions/UnknownEventException.class.cpp \
+	  exceptions/InvalidArgumentException.class.cpp \
+	  exceptions/ShouldNeverOccurException.class.cpp \
 
 SRC_DIR = ./srcs
 

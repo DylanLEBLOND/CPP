@@ -1,58 +1,97 @@
 #include <nibbler.hpp>
 
+void openSDL (guiFuncStruct *guiFunc)
+{
+	guiFunc->libHandle = dlopen ("./libs/SDL/lib/libguisdl.so", RTLD_LAZY);
+	if (guiFunc->libHandle == NULL)
+	{
+		throw DynamicLoadGUIException (eGUI::SDL, "dlopen", dlerror());
+	}
+
+	guiFunc->createGUI = (IGUI *(*)(Board *, Snake *, int *, char **)) dlsym (guiFunc->libHandle, "createGUI");
+	if (guiFunc->createGUI == NULL)
+	{
+		throw DynamicLoadGUIException (eGUI::SDL, "dlsym createGUI", dlerror());
+	}
+
+	guiFunc->destroyGUI = (void (*)(IGUI *)) dlsym (guiFunc->libHandle, "destroyGUI");
+	if (guiFunc->destroyGUI == NULL)
+	{
+		throw DynamicLoadGUIException (eGUI::SDL, "dlsym destroyGUI", dlerror());
+	}
+}
+
+void closeSDL (guiFuncStruct *guiFunc)
+{
+	if (dlclose (guiFunc->libHandle))
+	{
+		throw DynamicLoadGUIException (eGUI::SDL, "dlclose", dlerror());
+	}
+
+	guiFunc->libHandle = NULL;
+	guiFunc->createGUI = NULL;
+	guiFunc->destroyGUI = NULL;
+}
+
 int main (int ac, char **av)
 {
-	void *handle_GUISDL;
 	Board board (std::stoi (av[1]));
-	Snake snake (10, 10, 3, true);
+	Snake snake (10u, 10u, 3u, true);
+	guiFuncStruct guiFunc;
 	IGUI *currentGUI;
+	eGUIEvent currentEvent;
+	eGUI wantedGUI;
+	bool running;
 
-	IGUI *(*createGUI)(Board *, Snake *, int *, char **);
-	void (*destroyGUI)(IGUI *);
-
-	handle_GUISDL = dlopen ("./libs/SDL/lib/libguisdl.so", RTLD_LAZY);
-	if (handle_GUISDL == NULL)
+	try
 	{
-		std::cerr << "dlopen GUISDL Failed" << std::endl;
-		exit (0);
-	}
-	std::cout << "dlopen GUISDL Success" << std::endl;
+		openSDL (&guiFunc);
+		currentGUI = guiFunc.createGUI (&board, &snake, &ac, av);
+		currentGUI->start();
 
-	createGUI = (IGUI *(*)(Board *, Snake *, int *, char **)) dlsym (handle_GUISDL, "createGUI");
-	if (createGUI == NULL)
+		running = true;
+		while (running)
+		{
+			currentEvent = currentGUI->getEvent();
+			switch (currentEvent)
+			{
+				case eGUIEvent::goLeft:
+					snake.goLeft();
+					break;
+				case eGUIEvent::goRight:
+					snake.goRight();
+					break;
+				case eGUIEvent::goUp:
+					snake.goUp();
+					break;
+				case eGUIEvent::goDown:
+					snake.goDown();
+					break;
+				case eGUIEvent::changeGUI:
+					wantedGUI = currentGUI->wantedGUI();
+					//change GUI here
+					(void)wantedGUI;
+					break;
+				case eGUIEvent::nothingTODO:
+					break;
+				case eGUIEvent::quitGame:
+					running = false;
+					break;
+				default:
+					throw UnknownEventException (currentGUI->getGUIName(), currentEvent);
+			}
+
+			snake.moveStraight();
+			currentGUI->updateGUI();
+		}
+		currentGUI->stop();
+
+		closeSDL (&guiFunc);
+	}
+	catch (std::exception &e)
 	{
-		std::cerr << "dlsym createGUI Failed" << std::endl;
-		exit (0);
+		std::cerr << "Error : " << e.what() << std::endl;
 	}
-	std::cout << "dlsym createGUI Success" << std::endl;
-
-	destroyGUI = (void (*)(IGUI *)) dlsym (handle_GUISDL, "destroyGUI");
-	if (destroyGUI == NULL)
-	{
-		std::cerr << "dlsym destroyGUI Failed" << std::endl;
-		exit (0);
-	}
-	std::cout << "dlsym destroyGUI Success" << std::endl;
-
-	currentGUI = createGUI (&board, &snake, &ac, av);
-	if (currentGUI == NULL)
-	{
-		std::cerr << "createGUI GUISDL Failed" << std::endl;
-		exit (0);
-	}
-	std::cout << "createGUI GUISDL Success" << std::endl;
-
-	currentGUI->start();
-
-	std::cout << "start GUISDL Success" << std::endl;
-
-	while (currentGUI->run());
-
-	destroyGUI (currentGUI);
-
-//	std::cout << "MAIN Snake pos x = " << snake.getPositionX() << " | y = " << snake.getPositionY() << std::endl;
-
-	dlclose (handle_GUISDL);
 
 	switch (ac)
 	{

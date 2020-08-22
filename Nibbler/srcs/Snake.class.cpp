@@ -60,7 +60,7 @@ Snake::~Snake(void) {}
 /*
  * Operator "=" Overload
  */
-Snake					&Snake::operator=(Snake const &src)
+Snake					&Snake::operator= (Snake const &src)
 {
 	this->_snakeCells = src.getSnakeCells ();
 	this->_currentDirection = src.getCurrentDirection ();
@@ -215,9 +215,7 @@ void					Snake::moveStraight (void)
 				new_head.positionY = 0;
 			break;
 		default:
-			/* should never occur */
-			//THOW EXCEPTION HERE
-			return;
+			throw ShouldNeverOccurException (__FILE__, __LINE__);
 	}
 
 	it = std::find (this->_snakeCells.begin(), this->_snakeCells.end(), new_head);

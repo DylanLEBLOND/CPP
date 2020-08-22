@@ -28,10 +28,12 @@ class GUISDL : public IGUI
 {
 private:
 
+	eGUI const		_GUIName = eGUI::SDL;
+
 	/* common */
 	Board*			_board;
 	Snake*			_snake;
-	eGUISwitch		_GUISwitch;
+	eGUI			_wantedGUI;
 
 	/* SDL */
 	SDL_Window*		_window;
@@ -43,17 +45,19 @@ private:
 	GUISDL			&operator=(GUISDL const &src);
 
 	void			drawSnake (void);
-	void			drawTriangle (void);
 
 public:
 
 	GUISDL (Board *board, Snake *snake);
 	~GUISDL (void);
 
+	eGUI			getGUIName (void) const;
+
 	void			start (void);
-	bool			run (void);
 	void			stop (void);
-	eGUISwitch		getGUISwitch (void) const;
+	eGUIEvent		getEvent (void);
+	void			updateGUI (void);
+	eGUI			wantedGUI (void) const;
 };
 
 extern "C" {

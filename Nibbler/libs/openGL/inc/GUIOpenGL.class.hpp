@@ -29,10 +29,12 @@ class GUIOpenGL : public IGUI
 {
 private:
 
+	eGUI const		_GUIName = eGUI::openGL;
+
 	/* common */
 	Board*			_board;
 	Snake*			_snake;
-	eGUISwitch		_GUISwitch;
+	eGUI			_wantedGUI;
 
 	/* openGL */
 	int				*_ac;
@@ -50,12 +52,16 @@ public:
 	GUIOpenGL (Board *board, Snake *snake, int *ac, char **av);
 	~GUIOpenGL (void);
 
+	eGUI			getGUIName (void) const;
+
 	static void		drawTriangle (void);
 	static void		resizeWindows (int width, int height);
+
 	void			start (void);
-	bool			run (void);
 	void			stop (void);
-	eGUISwitch		getGUISwitch (void) const;
+	eGUIEvent		getEvent (void);
+	void			updateGUI (void);
+	eGUI			wantedGUI (void) const;
 };
 
 extern "C" {
