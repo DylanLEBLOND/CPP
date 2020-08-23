@@ -1,0 +1,9 @@
+make
+./nibbler boardWidth boardHeight [multiplayer:off/on]
+
+with
+30 <= boardWidth <= 100
+30 <= boardHeight <= 100
+
+
+Enjoy !

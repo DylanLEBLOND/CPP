@@ -1,17 +1,78 @@
 #include <GUIOpenGL.class.hpp>
 
-static int _size;
+static unsigned int _mapWidth;
+static unsigned int _mapHeight;
 
 /*
  * Constructors
  */
-GUIOpenGL::GUIOpenGL(Board *board, Snake *snake, int *ac, char **av)
-	: _board (board), _snake (snake), _wantedGUI (eGUI::openGL), _ac (ac), _av (av) { }
+GUIOpenGL::GUIOpenGL(Board *board, Snake *snake)
+	: _board (board), _snakeP1 (snake), _snakeP2 (NULL), _wantedGUI (eGUI::openGL)
+{
+	if (! board)
+	{
+		throw InvalidArgumentException ("GUIOpenGL::GUIOpenGL (Board *board, Snake *snake): board == null");
+	}
+
+	if (! snake)
+	{
+		throw InvalidArgumentException ("GUIOpenGL::GUIOpenGL (Board *board, Snake *snake): snake == null");
+	}
+
+	this-> _ac = new int[1];
+	if (! this-> _ac)
+	{
+		throw ShouldNeverOccurException (__FILE__, __LINE__);
+	}
+	this->_ac[0] = 1;
+
+	this-> _av = new char *[1];
+	if (! this-> _ac)
+	{
+		throw ShouldNeverOccurException (__FILE__, __LINE__);
+	}
+	this->_av[0] = (char*)"GUIOpenGL";
+}
+
+GUIOpenGL::GUIOpenGL(Board *board, Snake *snakeP1, Snake *snakeP2)
+	: _board (board), _snakeP1 (snakeP1), _snakeP2 (snakeP2), _wantedGUI (eGUI::openGL)
+{
+	if (! board)
+	{
+		throw InvalidArgumentException ("GUIOpenGL::GUIOpenGL (Board *board, Snake *snake): board == null");
+	}
+
+	if (! snakeP1 || ! snakeP2)
+	{
+		throw InvalidArgumentException ("GUIOpenGL::GUIOpenGL (Board *board, Snake *snakeP1, Snake *snakeP2): snakeP1 and/or snakeP2 == null");
+	}
+
+	this-> _ac = new int[1];
+	if (! this-> _ac)
+	{
+		throw ShouldNeverOccurException (__FILE__, __LINE__);
+	}
+	this->_ac[0] = 1;
+
+	this-> _av = new char *[1];
+	if (! this-> _ac)
+	{
+		throw ShouldNeverOccurException (__FILE__, __LINE__);
+	}
+	this->_av[0] = (char*)"GUIOpenGL";
+}
 
 /*
  * Destructor
  */
-GUIOpenGL::~GUIOpenGL(void) {}
+GUIOpenGL::~GUIOpenGL(void)
+{
+	if (this->_ac)
+		delete this->_ac;
+
+	if (this->_av)
+		delete this->_av;
+}
 
 
 /*
@@ -22,7 +83,7 @@ void			GUIOpenGL::drawTriangle (void)
 	glClearColor (1.0f, 1.0f, 1.0f, 1.0f);
 	glClear (GL_COLOR_BUFFER_BIT);
 
-	gluOrtho2D (0.0, _size, 0.0, _size);
+	gluOrtho2D (0.0, _mapWidth, 0.0, _mapHeight);
 
 	glPointSize (100.0f);
 //	glLineWidth (50.0f);
@@ -35,13 +96,13 @@ void			GUIOpenGL::drawTriangle (void)
 		glVertex2d (0.0, 0.0);
 
 		glColor3ub (255, 255, 0);
-		glVertex2d (_size, 0.0);
+		glVertex2d (_mapWidth, 0.0);
 
 		glColor3ub (0, 255, 0);
-		glVertex2d (_size, _size);
+		glVertex2d (_mapWidth, _mapHeight);
 
 		glColor3ub (0, 0, 255);
-		glVertex2d (0.0, _size);
+		glVertex2d (0.0, _mapHeight);
 
 	glEnd ();
 
@@ -50,9 +111,10 @@ void			GUIOpenGL::drawTriangle (void)
 
 void			GUIOpenGL::resizeWindows (int width, int height)
 {
-	_size = width;
+	_mapWidth = width;
+	_mapHeight = height;
 
-	glutReshapeWindow (_size, _size);
+	glutReshapeWindow (_mapWidth, _mapHeight);
 	glutDisplayFunc (drawTriangle);
 
 //	glViewport (0, 0, (GLsizei)_size, (GLsizei)_size);
@@ -74,12 +136,13 @@ eGUI		GUIOpenGL::getGUIName (void) const
 
 void			GUIOpenGL::start (void)
 {
-	_size = this->_board->getSize() * 10;
+	_mapWidth = this->_board->getWidth() * 10;
+	_mapHeight = this->_board->getHeight() * 10;
 
 	std::cout << "GUIOpenGL::start" << std::endl;
 	glutInit (this->_ac, this->_av);
 	glutInitDisplayMode (GLUT_SINGLE);
-	glutInitWindowSize (_size, _size);
+	glutInitWindowSize (_mapWidth, _mapHeight);
 	glutInitWindowPosition (100, 100);
 	glutCreateWindow ((char *)"OpenGL - Creating a triangle");
 	glutDisplayFunc (drawTriangle);
@@ -111,9 +174,11 @@ eGUI			GUIOpenGL::wantedGUI (void) const
 /*
  * Extern
  */
-GUIOpenGL		*createGUI (Board *board, Snake *snake, int *ac, char **av)
+GUIOpenGL			*createGUI (Board *board, Snake *snakeP1, Snake *snakeP2)
 {
-	return new GUIOpenGL (board, snake, ac, av);
+	if (! snakeP2)
+		return new GUIOpenGL (board, snakeP1);
+	return new GUIOpenGL (board, snakeP1, snakeP2);
 }
 
 void			destroyGUI (GUIOpenGL *GUI)

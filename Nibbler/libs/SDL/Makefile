@@ -20,7 +20,7 @@ VERSION = -std=c++11
 
 FLAGS = -shared -fPIC #-Wall -Wextra -Werror
 
-DEFINE = # -D PROJ_DEBUG
+DEFINE = -D PROJ_DEBUG
 
 INC = -I ./inc -I ../../includes
 

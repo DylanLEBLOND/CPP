@@ -84,17 +84,21 @@ createlibs: createlibSDL createlibOpenGL
 
 createlibSDL:
 	@make -C ./libs/SDL
+	@ln -s ./libs/SDL/lib/libguisdl.so libguisdl.so
 
 createlibOpenGL:
 	@make -C ./libs/openGL
+	@ln -s ./libs/openGL//lib/libguiopengl.so libguiopengl.so
 
 destroylibs: destroylibSDL destroylibOpenGL
 
 destroylibSDL:
 	@make fclean -C ./libs/SDL
+	@rm -f libguisdl.so
 
 destroylibOpenGL:
 	@make fclean -C ./libs/openGL
+	@rm -f libguiopengl	.so
 
 info :
 	@if (! (test -e $(NAME) && test -e srcs/main.o));					\

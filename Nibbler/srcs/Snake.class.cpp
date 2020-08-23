@@ -3,11 +3,12 @@
 /*
  * Constructors
  */
-Snake::Snake (void) : _currentDirection (eSnakeDirection::East), _canPassThroughWall (true), _mapSize (400), _eatCounter (0), _isAlive (true)
+Snake::Snake (void)
+	: _currentDirection (eSnakeDirection::East), _canPassThroughWall (true), _mapWidth (0u), _mapHeight (0u), _eatCounter (0), _score (0), _isAlive (true)
 {
 	t_cell cur_cell;
 
-	this->_snakeCells = std::list<t_cell> ();
+	this->_snakeCells = std::list<t_cell>();
 
 	cur_cell.positionX = 0;
 	cur_cell.positionY = 0;
@@ -22,8 +23,8 @@ Snake::Snake (void) : _currentDirection (eSnakeDirection::East), _canPassThrough
 	this->_snakeCells.push_front (cur_cell);
 }
 
-Snake::Snake (unsigned int initPosX, unsigned int initPosY, unsigned int initSize, bool canPassThroughWall)
-	: _currentDirection (eSnakeDirection::East), _canPassThroughWall (canPassThroughWall), _mapSize (400), _eatCounter (0), _isAlive (true)
+Snake::Snake (unsigned int initPosX, unsigned int initPosY, unsigned int initSize, eSnakeDirection initDirection, bool canPassThroughWall)
+	: _currentDirection (initDirection), _canPassThroughWall (canPassThroughWall), _mapWidth (0u), _mapHeight (0u), _eatCounter (0), _score (0), _isAlive (true)
 {
 	t_cell cur_cell;
 	unsigned int i;
@@ -34,7 +35,7 @@ Snake::Snake (unsigned int initPosX, unsigned int initPosY, unsigned int initSiz
 		exit (0);
 	}
 
-	this->_snakeCells = std::list<t_cell> ();
+	this->_snakeCells = std::list<t_cell>();
 
 	cur_cell.positionX = initPosX;
 	cur_cell.positionY = initPosY;
@@ -42,8 +43,27 @@ Snake::Snake (unsigned int initPosX, unsigned int initPosY, unsigned int initSiz
 
 	for (i = 1; i < initSize; i++)
 	{
-		cur_cell.positionX = initPosX - i;
-		this->_snakeCells.push_back (cur_cell);
+		switch (this->_currentDirection)
+		{
+			case eSnakeDirection::West:
+				cur_cell.positionX = initPosX + i;
+				this->_snakeCells.push_back (cur_cell);
+				break;
+			case eSnakeDirection::East:
+				cur_cell.positionX = initPosX - i;
+				this->_snakeCells.push_back (cur_cell);
+				break;
+			case eSnakeDirection::North:
+				cur_cell.positionY = initPosY + i;
+				this->_snakeCells.push_back (cur_cell);
+				break;
+			case eSnakeDirection::South:
+				cur_cell.positionY = initPosY + i;
+				this->_snakeCells.push_back (cur_cell);
+				break;
+			default:
+				throw ShouldNeverOccurException (__FILE__, __LINE__);
+		}
 	}
 }
 
@@ -55,19 +75,20 @@ Snake::Snake (Snake const &src)
 /*
  * Destructor
  */
-Snake::~Snake(void) {}
+Snake::~Snake (void) {}
 
 /*
  * Operator "=" Overload
  */
 Snake					&Snake::operator= (Snake const &src)
 {
-	this->_snakeCells = src.getSnakeCells ();
-	this->_currentDirection = src.getCurrentDirection ();
-	this->_canPassThroughWall = src.getCanPassThroughWall ();
-	this->_mapSize = src.getMapSize ();
+	this->_snakeCells = src.getSnakeCells();
+	this->_currentDirection = src.getCurrentDirection();
+	this->_canPassThroughWall = src.getCanPassThroughWall();
+	this->_mapWidth = src.getMapWidth();
+	this->_mapHeight = src.getMapHeight();
 	this->_eatCounter = 0;		/* always start with a eatCounter of 0 */
-	this->_isAlive = src.getIsAlive ();
+	this->_isAlive = src.getIsAlive();
 
 	return *this;
 }
@@ -95,20 +116,33 @@ bool					Snake::getCanPassThroughWall (void) const
 	return this->_canPassThroughWall;
 }
 
-unsigned int			Snake::getMapSize (void) const
+unsigned int			Snake::getMapWidth (void) const
 {
-	return this->_mapSize;
+	return this->_mapWidth;
+}
+
+unsigned int			Snake::getMapHeight (void) const
+{
+	return this->_mapHeight;
 }
 
 /*
  * Setter
  */
-void					Snake::setMapSize (unsigned int newSize)
+void					Snake::setMapWidth (unsigned int newWidth)
 {
 	if (! this->_isAlive)
 		return;
 
-	this->_mapSize = newSize;
+	this->_mapWidth = newWidth;
+}
+
+void					Snake::setMapHeight (unsigned int newHeight)
+{
+	if (! this->_isAlive)
+		return;
+
+	this->_mapHeight = newHeight;
 }
 
 /*
@@ -132,6 +166,15 @@ void					Snake::eat (int value)
 		return;
 
 	this->_eatCounter += value;
+	this->_score += value;
+}
+
+void					Snake::dead (void)
+{
+	if (! this->_isAlive)
+		return;
+
+	this->_isAlive = false;
 }
 
 void					Snake::goLeft (void)
@@ -187,31 +230,31 @@ void					Snake::moveStraight (void)
 	if (! this->_isAlive)
 		return;
 
-	current_head = this->_snakeCells.front ();
+	current_head = this->_snakeCells.front();
 	switch (this->_currentDirection)
 	{
 		case eSnakeDirection::West:
 			new_head.positionX = current_head.positionX - 1;
 			new_head.positionY = current_head.positionY;
 			if (this->_canPassThroughWall && new_head.positionX < 0)
-				new_head.positionX = this->_mapSize - 1;
+				new_head.positionX = this->_mapWidth - 1;
 			break;
 		case eSnakeDirection::East:
 			new_head.positionX = current_head.positionX + 1;
 			new_head.positionY = current_head.positionY;
-			if (this->_canPassThroughWall && new_head.positionX >= (int)this->_mapSize)
+			if (this->_canPassThroughWall && new_head.positionX >= (int)this->_mapWidth)
 				new_head.positionX = 0;
 			break;
 		case eSnakeDirection::North:
 			new_head.positionX = current_head.positionX;
 			new_head.positionY = current_head.positionY - 1;
 			if (this->_canPassThroughWall && new_head.positionY < 0)
-				new_head.positionY = this->_mapSize - 1;
+				new_head.positionY = this->_mapHeight - 1;
 			break;
 		case eSnakeDirection::South:
 			new_head.positionX = current_head.positionX;
 			new_head.positionY = current_head.positionY + 1;
-			if (this->_canPassThroughWall && new_head.positionY >= (int)this->_mapSize)
+			if (this->_canPassThroughWall && new_head.positionY >= (int)this->_mapHeight)
 				new_head.positionY = 0;
 			break;
 		default:
@@ -231,5 +274,5 @@ void					Snake::moveStraight (void)
 	if (this->_eatCounter > 0)
 		this->_eatCounter--;
 	else
-		this->_snakeCells.pop_back ();
+		this->_snakeCells.pop_back();
 }

@@ -18,7 +18,7 @@
  */
 enum class eGUI { openGL, SDL, MinilibX, unknownGUI };
 
-enum class eGUIEvent { goLeft, goRight, goUp, goDown, changeGUI, quitGame, nothingTODO, unknownEvent };
+enum class eGUIEvent { p1GoLeft, p1GoRight, p1GoUp, p1GoDown, p2GoLeft, p2GoRight, p2GoUp, p2GoDown, changeGUI, quitGame, nothingTODO, unknownEvent };
 
 class IGUI
 {

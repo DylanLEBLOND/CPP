@@ -9,6 +9,7 @@
 /*
  * System Includes
  */
+# include <string>
 # include <dlfcn.h>
 
 
@@ -18,7 +19,7 @@
 typedef struct guiFuncStruct
 {
 	void *libHandle;
-	IGUI *(*createGUI)(Board *, Snake *, int *, char **);
+	IGUI *(*createGUI)(Board *, Snake *, Snake *);
 	void (*destroyGUI)(IGUI *);
 
 	guiFuncStruct (void)

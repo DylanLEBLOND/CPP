@@ -16,28 +16,43 @@
 /*
  * Personals Includes
  */
+# include <Exceptions.hpp>
+# include <Snake.class.hpp>
 
 /*
  * System Includes
  */
-
+# include <stdlib.h>
+# include <time.h>
 
 class Board
 {
 private:
 
-	int _size;
+	unsigned int		_width;
+	unsigned int		_height;
+	bool				_multiPlayer;
+	Snake*				_snakeP1;
+	Snake*				_snakeP2;
+
+	void				generateBonus (unsigned int number);
 
 public:
 
-	Board(void);
-	Board (int size);
-	Board(Board const &src);
-	~Board(void);
+	Board (void);
+	Board (Board const &src);
+	~Board (void);
 
-	Board		&operator=(Board const &src);
+	Board				&operator= (Board const &src);
 
-	int			getSize(void) const;
+	unsigned int		getWidth (void) const;
+	unsigned int		getHeight (void) const;
+	bool				getMultiPlayer (void) const;
+
+	void				initBoard (unsigned int width, unsigned int height, bool multiPlayer);
+	void				initPlayers (Snake *snakeP1, Snake *snakeP2);
+	void				runTurn (void);
+	bool				snakesAreAlive (void);
 };
 
 #endif /* BOARD_CLASS_HPP */

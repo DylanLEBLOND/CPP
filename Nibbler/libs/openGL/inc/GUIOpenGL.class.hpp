@@ -33,11 +33,12 @@ private:
 
 	/* common */
 	Board*			_board;
-	Snake*			_snake;
+	Snake*			_snakeP1;
+	Snake*			_snakeP2;
 	eGUI			_wantedGUI;
 
 	/* openGL */
-	int				*_ac;
+	int*			_ac;
 	char**			_av;
 
 	GUIOpenGL (void);
@@ -49,7 +50,8 @@ private:
 
 public:
 
-	GUIOpenGL (Board *board, Snake *snake, int *ac, char **av);
+	GUIOpenGL (Board *board, Snake *snake);
+	GUIOpenGL (Board *board, Snake *snakeP1, Snake *snakeP2);
 	~GUIOpenGL (void);
 
 	eGUI			getGUIName (void) const;
@@ -66,7 +68,7 @@ public:
 
 extern "C" {
 
-	GUIOpenGL		*createGUI (Board *board, Snake *snake, int *ac, char **av);
+	GUIOpenGL		*createGUI (Board *board, Snake *snakeP1, Snake *snakeP2);
 	void			destroyGUI (GUIOpenGL* GUI);
 }
 

@@ -32,7 +32,8 @@ private:
 
 	/* common */
 	Board*			_board;
-	Snake*			_snake;
+	Snake*			_snakeP1;
+	Snake*			_snakeP2;
 	eGUI			_wantedGUI;
 
 	/* SDL */
@@ -44,11 +45,13 @@ private:
 
 	GUISDL			&operator=(GUISDL const &src);
 
-	void			drawSnake (void);
+	void			drawBoard (void);
+	void			drawSnakes (void);
 
 public:
 
 	GUISDL (Board *board, Snake *snake);
+	GUISDL (Board *board, Snake *snakeP1, Snake *snakeP2);
 	~GUISDL (void);
 
 	eGUI			getGUIName (void) const;
@@ -62,7 +65,7 @@ public:
 
 extern "C" {
 
-	GUISDL			*createGUI (Board *board, Snake *snake, int *ac, char **av);
+	GUISDL			*createGUI (Board *board, Snake *snakeP1, Snake *snakeP2);
 	void			destroyGUI (GUISDL* GUI);
 }
 

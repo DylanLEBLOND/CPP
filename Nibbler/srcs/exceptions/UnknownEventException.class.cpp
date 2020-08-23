@@ -24,17 +24,29 @@ UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIEvent receive
 	this->_message += "\" | Received Event = \"";
 	switch (receivedEvent)
 	{
-		case eGUIEvent::goLeft:
-			this->_message += "goLeft";
+		case eGUIEvent::p1GoLeft:
+			this->_message += "p1GoLeft";
 			break;
-		case eGUIEvent::goRight:
-			this->_message += "goRight";
+		case eGUIEvent::p1GoRight:
+			this->_message += "p1GoRight";
 			break;
-		case eGUIEvent::goUp:
-			this->_message += "goUp";
+		case eGUIEvent::p1GoUp:
+			this->_message += "p1GoUp";
 			break;
-		case eGUIEvent::goDown:
-			this->_message += "goDown";
+		case eGUIEvent::p1GoDown:
+			this->_message += "p1GoDown";
+			break;
+		case eGUIEvent::p2GoLeft:
+			this->_message += "p2GoLeft";
+			break;
+		case eGUIEvent::p2GoRight:
+			this->_message += "p2GoRight";
+			break;
+		case eGUIEvent::p2GoUp:
+			this->_message += "p2GoUp";
+			break;
+		case eGUIEvent::p2GoDown:
+			this->_message += "p2GoDown";
 			break;
 		case eGUIEvent::changeGUI:
 			this->_message += "changeGUI";
