@@ -67,6 +67,7 @@ info :
 $(NAME) :
 	@if ! (test -e $(LIB));																			\
 	then																							\
+		mkdir ./lib;																				\
 		$(CC) $(VERSION) $(FLAGS) $(DEFINE) $(INC) -o $(LIB) $(SRCS) $(LINK);						\
 		echo "$(BLUE) created $(WHITE)->$(RED) $@ $(GREEN) (emplacement: ./lib) $(BASIC)";			\
 	else																							\
@@ -75,6 +76,7 @@ $(NAME) :
 
 clean :
 	@rm -f $(LIB)
+	@rm -rf lib
 	@echo "$(BLUE) $(NAME) $(WHITE)->$(RED) DELETED $(BASIC)"
 
 fclean: clean
