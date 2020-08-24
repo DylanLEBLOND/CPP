@@ -126,6 +126,11 @@ unsigned int			Snake::getMapHeight (void) const
 	return this->_mapHeight;
 }
 
+unsigned int			Snake::getScore (void) const
+{
+	return this->_score;
+}
+
 /*
  * Setter
  */

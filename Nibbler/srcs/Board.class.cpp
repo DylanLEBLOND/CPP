@@ -6,7 +6,8 @@
 Board::Board (void)
 	: _width (0u), _height (0u), _boardCells (NULL), _initialized (false),
 	  _multiPlayer (false), _friendlyFire (true),
-	  _snakeP1 (NULL), _snakeP2 (NULL), _playersInitialized (false) {}
+	  _snakeP1 (NULL), _snakeP2 (NULL), _playersInitialized (false),
+	  _bonusStillUp (0u) {}
 
 Board::Board (Board const &src)
 {
@@ -75,24 +76,61 @@ bool								Board::isInitialized (void) const
  */
 void								Board::loadMapSquare (void)
 {
-	unsigned int i;
+	unsigned int y, x;
+	t_cell emptyCell;
 
 	std::fill (this->_boardCells->front().begin(), this->_boardCells->front().end(), -1);
 	std::fill (this->_boardCells->back().begin(), this->_boardCells->back().end(), -1);
-	for (i = 1; i < this->_height - 1; i++)
+	for (y = 1; y < this->_height - 1; y++)
 	{
-		this->_boardCells->at (i).at (0) = -1;
-		this->_boardCells->at (i).at (this->_width - 1) = -1;
+		this->_boardCells->at (y).at (0) = -1;
+		this->_boardCells->at (y).at (this->_width - 1) = -1;
+
+		for (x = 1; x < this->_width - 1; x++)
+		{
+			emptyCell.positionX = x;
+			emptyCell.positionY = y;
+			_boardEmptyCells.push_back (emptyCell);
+		}
 	}
 }
 
 void								Board::loadMapOpen (void)
 {
-	unsigned int i;
+	unsigned int y, x;
+	t_cell emptyCell;
 
-	for (i = 0; i < this->_height; i++)
+	for (y = 0; y < this->_height; y++)
 	{
-		std::fill (this->_boardCells->at (i).begin(), this->_boardCells->at (i).end(), 0);
+		std::fill (this->_boardCells->at (y).begin(), this->_boardCells->at (y).end(), 0);
+
+		for (x = 0; x < this->_width; x++)
+		{
+			emptyCell.positionX = x;
+			emptyCell.positionY = y;
+			_boardEmptyCells.push_back (emptyCell);
+		}
+	}
+}
+
+void								Board::generateBonus (unsigned int number)
+{
+	unsigned int bonusValue, posEmptyCell;
+	t_cell emptyCell;
+
+	while (number > 0)
+	{
+		srand (time (NULL));
+		bonusValue = rand() % 3 + 1;
+
+		srand (time (NULL));
+		posEmptyCell = rand() % this->_boardEmptyCells.size();
+		emptyCell = this->_boardEmptyCells [posEmptyCell];
+		this->_boardCells->at (emptyCell.positionY).at (emptyCell.positionX) = bonusValue;
+
+		this->_boardEmptyCells.erase (this->_boardEmptyCells.begin() + posEmptyCell);
+		this->_bonusStillUp++;
+		number--;
 	}
 }
 
@@ -110,6 +148,18 @@ void								Board::checkSnakesCollision (void)
 	if (this->_boardCells->at (snakeP1Head.positionY).at (snakeP1Head.positionX) < 0)
 		this->_snakeP1->dead();
 
+	/* check if snakeP1 eat something */
+	if (this->_boardCells->at (snakeP1Head.positionY).at (snakeP1Head.positionX) > 0)
+	{
+		this->_snakeP1->eat (this->_boardCells->at (snakeP1Head.positionY).at (snakeP1Head.positionX));
+
+		this->_boardCells->at (snakeP1Head.positionY).at (snakeP1Head.positionX) = 0;
+		this->_boardEmptyCells.insert (this->_boardEmptyCells.begin() +
+										snakeP1Head.positionY * this->_width + snakeP1Head.positionX,
+										snakeP1Head);		/* snakeP1 Head become an empty cell */
+		this->_bonusStillUp--;
+	}
+
 	if (this->_multiPlayer)
 	{
 		/* check if snakeP2 hit a wall */
@@ -117,6 +167,18 @@ void								Board::checkSnakesCollision (void)
 		snakeP2Head = snakeP2Cells.front();
 		if (this->_boardCells->at (snakeP2Head.positionY).at (snakeP2Head.positionX) < 0)
 			this->_snakeP2->dead();
+
+		/* check if snakeP2 eat something */
+		if (this->_boardCells->at (snakeP2Head.positionY).at (snakeP2Head.positionX) > 0)
+		{
+			this->_snakeP2->eat (this->_boardCells->at (snakeP2Head.positionY).at (snakeP2Head.positionX));
+
+			this->_boardCells->at (snakeP2Head.positionY).at (snakeP2Head.positionX) = 0;
+			this->_boardEmptyCells.insert (this->_boardEmptyCells.begin() +
+											snakeP2Head.positionY * this->_width + snakeP2Head.positionX,
+											snakeP2Head);		/* snakeP2 Head become an empty cell */
+			this->_bonusStillUp--;
+		}
 
 		if (this->_friendlyFire)
 		{
@@ -234,6 +296,16 @@ void								Board::runTurn (void)
 	if (! this->_playersInitialized)
 	{
 		throw InvalidArgumentException ("Board::runTurn: Players not initialized");
+	}
+
+	if (! this->_multiPlayer && !this->_bonusStillUp)
+		this->generateBonus (1);
+	else if (this->_multiPlayer)
+	{
+		if (this->_bonusStillUp < 1)
+			this->generateBonus (2);
+		else if (this->_bonusStillUp == 1)
+			this->generateBonus (1);
 	}
 
 	this->_snakeP1->moveStraight();

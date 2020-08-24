@@ -66,6 +66,7 @@ void			GUISDL::drawBoard (void)
 	unsigned int height, width, y, x;
 	std::vector< std::vector<int> > *boardCells;
 	SDL_Rect boardCellDraw;
+	Uint8 r, g, b;
 
 	if (SDL_SetRenderDrawColor (this->_boardRenderer, 255, 255, 255, 255))
 	{
@@ -76,11 +77,6 @@ void			GUISDL::drawBoard (void)
 		throw GUIException (this->_GUIName, "SDL_RenderClear GUISDL::drawBoard");
 	}
 
-	if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 0, 0, 255))
-	{
-		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawBoard");
-	}
-
 	boardCells = this->_board->getBoardCells();
 	height = this->_board->getHeight();
 	width = this->_board->getWidth();
@@ -89,8 +85,39 @@ void			GUISDL::drawBoard (void)
 	{
 		for (x = 0; x < width; x++)
 		{
-			if (boardCells-> at (y).at (x) < 0)
+			if (boardCells-> at (y).at (x) != 0)
 			{
+				switch (boardCells-> at (y).at (x))
+				{
+					case -1:
+						r = 0;
+						g = 0;
+						b = 0;
+						break;
+					case 1:
+						r = 255;
+						g = 255;
+						b = 0;
+						break;
+					case 2:
+						r = 255;
+						g = 0;
+						b = 255;
+						break;
+					case 3:
+						r = 255;
+						g = 0;
+						b = 0;
+						break;
+					default:
+						throw ShouldNeverOccurException (__FILE__, __LINE__);
+				}
+
+				if (SDL_SetRenderDrawColor (this->_boardRenderer, r, g, b, 255))
+				{
+					throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawBoard");
+				}
+
 				boardCellDraw.x = x * 10;
 				boardCellDraw.y = y * 10;
 				boardCellDraw.w = 10;
@@ -275,12 +302,21 @@ eGUIEvent		GUISDL::getEvent (void)
 
 void			GUISDL::updateGUI (void)
 {
+	unsigned int currentGlobalScore;
+
 	this->drawBoard();
 	this->drawSnakes();
 
 	SDL_RenderPresent (this->_boardRenderer);
 
-	SDL_Delay (100 /* 16 */);		/* ~ 60 FPS */
+	currentGlobalScore = this->_snakeP1->getScore();
+	if (this->_snakeP2)
+		currentGlobalScore = currentGlobalScore > this->_snakeP2->getScore() ? currentGlobalScore : this->_snakeP2->getScore();
+
+	if (currentGlobalScore > 95)
+		currentGlobalScore = 95;
+
+	SDL_Delay (100 - currentGlobalScore);
 }
 
 eGUI			GUISDL::wantedGUI (void) const

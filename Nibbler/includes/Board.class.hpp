@@ -39,6 +39,7 @@ private:
 	unsigned int						_width;
 	unsigned int						_height;
 	std::vector< std::vector<int> >*	_boardCells;
+	std::vector<t_cell>					_boardEmptyCells;
 	bool								_initialized;
 
 	bool								_multiPlayer;
@@ -47,6 +48,8 @@ private:
 	Snake*								_snakeP1;
 	Snake*								_snakeP2;
 	bool								_playersInitialized;
+
+	unsigned int						_bonusStillUp;
 
 	void								loadMapSquare (void);
 	void								loadMapOpen (void);
