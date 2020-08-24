@@ -16,6 +16,16 @@
 /*
  * Structures
  */
+typedef struct nibblerParametersStruct
+{
+	unsigned int	width;
+	unsigned int	height;
+	eBoardMaps		selectedMap;
+	bool			multiplayer;
+	bool			friendlyFire;
+
+} nibblerParametersStruct, *nibblerParametersPointer;
+
 typedef struct guiFuncStruct
 {
 	void *libHandle;
@@ -45,7 +55,10 @@ typedef struct guiFuncStruct
 
 } guiFuncStruct;
 
-void			standard_workflow(void);
-void			file_workflow(char const *filename);
+/*
+ * Functions
+ */
+void		openGUILibrary (eGUI wantedGUI, guiFuncStruct *guiFunc);
+void		closeGUILibrary (eGUI currentGUI, guiFuncStruct *guiFunc);
 
 #endif // NIBBLER_HPP

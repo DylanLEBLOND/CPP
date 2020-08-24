@@ -28,7 +28,7 @@ LIB_SDL_REQUIREMENT = libsdl2-dev
 
 LIB_OPENGL_REQUIREMENT = freeglut3-dev
 
-SRC = main.cpp Board.class.cpp Snake.class.cpp \
+SRC = main.cpp gestionGUI.cpp Board.class.cpp Snake.class.cpp \
 	  exceptions/GUIException.class.cpp \
 	  exceptions/DynamicLoadGUIException.class.cpp \
 	  exceptions/UnknownEventException.class.cpp \
@@ -83,12 +83,18 @@ packagesOpenGL:
 createlibs: createlibSDL createlibOpenGL
 
 createlibSDL:
-	@make -C ./libs/SDL
-	@ln -s ./libs/SDL/lib/libguisdl.so libguisdl.so
+	@if (! (test -e libguisdl.so));										\
+	then																\
+		make -C ./libs/SDL;												\
+		ln -s ./libs/SDL/lib/libguisdl.so libguisdl.so;					\
+	fi
 
 createlibOpenGL:
-	@make -C ./libs/openGL
-	@ln -s ./libs/openGL//lib/libguiopengl.so libguiopengl.so
+	@if (! (test -e libguiopengl.so));									\
+	then																\
+		make -C ./libs/openGL;											\
+		ln -s ./libs/openGL/lib/libguiopengl.so libguiopengl.so;		\
+	fi
 
 destroylibs: destroylibSDL destroylibOpenGL
 
@@ -98,7 +104,7 @@ destroylibSDL:
 
 destroylibOpenGL:
 	@make fclean -C ./libs/openGL
-	@rm -f libguiopengl	.so
+	@rm -f libguiopengl.so
 
 info :
 	@if (! (test -e $(NAME) && test -e srcs/main.o));					\

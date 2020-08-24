@@ -63,49 +63,43 @@ GUISDL::~GUISDL (void)
  */
 void			GUISDL::drawBoard (void)
 {
-	std::list<t_cell> snakeCells;
-	std::list<t_cell>::iterator itSnakeCell;
-	SDL_Rect snakeCellDraw;
+	unsigned int height, width, y, x;
+	std::vector< std::vector<int> > *boardCells;
+	SDL_Rect boardCellDraw;
 
-	snakeCells = this->_snakeP1->getSnakeCells();
-
-	if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 255, 0, 255))
+	if (SDL_SetRenderDrawColor (this->_boardRenderer, 255, 255, 255, 255))
 	{
-		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor");
+		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawBoard");
+	}
+	if (SDL_RenderClear (this->_boardRenderer))		/* use the RenderDrawColor to clear the Renderer */
+	{
+		throw GUIException (this->_GUIName, "SDL_RenderClear GUISDL::drawBoard");
 	}
 
-	for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
+	if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 0, 0, 255))
 	{
-		snakeCellDraw.x = itSnakeCell->positionX * 10;
-		snakeCellDraw.y = itSnakeCell->positionY * 10;
-		snakeCellDraw.w = 10;
-		snakeCellDraw.h = 10;
-
-		if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
-		{
-			throw GUIException (this->_GUIName, "SDL_RenderFillRect");
-		}
+		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawBoard");
 	}
 
-	if (this->_snakeP2)
+	boardCells = this->_board->getBoardCells();
+	height = this->_board->getHeight();
+	width = this->_board->getWidth();
+
+	for (y = 0; y < height; y++)
 	{
-		snakeCells = this->_snakeP2->getSnakeCells();
-
-		if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 0, 255, 255))
+		for (x = 0; x < width; x++)
 		{
-			throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor");
-		}
-
-		for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
-		{
-			snakeCellDraw.x = itSnakeCell->positionX * 10;
-			snakeCellDraw.y = itSnakeCell->positionY * 10;
-			snakeCellDraw.w = 10;
-			snakeCellDraw.h = 10;
-
-			if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
+			if (boardCells-> at (y).at (x) < 0)
 			{
-				throw GUIException (this->_GUIName, "SDL_RenderFillRect");
+				boardCellDraw.x = x * 10;
+				boardCellDraw.y = y * 10;
+				boardCellDraw.w = 10;
+				boardCellDraw.h = 10;
+
+				if (SDL_RenderFillRect (this->_boardRenderer, &boardCellDraw))
+				{
+					throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawBoard");
+				}
 			}
 		}
 	}
@@ -121,7 +115,7 @@ void			GUISDL::drawSnakes (void)
 
 	if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 255, 0, 255))
 	{
-		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor");
+		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P1");
 	}
 
 	for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
@@ -133,7 +127,7 @@ void			GUISDL::drawSnakes (void)
 
 		if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
 		{
-			throw GUIException (this->_GUIName, "SDL_RenderFillRect");
+			throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawSnake P1");
 		}
 	}
 
@@ -143,7 +137,7 @@ void			GUISDL::drawSnakes (void)
 
 		if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 0, 255, 255))
 		{
-			throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor");
+			throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P2");
 		}
 
 		for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
@@ -155,7 +149,7 @@ void			GUISDL::drawSnakes (void)
 
 			if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
 			{
-				throw GUIException (this->_GUIName, "SDL_RenderFillRect");
+				throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawSnake P2");
 			}
 		}
 	}
@@ -281,15 +275,6 @@ eGUIEvent		GUISDL::getEvent (void)
 
 void			GUISDL::updateGUI (void)
 {
-	if (SDL_SetRenderDrawColor (this->_boardRenderer, 255, 255, 255, 255))
-	{
-		throw GUIException (this->_GUIName, "SDL_CreateRenderer");
-	}
-	if (SDL_RenderClear (this->_boardRenderer))		/* use the RenderDrawColor to clear the Renderer */
-	{
-		throw GUIException (this->_GUIName, "SDL_CreateRenderer");
-	}
-
 	this->drawBoard();
 	this->drawSnakes();
 

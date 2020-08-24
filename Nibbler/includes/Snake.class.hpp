@@ -28,7 +28,7 @@
 /*
  * Enumerations
  */
-enum class eSnakeDirection { North, South, East, West, Unknown };
+enum class eSnakeDirection { North, South, East, West, UnknownDirection };
 
 /*
  * Structures
