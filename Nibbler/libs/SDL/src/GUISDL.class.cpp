@@ -7,7 +7,9 @@ static unsigned int _mapHeight;
  * Constructors
  */
 GUISDL::GUISDL (Board *board, Snake *snake)
-	: _board (board), _snakeP1 (snake), _snakeP2 (NULL), _window (NULL), _boardRenderer (NULL), _wantedGUI (eGUI::SDL)
+	: _board (board), _snakeP1 (snake), _snakeP2 (NULL),
+	  _window (NULL), _boardRenderer (NULL), _wantedGUI (eGUI::SDL),
+	  _started (false)
 {
 	if (! board)
 	{
@@ -26,7 +28,9 @@ GUISDL::GUISDL (Board *board, Snake *snake)
 }
 
 GUISDL::GUISDL (Board *board, Snake *snakeP1, Snake *snakeP2)
-	: _board (board), _snakeP1 (snakeP1), _snakeP2 (snakeP2), _window (NULL), _boardRenderer (NULL), _wantedGUI (eGUI::SDL)
+	: _board (board), _snakeP1 (snakeP1), _snakeP2 (snakeP2),
+	  _window (NULL), _boardRenderer (NULL), _wantedGUI (eGUI::SDL),
+	  _started (false)
 {
 	if (! board)
 	{
@@ -61,7 +65,7 @@ GUISDL::~GUISDL (void)
 /*
  * Private
  */
-void			GUISDL::drawBoard (void)
+void				GUISDL::drawBoard (void)
 {
 	unsigned int height, width, y, x;
 	std::vector< std::vector<int> > *boardCells;
@@ -90,24 +94,34 @@ void			GUISDL::drawBoard (void)
 				switch (boardCells-> at (y).at (x))
 				{
 					case -1:
-						r = 0;
-						g = 0;
-						b = 0;
+						r = 0x00;
+						g = 0x00;
+						b = 0x00;
 						break;
-					case 1:
-						r = 255;
-						g = 255;
-						b = 0;
+					case (int)eBonusValue::CommonValue:
+						r = 0xff;
+						g = 0xa5;
+						b = 0x00;
 						break;
-					case 2:
-						r = 255;
-						g = 0;
-						b = 255;
+					case (int)eBonusValue::UncommonValue:
+						r = 0xff;
+						g = 0x00;
+						b = 0x00;
 						break;
-					case 3:
-						r = 255;
-						g = 0;
-						b = 0;
+					case (int)eBonusValue::RareValue:
+						r = 0xff;
+						g = 0x00;
+						b = 0xff;
+						break;
+					case (int)eBonusValue::LegendaryValue:
+						r = 0x00;
+						g = 0x00;
+						b = 0xff;
+						break;
+					case (int)eBonusValue::GodlikeValue:
+						r = 0x33;
+						g = 0x33;
+						b = 0x33;
 						break;
 					default:
 						throw ShouldNeverOccurException (__FILE__, __LINE__);
@@ -132,7 +146,7 @@ void			GUISDL::drawBoard (void)
 	}
 }
 
-void			GUISDL::drawSnakes (void)
+void				GUISDL::drawSnakes (void)
 {
 	std::list<t_cell> snakeCells;
 	std::list<t_cell>::iterator itSnakeCell;
@@ -162,7 +176,7 @@ void			GUISDL::drawSnakes (void)
 	{
 		snakeCells = this->_snakeP2->getSnakeCells();
 
-		if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 0, 255, 255))
+		if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 255, 255, 255))
 		{
 			throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P2");
 		}
@@ -182,15 +196,27 @@ void			GUISDL::drawSnakes (void)
 	}
 }
 
+void				GUISDL::drawMenu (void)
+{
+	if (SDL_SetRenderDrawColor (this->_boardRenderer, 255, 255, 255, 255))
+	{
+		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawBoard");
+	}
+	if (SDL_RenderClear (this->_boardRenderer))		/* use the RenderDrawColor to clear the Renderer */
+	{
+		throw GUIException (this->_GUIName, "SDL_RenderClear GUISDL::drawBoard");
+	}
+}
+
 /*
  * Public
  */
-eGUI			GUISDL::getGUIName (void) const
+eGUI				GUISDL::getGUIName (void) const
 {
 	return this->_GUIName;
 }
 
-void			GUISDL::start (void)
+void				GUISDL::start (void)
 {
 	_mapWidth = this->_board->getWidth() * 10;
 	_mapHeight = this->_board->getHeight() * 10;
@@ -210,9 +236,16 @@ void			GUISDL::start (void)
 	{
 		throw GUIException (this->_GUIName, "SDL_CreateRenderer");
 	}
+
+	this->_started = true;
 }
 
-void			GUISDL::stop()
+bool				GUISDL::alreadyStarted (void) const
+{
+	return this->_started;
+}
+
+void				GUISDL::stop()
 {
 #ifdef PROJ_DEBUG
 	std::cout << "GUISDL::stop" << std::endl;
@@ -224,9 +257,11 @@ void			GUISDL::stop()
 	}
 
 	SDL_DestroyWindow (this->_window);
+
+	this->_started = false;
 }
 
-eGUIEvent		GUISDL::getEvent (void)
+eGUIEvent			GUISDL::getEvent (void)
 {
 	SDL_Event events;
 	int x, y;
@@ -300,9 +335,14 @@ eGUIEvent		GUISDL::getEvent (void)
 	return eGUIEvent::nothingTODO;
 }
 
-void			GUISDL::updateGUI (void)
+void				GUISDL::updateGUI (void)
 {
 	unsigned int currentGlobalScore;
+
+//	if (! this->_snakeP1->getIsAlive())
+//		return;
+//	if (this->_snakeP2 && ! this->_snakeP2->getIsAlive())
+//		return;
 
 	this->drawBoard();
 	this->drawSnakes();
@@ -319,9 +359,21 @@ void			GUISDL::updateGUI (void)
 	SDL_Delay (100 - currentGlobalScore);
 }
 
-eGUI			GUISDL::wantedGUI (void) const
+eGUI				GUISDL::wantedGUI (void) const
 {
 	return this->_wantedGUI;
+}
+
+void				GUISDL::loadMenu (void)
+{
+	this->drawMenu();
+
+	SDL_RenderPresent (this->_boardRenderer);
+}
+
+eGUIMenuEvent		GUISDL::getMenuEvent (void)
+{
+	return eGUIMenuEvent::nextLevel;
 }
 
 /*

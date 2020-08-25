@@ -7,7 +7,9 @@ static unsigned int _mapHeight;
  * Constructors
  */
 GUIOpenGL::GUIOpenGL(Board *board, Snake *snake)
-	: _board (board), _snakeP1 (snake), _snakeP2 (NULL), _wantedGUI (eGUI::openGL)
+	: _board (board), _snakeP1 (snake), _snakeP2 (NULL),
+	  _wantedGUI (eGUI::openGL),
+	  _started (false)
 {
 	if (! board)
 	{
@@ -35,7 +37,9 @@ GUIOpenGL::GUIOpenGL(Board *board, Snake *snake)
 }
 
 GUIOpenGL::GUIOpenGL(Board *board, Snake *snakeP1, Snake *snakeP2)
-	: _board (board), _snakeP1 (snakeP1), _snakeP2 (snakeP2), _wantedGUI (eGUI::openGL)
+	: _board (board), _snakeP1 (snakeP1), _snakeP2 (snakeP2),
+	  _wantedGUI (eGUI::openGL),
+	  _started (false)
 {
 	if (! board)
 	{
@@ -78,7 +82,7 @@ GUIOpenGL::~GUIOpenGL(void)
 /*
  * Private
  */
-void			GUIOpenGL::drawTriangle (void)
+void				GUIOpenGL::drawBoard (void)
 {
 	glClearColor (1.0f, 1.0f, 1.0f, 1.0f);
 	glClear (GL_COLOR_BUFFER_BIT);
@@ -109,13 +113,23 @@ void			GUIOpenGL::drawTriangle (void)
 	glFlush ();
 }
 
-void			GUIOpenGL::resizeWindows (int width, int height)
+void				GUIOpenGL::drawSnakes (void)
+{
+
+}
+
+void				GUIOpenGL::drawMenu (void)
+{
+
+}
+
+void				GUIOpenGL::resizeWindows (int width, int height)
 {
 	_mapWidth = width;
 	_mapHeight = height;
 
 	glutReshapeWindow (_mapWidth, _mapHeight);
-	glutDisplayFunc (drawTriangle);
+//	glutDisplayFunc (this->drawBoard);
 
 //	glViewport (0, 0, (GLsizei)_size, (GLsizei)_size);
 //	glMatrixMode (GL_PROJECTION);
@@ -129,12 +143,12 @@ void			GUIOpenGL::resizeWindows (int width, int height)
 /*
  * Public
  */
-eGUI		GUIOpenGL::getGUIName (void) const
+eGUI				GUIOpenGL::getGUIName (void) const
 {
 	return this->_GUIName;
 }
 
-void			GUIOpenGL::start (void)
+void				GUIOpenGL::start (void)
 {
 	_mapWidth = this->_board->getWidth() * 10;
 	_mapHeight = this->_board->getHeight() * 10;
@@ -145,31 +159,61 @@ void			GUIOpenGL::start (void)
 	glutInitWindowSize (_mapWidth, _mapHeight);
 	glutInitWindowPosition (100, 100);
 	glutCreateWindow ((char *)"OpenGL - Creating a triangle");
-	glutDisplayFunc (drawTriangle);
-	glutReshapeFunc (resizeWindows);
+//	glutDisplayFunc (this->drawBoard);
+//	glutReshapeFunc (this->resizeWindows);
 	glutMainLoop ();
 	//	glutIdleFunc (snakeAnimation);
+
+	this->_started = true;
 }
 
-eGUIEvent		GUIOpenGL::getEvent (void)
+bool				GUIOpenGL::alreadyStarted (void) const
+{
+	return this->_started;
+}
+
+void				GUIOpenGL::stop (void)
+{
+	this->_started = false;
+}
+
+eGUIEvent			GUIOpenGL::getEvent (void)
 {
 	return eGUIEvent::unknownEvent;
 }
 
-void			GUIOpenGL::stop (void)
+void				GUIOpenGL::updateGUI (void)
 {
+	this->drawBoard();
+	this->drawSnakes();
 
+//	SDL_RenderPresent (this->_boardRenderer);
+//
+//	currentGlobalScore = this->_snakeP1->getScore();
+//	if (this->_snakeP2)
+//		currentGlobalScore = currentGlobalScore > this->_snakeP2->getScore() ? currentGlobalScore : this->_snakeP2->getScore();
+//
+//	if (currentGlobalScore > 95)
+//		currentGlobalScore = 95;
+//
+//	SDL_Delay (100 - currentGlobalScore);
 }
 
-void			GUIOpenGL::updateGUI (void)
-{
-}
-
-
-eGUI			GUIOpenGL::wantedGUI (void) const
+eGUI				GUIOpenGL::wantedGUI (void) const
 {
 	return this->_wantedGUI;
 }
+
+void				GUIOpenGL::loadMenu (void)
+{
+
+}
+
+eGUIMenuEvent		GUIOpenGL::getMenuEvent (void)
+{
+	return eGUIMenuEvent::unknownMenuEvent;
+}
+
 
 /*
  * Extern
@@ -181,7 +225,7 @@ GUIOpenGL			*createGUI (Board *board, Snake *snakeP1, Snake *snakeP2)
 	return new GUIOpenGL (board, snakeP1, snakeP2);
 }
 
-void			destroyGUI (GUIOpenGL *GUI)
+void				destroyGUI (GUIOpenGL *GUI)
 {
 	delete GUI;
 }

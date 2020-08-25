@@ -26,7 +26,7 @@ INC = -I ./inc -I ../../includes
 
 LINK = -lSDL2main -lSDL2
 
-SRC = GUISDL.class.cpp Board.class.cpp Snake.class.cpp \
+SRC = GUISDL.class.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
 	  exceptions/GUIException.class.cpp \
 	  exceptions/DynamicLoadGUIException.class.cpp \
 	  exceptions/UnknownEventException.class.cpp \

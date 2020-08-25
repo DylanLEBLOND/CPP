@@ -29,24 +29,32 @@ class GUIOpenGL : public IGUI
 {
 private:
 
-	eGUI const		_GUIName = eGUI::openGL;
+	eGUI const			_GUIName = eGUI::openGL;
 
 	/* common */
-	Board*			_board;
-	Snake*			_snakeP1;
-	Snake*			_snakeP2;
-	eGUI			_wantedGUI;
+	Board*				_board;
+	Snake*				_snakeP1;
+	Snake*				_snakeP2;
+	eGUI				_wantedGUI;
 
 	/* openGL */
-	int*			_ac;
-	char**			_av;
+	int*				_ac;
+	char**				_av;
+
+	/* GUI */
+	bool				_started;
 
 	GUIOpenGL (void);
 	GUIOpenGL (GUIOpenGL const &src);
 
-	GUIOpenGL		&operator=(GUIOpenGL const &src);
+	GUIOpenGL			&operator=(GUIOpenGL const &src);
 
-	void			snakeAnimation (void);
+	void				drawBoard (void);
+	void				drawSnakes (void);
+
+	void				drawMenu (void);
+
+	void				resizeWindows (int width, int height);
 
 public:
 
@@ -54,22 +62,23 @@ public:
 	GUIOpenGL (Board *board, Snake *snakeP1, Snake *snakeP2);
 	~GUIOpenGL (void);
 
-	eGUI			getGUIName (void) const;
+	eGUI				getGUIName (void) const;
 
-	static void		drawTriangle (void);
-	static void		resizeWindows (int width, int height);
+	void				start (void);
+	bool				alreadyStarted (void) const;
+	void				stop (void);
+	eGUIEvent			getEvent (void);
+	void				updateGUI (void);
+	eGUI				wantedGUI (void) const;
 
-	void			start (void);
-	void			stop (void);
-	eGUIEvent		getEvent (void);
-	void			updateGUI (void);
-	eGUI			wantedGUI (void) const;
+	void				loadMenu (void);
+	eGUIMenuEvent		getMenuEvent (void);
 };
 
 extern "C" {
 
-	GUIOpenGL		*createGUI (Board *board, Snake *snakeP1, Snake *snakeP2);
-	void			destroyGUI (GUIOpenGL* GUI);
+	GUIOpenGL			*createGUI (Board *board, Snake *snakeP1, Snake *snakeP2);
+	void				destroyGUI (GUIOpenGL* GUI);
 }
 
 #endif /* GUIOPENGL_CLASS_HPP */

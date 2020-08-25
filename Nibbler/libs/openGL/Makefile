@@ -26,7 +26,7 @@ INC = -I ./inc -I ../../includes
 
 LINK = -lglut -lGLU -lGL
 
-SRC = GUIOpenGL.class.cpp Board.class.cpp Snake.class.cpp
+SRC = GUIOpenGL.class.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp
 
 SRC_DIR = ./src
 

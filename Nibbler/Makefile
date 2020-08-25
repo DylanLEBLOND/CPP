@@ -28,7 +28,7 @@ LIB_SDL_REQUIREMENT = libsdl2-dev
 
 LIB_OPENGL_REQUIREMENT = freeglut3-dev
 
-SRC = main.cpp gestionGUI.cpp Board.class.cpp Snake.class.cpp \
+SRC = main.cpp gestionGUI.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
 	  exceptions/GUIException.class.cpp \
 	  exceptions/DynamicLoadGUIException.class.cpp \
 	  exceptions/UnknownEventException.class.cpp \

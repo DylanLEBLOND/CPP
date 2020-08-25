@@ -64,6 +64,46 @@ UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIEvent receive
 	this->_message += "\".";
 }
 
+UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIMenuEvent receivedEvent)
+{
+	this->_message = "Unknown Event Error: GUI = \"";
+	switch (affectedGUI)
+	{
+		case eGUI::SDL:
+			this->_message += "SDL";
+			break;
+		case eGUI::MinilibX:
+			this->_message += "MinilibX";
+			break;
+		case eGUI::openGL:
+			this->_message += "openGLL";
+			break;
+		default:
+			this->_message += "unknownGUI";
+			break;
+	}
+	this->_message += "\" | Received Menu Event = \"";
+	switch (receivedEvent)
+	{
+		case eGUIMenuEvent::restartLevel:
+			this->_message += "restart";
+			break;
+		case eGUIMenuEvent::nextLevel:
+			this->_message += "nextLevel";
+			break;
+		case eGUIMenuEvent::changeGUI:
+			this->_message += "changeGUI";
+			break;
+		case eGUIMenuEvent::quitGame:
+			this->_message += "quitGame";
+			break;
+		default:
+			this->_message += "unknownMenuEvent";
+			break;
+	}
+	this->_message += "\".";
+}
+
 UnknownEventException::UnknownEventException(UnknownEventException const &src)
 {
 	*this = src;

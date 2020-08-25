@@ -59,7 +59,6 @@ private:
 public:
 
 	Snake (void);
-	Snake (unsigned int initPosX, unsigned int initPosY, unsigned int initSize, eSnakeDirection initDirection, bool canPassThroughWall);
 	Snake (Snake const &src);
 	~Snake (void);
 
@@ -76,6 +75,7 @@ public:
 	void					setMapWidth (unsigned int newWidth);
 	void					setMapHeight (unsigned int newHeight);
 
+	void					initSnake (unsigned int initPosX, unsigned int initPosY, unsigned int initSize, eSnakeDirection initDirection, bool canPassThroughWall);
 	void					passThroughWall (bool active);
 	void					eat (int value);
 	void					dead (void);

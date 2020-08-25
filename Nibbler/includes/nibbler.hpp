@@ -12,6 +12,10 @@
 # include <string>
 # include <dlfcn.h>
 
+/*
+ * Enumerations
+ */
+enum class eGameStatus { finish, restart, changeLevel, quit, UnknownStatus };
 
 /*
  * Structures

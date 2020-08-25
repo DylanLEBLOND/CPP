@@ -18,6 +18,7 @@
  */
 # include <Exceptions.hpp>
 # include <Snake.class.hpp>
+# include <Bonus.class.hpp>
 
 /*
  * System Includes
@@ -49,12 +50,13 @@ private:
 	Snake*								_snakeP2;
 	bool								_playersInitialized;
 
-	unsigned int						_bonusStillUp;
+	Bonus								_bonus1;
+	Bonus								_bonus2;
 
 	void								loadMapSquare (void);
 	void								loadMapOpen (void);
 
-	void								generateBonus (unsigned int number);
+	void								updateBonus (void);
 	void								checkSnakesCollision (void);
 
 public:

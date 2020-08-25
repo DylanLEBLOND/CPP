@@ -23,6 +23,7 @@ private:
 public:
 
 	UnknownEventException(eGUI affectedGUI, eGUIEvent receivedEvent);
+	UnknownEventException(eGUI affectedGUI, eGUIMenuEvent receivedEvent);
 	UnknownEventException(UnknownEventException const &src);
 	~UnknownEventException(void);
 

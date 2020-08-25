@@ -28,25 +28,30 @@ class GUISDL : public IGUI
 {
 private:
 
-	eGUI const		_GUIName = eGUI::SDL;
+	eGUI const			_GUIName = eGUI::SDL;
 
 	/* common */
-	Board*			_board;
-	Snake*			_snakeP1;
-	Snake*			_snakeP2;
-	eGUI			_wantedGUI;
+	Board*				_board;
+	Snake*				_snakeP1;
+	Snake*				_snakeP2;
+	eGUI				_wantedGUI;
 
 	/* SDL */
-	SDL_Window*		_window;
-	SDL_Renderer*	_boardRenderer;
+	SDL_Window*			_window;
+	SDL_Renderer*		_boardRenderer;
+
+	/* GUI */
+	bool				_started;
 
 	GUISDL (void);
 	GUISDL (GUISDL const &src);
 
-	GUISDL			&operator=(GUISDL const &src);
+	GUISDL				&operator=(GUISDL const &src);
 
-	void			drawBoard (void);
-	void			drawSnakes (void);
+	void				drawBoard (void);
+	void				drawSnakes (void);
+
+	void				drawMenu (void);
 
 public:
 
@@ -54,19 +59,23 @@ public:
 	GUISDL (Board *board, Snake *snakeP1, Snake *snakeP2);
 	~GUISDL (void);
 
-	eGUI			getGUIName (void) const;
+	eGUI				getGUIName (void) const;
 
-	void			start (void);
-	void			stop (void);
-	eGUIEvent		getEvent (void);
-	void			updateGUI (void);
-	eGUI			wantedGUI (void) const;
+	void				start (void);
+	bool				alreadyStarted (void) const;
+	void				stop (void);
+	eGUIEvent			getEvent (void);
+	void				updateGUI (void);
+	eGUI				wantedGUI (void) const;
+
+	void				loadMenu (void);
+	eGUIMenuEvent		getMenuEvent (void);
 };
 
 extern "C" {
 
-	GUISDL			*createGUI (Board *board, Snake *snakeP1, Snake *snakeP2);
-	void			destroyGUI (GUISDL* GUI);
+	GUISDL				*createGUI (Board *board, Snake *snakeP1, Snake *snakeP2);
+	void				destroyGUI (GUISDL* GUI);
 }
 
 #endif /* GUISDL_CLASS_HPP */

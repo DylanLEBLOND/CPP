@@ -4,68 +4,7 @@
  * Constructors
  */
 Snake::Snake (void)
-	: _currentDirection (eSnakeDirection::East), _canPassThroughWall (true), _mapWidth (0u), _mapHeight (0u), _eatCounter (0), _score (0), _isAlive (true)
-{
-	t_cell cur_cell;
-
-	this->_snakeCells = std::list<t_cell>();
-
-	cur_cell.positionX = 0;
-	cur_cell.positionY = 0;
-	this->_snakeCells.push_front (cur_cell);
-
-	cur_cell.positionX = 1;
-	cur_cell.positionY = 0;
-	this->_snakeCells.push_front (cur_cell);
-
-	cur_cell.positionX = 2;
-	cur_cell.positionY = 0;
-	this->_snakeCells.push_front (cur_cell);
-}
-
-Snake::Snake (unsigned int initPosX, unsigned int initPosY, unsigned int initSize, eSnakeDirection initDirection, bool canPassThroughWall)
-	: _currentDirection (initDirection), _canPassThroughWall (canPassThroughWall), _mapWidth (0u), _mapHeight (0u), _eatCounter (0), _score (0), _isAlive (true)
-{
-	t_cell cur_cell;
-	unsigned int i;
-
-	if (initSize > 100 || (int)(initPosX - initSize) < 0)
-	{
-		//THOW EXCEPTION HERE
-		exit (0);
-	}
-
-	this->_snakeCells = std::list<t_cell>();
-
-	cur_cell.positionX = initPosX;
-	cur_cell.positionY = initPosY;
-	this->_snakeCells.push_front (cur_cell);
-
-	for (i = 1; i < initSize; i++)
-	{
-		switch (this->_currentDirection)
-		{
-			case eSnakeDirection::West:
-				cur_cell.positionX = initPosX + i;
-				this->_snakeCells.push_back (cur_cell);
-				break;
-			case eSnakeDirection::East:
-				cur_cell.positionX = initPosX - i;
-				this->_snakeCells.push_back (cur_cell);
-				break;
-			case eSnakeDirection::North:
-				cur_cell.positionY = initPosY + i;
-				this->_snakeCells.push_back (cur_cell);
-				break;
-			case eSnakeDirection::South:
-				cur_cell.positionY = initPosY + i;
-				this->_snakeCells.push_back (cur_cell);
-				break;
-			default:
-				throw ShouldNeverOccurException (__FILE__, __LINE__);
-		}
-	}
-}
+	: _currentDirection (eSnakeDirection::East), _canPassThroughWall (true), _mapWidth (0u), _mapHeight (0u), _eatCounter (0), _score (0), _isAlive (true) { }
 
 Snake::Snake (Snake const &src)
 {
@@ -172,6 +111,8 @@ void					Snake::eat (int value)
 
 	this->_eatCounter += value;
 	this->_score += value;
+
+	std::cout << "Snake current score = " << this->_score << std::endl;
 }
 
 void					Snake::dead (void)
@@ -280,4 +221,54 @@ void					Snake::moveStraight (void)
 		this->_eatCounter--;
 	else
 		this->_snakeCells.pop_back();
+}
+
+void					Snake::initSnake (unsigned int initPosX, unsigned int initPosY, unsigned int initSize, eSnakeDirection initDirection, bool canPassThroughWall)
+{
+	t_cell cur_cell;
+	unsigned int i;
+
+	if (initSize > 100 || (int)(initPosX - initSize) < 0 || (int)(initPosY - initSize) < 0)
+	{
+		throw InvalidArgumentException ("Snake::reset: initSize > 100 || initPosX > initSize || initPosY > initSize");
+	}
+
+	this->_snakeCells.clear();
+
+	cur_cell.positionX = initPosX;
+	cur_cell.positionY = initPosY;
+	this->_snakeCells.push_front (cur_cell);
+
+	for (i = 1; i < initSize; i++)
+	{
+		switch (initDirection)
+		{
+			case eSnakeDirection::West:
+				cur_cell.positionX = initPosX + i;
+				this->_snakeCells.push_back (cur_cell);
+				break;
+			case eSnakeDirection::East:
+				cur_cell.positionX = initPosX - i;
+				this->_snakeCells.push_back (cur_cell);
+				break;
+			case eSnakeDirection::North:
+				cur_cell.positionY = initPosY + i;
+				this->_snakeCells.push_back (cur_cell);
+				break;
+			case eSnakeDirection::South:
+				cur_cell.positionY = initPosY + i;
+				this->_snakeCells.push_back (cur_cell);
+				break;
+			default:
+				throw ShouldNeverOccurException (__FILE__, __LINE__);
+		}
+	}
+
+	this->_currentDirection = initDirection;
+	this->_canPassThroughWall = canPassThroughWall;
+	this->_mapWidth = 0u;
+	this->_mapHeight = 0u;
+	this->_eatCounter = 0;
+	this->_score = 0;
+	this->_isAlive = true;
 }

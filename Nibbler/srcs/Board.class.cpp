@@ -6,8 +6,7 @@
 Board::Board (void)
 	: _width (0u), _height (0u), _boardCells (NULL), _initialized (false),
 	  _multiPlayer (false), _friendlyFire (true),
-	  _snakeP1 (NULL), _snakeP2 (NULL), _playersInitialized (false),
-	  _bonusStillUp (0u) {}
+	  _snakeP1 (NULL), _snakeP2 (NULL), _playersInitialized (false) {}
 
 Board::Board (Board const &src)
 {
@@ -113,24 +112,60 @@ void								Board::loadMapOpen (void)
 	}
 }
 
-void								Board::generateBonus (unsigned int number)
+void								Board::updateBonus (void)
 {
-	unsigned int bonusValue, posEmptyCell;
+	unsigned int numEmptyCell;
 	t_cell emptyCell;
 
-	while (number > 0)
+	if (this->_bonus1.getTimeLeft ())
 	{
-		srand (time (NULL));
-		bonusValue = rand() % 3 + 1;
+		this->_bonus1.update();
+	}
+	else
+	{
+		emptyCell.positionX = this->_bonus1.getX();
+		emptyCell.positionY = this->_bonus1.getY();
+
+		this->_boardCells->at (emptyCell.positionY).at (emptyCell.positionX) = 0;
+		this->_boardEmptyCells.push_back (emptyCell);		/* bonus1 become an empty cell */
+
+		this->_bonus1.clear();
 
 		srand (time (NULL));
-		posEmptyCell = rand() % this->_boardEmptyCells.size();
-		emptyCell = this->_boardEmptyCells [posEmptyCell];
-		this->_boardCells->at (emptyCell.positionY).at (emptyCell.positionX) = bonusValue;
+		numEmptyCell = rand() % this->_boardEmptyCells.size();
+		emptyCell = this->_boardEmptyCells [numEmptyCell];
 
-		this->_boardEmptyCells.erase (this->_boardEmptyCells.begin() + posEmptyCell);
-		this->_bonusStillUp++;
-		number--;
+		this->_bonus1.generate (emptyCell.positionX, emptyCell.positionY);
+
+		this->_boardCells->at (emptyCell.positionY).at (emptyCell.positionX) = (int)this->_bonus1.getValue();
+
+		this->_boardEmptyCells.erase (this->_boardEmptyCells.begin() + numEmptyCell);
+	}
+
+	if (this->_multiPlayer)
+	{
+		if (this->_bonus2.getTimeLeft ())
+			this->_bonus2.update();
+		else
+		{
+			emptyCell.positionX = this->_bonus2.getX();
+			emptyCell.positionY = this->_bonus2.getY();
+
+			this->_boardCells->at (emptyCell.positionY).at (emptyCell.positionX) = 0;
+			this->_boardEmptyCells.push_back (emptyCell);		/* bonus2 become an empty cell */
+
+			this->_bonus2.clear();
+
+			srand (time (NULL));
+			numEmptyCell = rand() % this->_boardEmptyCells.size();
+			emptyCell = this->_boardEmptyCells [numEmptyCell];
+
+			this->_bonus2.generate (emptyCell.positionX, emptyCell.positionY);
+
+			this->_boardCells->at (emptyCell.positionY).at (emptyCell.positionX) = (int)this->_bonus2.getValue();
+
+			this->_boardEmptyCells.erase (this->_boardEmptyCells.begin() + numEmptyCell);
+		}
 	}
 }
 
@@ -141,6 +176,13 @@ void								Board::checkSnakesCollision (void)
 	std::list<t_cell>::iterator it;
 	t_cell snakeP1Head;
 	t_cell snakeP2Head;
+	t_cell bonus1Position;
+	t_cell bonus2Position;
+
+	bonus1Position.positionX = this->_bonus1.getX();
+	bonus1Position.positionY = this->_bonus1.getY();
+	bonus2Position.positionX = this->_bonus2.getX();
+	bonus2Position.positionY = this->_bonus2.getY();
 
 	/* check if snakeP1 hit a wall */
 	snakeP1Cells = this->_snakeP1->getSnakeCells();
@@ -151,13 +193,16 @@ void								Board::checkSnakesCollision (void)
 	/* check if snakeP1 eat something */
 	if (this->_boardCells->at (snakeP1Head.positionY).at (snakeP1Head.positionX) > 0)
 	{
+		std::cout << " *** SnakeP1 eat ***" << std::endl;
+
 		this->_snakeP1->eat (this->_boardCells->at (snakeP1Head.positionY).at (snakeP1Head.positionX));
+		if (snakeP1Head == bonus1Position)
+			this->_bonus1.clear();
+		if (snakeP1Head == bonus2Position)
+			this->_bonus2.clear();
 
 		this->_boardCells->at (snakeP1Head.positionY).at (snakeP1Head.positionX) = 0;
-		this->_boardEmptyCells.insert (this->_boardEmptyCells.begin() +
-										snakeP1Head.positionY * this->_width + snakeP1Head.positionX,
-										snakeP1Head);		/* snakeP1 Head become an empty cell */
-		this->_bonusStillUp--;
+		this->_boardEmptyCells.push_back (snakeP1Head);		/* snakeP1 Head become an empty cell */
 	}
 
 	if (this->_multiPlayer)
@@ -171,13 +216,16 @@ void								Board::checkSnakesCollision (void)
 		/* check if snakeP2 eat something */
 		if (this->_boardCells->at (snakeP2Head.positionY).at (snakeP2Head.positionX) > 0)
 		{
+			std::cout << " *** SnakeP2 eat ***" << std::endl;
+
 			this->_snakeP2->eat (this->_boardCells->at (snakeP2Head.positionY).at (snakeP2Head.positionX));
+			if (snakeP2Head == bonus1Position)
+				this->_bonus1.clear();
+			if (snakeP2Head == bonus2Position)
+				this->_bonus2.clear();
 
 			this->_boardCells->at (snakeP2Head.positionY).at (snakeP2Head.positionX) = 0;
-			this->_boardEmptyCells.insert (this->_boardEmptyCells.begin() +
-											snakeP2Head.positionY * this->_width + snakeP2Head.positionX,
-											snakeP2Head);		/* snakeP2 Head become an empty cell */
-			this->_bonusStillUp--;
+			this->_boardEmptyCells.push_back (snakeP2Head);		/* snakeP2 Head become an empty cell */
 		}
 
 		if (this->_friendlyFire)
@@ -185,12 +233,12 @@ void								Board::checkSnakesCollision (void)
 			/* check if snakeP1 hit snakeP2 */
 			it = std::find (snakeP2Cells.begin(), snakeP2Cells.end(), snakeP1Head);
 			if (it != snakeP2Cells.end())
-				this->_snakeP2->dead();
+				this->_snakeP1->dead();
 
 			/* check if snakeP2 hit snakeP1 */
 			it = std::find (snakeP1Cells.begin(), snakeP1Cells.end(), snakeP2Head);
 			if (it != snakeP1Cells.end())
-				this->_snakeP1->dead();
+				this->_snakeP2->dead();
 		}
 	}
 }
@@ -298,21 +346,12 @@ void								Board::runTurn (void)
 		throw InvalidArgumentException ("Board::runTurn: Players not initialized");
 	}
 
-	if (! this->_multiPlayer && !this->_bonusStillUp)
-		this->generateBonus (1);
-	else if (this->_multiPlayer)
-	{
-		if (this->_bonusStillUp < 1)
-			this->generateBonus (2);
-		else if (this->_bonusStillUp == 1)
-			this->generateBonus (1);
-	}
-
 	this->_snakeP1->moveStraight();
 	if (this->_multiPlayer)
 		this->_snakeP2->moveStraight();
 
 	this->checkSnakesCollision();
+	this->updateBonus();
 }
 
 bool								Board::snakesAreAlive (void)
@@ -337,9 +376,17 @@ void								Board::clearBoard (void)
 	{
 		delete this->_boardCells;
 	}
+	this->_boardCells = NULL;
+	this->_boardEmptyCells.clear();
 
 	this->_width = 0u;
 	this->_height = 0u;
+	this->_initialized = false,
 	this->_multiPlayer = false;
-	this->_boardCells = NULL;
+	this->_friendlyFire = true,
+	this->_snakeP1 = NULL;
+	this->_snakeP2 = NULL;
+	this->_playersInitialized = false,
+	this->_bonus1.clear();
+	this->_bonus2.clear();
 }
