@@ -3,7 +3,7 @@
 /*
 ** Constructors
 */
-UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIEvent receivedEvent)
+UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIMainMenuEvent receivedEvent)
 {
 	this->_message = "Unknown Event Error: GUI = \"";
 	switch (affectedGUI)
@@ -21,50 +21,29 @@ UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIEvent receive
 			this->_message += "unknownGUI";
 			break;
 	}
-	this->_message += "\" | Received Event = \"";
+	this->_message += "\" | Received Main Menu Event = \"";
 	switch (receivedEvent)
 	{
-		case eGUIEvent::p1GoLeft:
-			this->_message += "p1GoLeft";
+		case eGUIMainMenuEvent::startSinglePlayerGame:
+			this->_message += "startSinglePlayerGame";
 			break;
-		case eGUIEvent::p1GoRight:
-			this->_message += "p1GoRight";
+		case eGUIMainMenuEvent::startMultiPlayerGame:
+			this->_message += "startMultiPlayerGame";
 			break;
-		case eGUIEvent::p1GoUp:
-			this->_message += "p1GoUp";
-			break;
-		case eGUIEvent::p1GoDown:
-			this->_message += "p1GoDown";
-			break;
-		case eGUIEvent::p2GoLeft:
-			this->_message += "p2GoLeft";
-			break;
-		case eGUIEvent::p2GoRight:
-			this->_message += "p2GoRight";
-			break;
-		case eGUIEvent::p2GoUp:
-			this->_message += "p2GoUp";
-			break;
-		case eGUIEvent::p2GoDown:
-			this->_message += "p2GoDown";
-			break;
-		case eGUIEvent::changeGUI:
+		case eGUIMainMenuEvent::changeGUI:
 			this->_message += "changeGUI";
 			break;
-		case eGUIEvent::quitGame:
+		case eGUIMainMenuEvent::quitGame:
 			this->_message += "quitGame";
 			break;
-		case eGUIEvent::nothingTODO:
-			this->_message += "nothingTODO";
-			break;
 		default:
-			this->_message += "unknownEvent";
+			this->_message += "unknownMainMenuEvent";
 			break;
 	}
 	this->_message += "\".";
 }
 
-UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIMenuEvent receivedEvent)
+UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIGameEvent receivedEvent)
 {
 	this->_message = "Unknown Event Error: GUI = \"";
 	switch (affectedGUI)
@@ -82,23 +61,84 @@ UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIMenuEvent rec
 			this->_message += "unknownGUI";
 			break;
 	}
-	this->_message += "\" | Received Menu Event = \"";
+	this->_message += "\" | Received Game Event = \"";
 	switch (receivedEvent)
 	{
-		case eGUIMenuEvent::restartLevel:
-			this->_message += "restart";
+		case eGUIGameEvent::p1GoLeft:
+			this->_message += "p1GoLeft";
 			break;
-		case eGUIMenuEvent::nextLevel:
-			this->_message += "nextLevel";
+		case eGUIGameEvent::p1GoRight:
+			this->_message += "p1GoRight";
 			break;
-		case eGUIMenuEvent::changeGUI:
+		case eGUIGameEvent::p1GoUp:
+			this->_message += "p1GoUp";
+			break;
+		case eGUIGameEvent::p1GoDown:
+			this->_message += "p1GoDown";
+			break;
+		case eGUIGameEvent::p2GoLeft:
+			this->_message += "p2GoLeft";
+			break;
+		case eGUIGameEvent::p2GoRight:
+			this->_message += "p2GoRight";
+			break;
+		case eGUIGameEvent::p2GoUp:
+			this->_message += "p2GoUp";
+			break;
+		case eGUIGameEvent::p2GoDown:
+			this->_message += "p2GoDown";
+			break;
+		case eGUIGameEvent::changeGUI:
 			this->_message += "changeGUI";
 			break;
-		case eGUIMenuEvent::quitGame:
+		case eGUIGameEvent::quitGame:
+			this->_message += "quitGame";
+			break;
+		case eGUIGameEvent::nothingTODO:
+			this->_message += "nothingTODO";
+			break;
+		default:
+			this->_message += "unknownGameEvent";
+			break;
+	}
+	this->_message += "\".";
+}
+
+UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIEndMenuEvent receivedEvent)
+{
+	this->_message = "Unknown Event Error: GUI = \"";
+	switch (affectedGUI)
+	{
+		case eGUI::SDL:
+			this->_message += "SDL";
+			break;
+		case eGUI::MinilibX:
+			this->_message += "MinilibX";
+			break;
+		case eGUI::openGL:
+			this->_message += "openGLL";
+			break;
+		default:
+			this->_message += "unknownGUI";
+			break;
+	}
+	this->_message += "\" | Received End Menu Event = \"";
+	switch (receivedEvent)
+	{
+		case eGUIEndMenuEvent::restartLevel:
+			this->_message += "restart";
+			break;
+		case eGUIEndMenuEvent::nextLevel:
+			this->_message += "nextLevel";
+			break;
+		case eGUIEndMenuEvent::changeGUI:
+			this->_message += "changeGUI";
+			break;
+		case eGUIEndMenuEvent::quitGame:
 			this->_message += "quitGame";
 			break;
 		default:
-			this->_message += "unknownMenuEvent";
+			this->_message += "unknownEndMenuEvent";
 			break;
 	}
 	this->_message += "\".";

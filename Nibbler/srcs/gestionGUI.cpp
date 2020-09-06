@@ -11,10 +11,16 @@ static void		openSDL (guiFuncStruct *guiFunc)
 		throw DynamicLoadGUIException (eGUI::SDL, "dlopen", dlerror());
 	}
 
-	guiFunc->createGUI = (IGUI *(*)(Board *, Snake *, Snake *)) dlsym (guiFunc->libHandle, "createGUI");
+	guiFunc->createGUI = (IGUI *(*)(Board *)) dlsym (guiFunc->libHandle, "createGUI");
 	if (guiFunc->createGUI == NULL)
 	{
 		throw DynamicLoadGUIException (eGUI::SDL, "dlsym createGUI", dlerror());
+	}
+
+	guiFunc->setPlayers = (void (*)(IGUI *, Snake *, Snake *)) dlsym (guiFunc->libHandle, "setPlayers");
+	if (guiFunc->setPlayers == NULL)
+	{
+		throw DynamicLoadGUIException (eGUI::SDL, "dlsym setPlayers", dlerror());
 	}
 
 	guiFunc->destroyGUI = (void (*)(IGUI *)) dlsym (guiFunc->libHandle, "destroyGUI");
@@ -32,10 +38,16 @@ static void		openOpenGL (guiFuncStruct *guiFunc)
 		throw DynamicLoadGUIException (eGUI::openGL, "dlopen", dlerror());
 	}
 
-	guiFunc->createGUI = (IGUI *(*)(Board *, Snake *, Snake *)) dlsym (guiFunc->libHandle, "createGUI");
+	guiFunc->createGUI = (IGUI *(*)(Board *)) dlsym (guiFunc->libHandle, "createGUI");
 	if (guiFunc->createGUI == NULL)
 	{
 		throw DynamicLoadGUIException (eGUI::openGL, "dlsym createGUI", dlerror());
+	}
+
+	guiFunc->setPlayers = (void (*)(IGUI *, Snake *, Snake *)) dlsym (guiFunc->libHandle, "setPlayers");
+	if (guiFunc->setPlayers == NULL)
+	{
+		throw DynamicLoadGUIException (eGUI::openGL, "dlsym setPlayers", dlerror());
 	}
 
 	guiFunc->destroyGUI = (void (*)(IGUI *)) dlsym (guiFunc->libHandle, "destroyGUI");
@@ -108,6 +120,7 @@ void			closeGUILibrary (eGUI currentGUI, guiFuncStruct *guiFunc)
 
 	guiFunc->libHandle = NULL;
 	guiFunc->createGUI = NULL;
+	guiFunc->setPlayers = NULL;
 	guiFunc->destroyGUI = NULL;
 }
 

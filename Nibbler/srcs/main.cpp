@@ -1,59 +1,36 @@
 #include <nibbler.hpp>
 
-static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
-								   nibblerParametersPointer nibblerParams,
-								   guiFuncStruct *guiFunc, IGUI *GUI)
+static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerParams,
+									   guiFuncStruct *guiFunc, IGUI *GUI)
 {
-	eGUIEvent currentEvent;
+	eGUIMainMenuEvent currentEvent;
 	eGUI currentGUI, wantedGUI;
 
-	std::cout << "startGame BEGIN" << std::endl;
+	(void)nibblerParams;
+
+	std::cout << "launchNibbler BEGIN" << std::endl;
 
 	currentGUI = GUI->getGUIName();
+
+	GUI->start();
+	GUI->loadMainMenu();
+
 	while (true)
 	{
-		GUI->updateGUI();
-
-		currentEvent = GUI->getEvent();
+		currentEvent = GUI->getMainMenuEvent();
 		switch (currentEvent)
 		{
-			case eGUIEvent::p1GoLeft:
-				snakeP1->goLeft();
-				break;
-			case eGUIEvent::p1GoRight:
-				snakeP1->goRight();
-				break;
-			case eGUIEvent::p1GoUp:
-				snakeP1->goUp();
-				break;
-			case eGUIEvent::p1GoDown:
-				snakeP1->goDown();
-				break;
-			case eGUIEvent::p2GoLeft:
-				if (nibblerParams->multiplayer)
-					snakeP2->goLeft();
-				else
-					throw UnknownEventException (currentGUI, currentEvent);
-				break;
-			case eGUIEvent::p2GoRight:
-				if (nibblerParams->multiplayer)
-					snakeP2->goRight();
-				else
-					throw UnknownEventException (currentGUI, currentEvent);
-				break;
-			case eGUIEvent::p2GoUp:
-				if (nibblerParams->multiplayer)
-					snakeP2->goUp();
-				else
-					throw UnknownEventException (currentGUI, currentEvent);
-				break;
-			case eGUIEvent::p2GoDown:
-				if (nibblerParams->multiplayer)
-					snakeP2->goDown();
-				else
-					throw UnknownEventException (currentGUI, currentEvent);
-				break;
-			case eGUIEvent::changeGUI:
+			case eGUIMainMenuEvent::startSinglePlayerGame:
+				nibblerParams->multiplayer = false;
+				std::cout << "launchNibbler END (startSinglePlayerGame)" << std::endl;
+				return true;
+
+			case eGUIMainMenuEvent::startMultiPlayerGame:
+				nibblerParams->multiplayer = true;
+				std::cout << "launchNibbler END (startMultiPlayerGame)" << std::endl;
+				return true;
+
+			case eGUIMainMenuEvent::changeGUI:
 				std::cout << "==> Switch GUI <==";
 				wantedGUI = GUI->wantedGUI();
 
@@ -62,14 +39,100 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 				closeGUILibrary (currentGUI, guiFunc);
 
 				openGUILibrary (wantedGUI, guiFunc);
-				GUI = guiFunc->createGUI (board, snakeP1, snakeP2);
+				GUI = guiFunc->createGUI (board);
 				GUI->start();
 
 				currentGUI = wantedGUI;
 				break;
-			case eGUIEvent::nothingTODO:
+
+			case eGUIMainMenuEvent::quitGame:
+				std::cout << "launchNibbler END (quit)" << std::endl;
+				return false;
+
+			case eGUIMainMenuEvent::nothingTODO:
 				break;
-			case eGUIEvent::quitGame:
+
+			default:
+				throw UnknownEventException (GUI->getGUIName(), currentEvent);
+		}
+	}
+
+	std::cout << "launchNibbler END (SNO)" << std::endl;
+
+	return false;
+}
+
+static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
+								   nibblerParametersPointer nibblerParams,
+								   guiFuncStruct *guiFunc, IGUI *GUI)
+{
+	eGUIGameEvent currentEvent;
+	eGUI currentGUI, wantedGUI;
+
+	std::cout << "startGame BEGIN" << std::endl;
+
+	currentGUI = GUI->getGUIName();
+	while (true)
+	{
+		GUI->updateGameGUI();
+
+		currentEvent = GUI->getGameEvent();
+		switch (currentEvent)
+		{
+			case eGUIGameEvent::p1GoLeft:
+				snakeP1->goLeft();
+				break;
+			case eGUIGameEvent::p1GoRight:
+				snakeP1->goRight();
+				break;
+			case eGUIGameEvent::p1GoUp:
+				snakeP1->goUp();
+				break;
+			case eGUIGameEvent::p1GoDown:
+				snakeP1->goDown();
+				break;
+			case eGUIGameEvent::p2GoLeft:
+				if (nibblerParams->multiplayer)
+					snakeP2->goLeft();
+				else
+					throw UnknownEventException (currentGUI, currentEvent);
+				break;
+			case eGUIGameEvent::p2GoRight:
+				if (nibblerParams->multiplayer)
+					snakeP2->goRight();
+				else
+					throw UnknownEventException (currentGUI, currentEvent);
+				break;
+			case eGUIGameEvent::p2GoUp:
+				if (nibblerParams->multiplayer)
+					snakeP2->goUp();
+				else
+					throw UnknownEventException (currentGUI, currentEvent);
+				break;
+			case eGUIGameEvent::p2GoDown:
+				if (nibblerParams->multiplayer)
+					snakeP2->goDown();
+				else
+					throw UnknownEventException (currentGUI, currentEvent);
+				break;
+			case eGUIGameEvent::changeGUI:
+				std::cout << "==> Switch GUI <==";
+				wantedGUI = GUI->wantedGUI();
+
+				GUI->stop();
+				guiFunc->destroyGUI (GUI);
+				closeGUILibrary (currentGUI, guiFunc);
+
+				openGUILibrary (wantedGUI, guiFunc);
+				GUI = guiFunc->createGUI (board);
+				guiFunc->setPlayers (GUI, snakeP1, snakeP2);
+				GUI->start();
+
+				currentGUI = wantedGUI;
+				break;
+			case eGUIGameEvent::nothingTODO:
+				break;
+			case eGUIGameEvent::quitGame:
 				std::cout << "startGame END (Quit)" << std::endl;
 				return eGameStatus::quit;
 			default:
@@ -93,21 +156,21 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 static eGameStatus		endGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 								 guiFuncStruct *guiFunc, IGUI *GUI)
 {
-	eGUIMenuEvent currentEvent;
+	eGUIEndMenuEvent currentEvent;
 	eGUI currentGUI, wantedGUI;
 
 	std::cout << "endGame BEGIN" << std::endl;
 
 	currentGUI = GUI->getGUIName();
 
-	GUI->loadMenu();
+	GUI->loadEndMenu();
 
 	while (true)
 	{
-		currentEvent = GUI->getMenuEvent();
+		currentEvent = GUI->getEndMenuEvent();
 		switch (currentEvent)
 		{
-			case eGUIMenuEvent::changeGUI:
+			case eGUIEndMenuEvent::changeGUI:
 				std::cout << "==> Switch GUI <==";
 				wantedGUI = GUI->wantedGUI();
 
@@ -116,30 +179,34 @@ static eGameStatus		endGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 				closeGUILibrary (currentGUI, guiFunc);
 
 				openGUILibrary (wantedGUI, guiFunc);
-				GUI = guiFunc->createGUI (board, snakeP1, snakeP2);
+				GUI = guiFunc->createGUI (board);
+				guiFunc->setPlayers (GUI, snakeP1, snakeP2);
 				GUI->start();
 
 				currentGUI = wantedGUI;
 				break;
 
-			case eGUIMenuEvent::restartLevel:
+			case eGUIEndMenuEvent::restartLevel:
 				std::cout << "endGame END (restart)" << std::endl;
 				return eGameStatus::restart;
 
-			case eGUIMenuEvent::nextLevel:
+			case eGUIEndMenuEvent::nextLevel:
 				std::cout << "endGame END (changeLevel)" << std::endl;
 				return eGameStatus::changeLevel;
 
-			case eGUIMenuEvent::quitGame:
+			case eGUIEndMenuEvent::quitGame:
 				std::cout << "endGame END (quit)" << std::endl;
 				return eGameStatus::quit;
+
+			case eGUIEndMenuEvent::nothingTODO:
+				break;
 
 			default:
 				throw UnknownEventException (GUI->getGUIName(), currentEvent);
 		}
 	}
 
-	std::cout << "endGame END (Quit)" << std::endl;
+	std::cout << "endGame END (SNO)" << std::endl;
 
 	return eGameStatus::quit;
 }
@@ -175,6 +242,15 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 	if (! board)
 		throw ShouldNeverOccurException (__FILE__, __LINE__);
 
+	currentMap = nibblerParams->selectedMap;
+
+	openGUILibrary (eGUI::SDL, &guiFunc);
+	GUI = guiFunc.createGUI (board);
+
+	board->initBoard (nibblerParams->width, nibblerParams->height);
+
+	running = launchNibbler (board, nibblerParams, &guiFunc, GUI);
+
 	snakeP1 = new Snake ();
 	if (! snakeP1)
 		throw ShouldNeverOccurException (__FILE__, __LINE__);
@@ -201,25 +277,16 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 		p2IinitPosY = nibblerParams->height - 10;
 	}
 
-	currentMap = nibblerParams->selectedMap;
+	guiFunc.setPlayers (GUI, snakeP1, snakeP2);
 
-	openGUILibrary (eGUI::SDL, &guiFunc);
-	GUI = guiFunc.createGUI (board, snakeP1, snakeP2);
-
-	running = true;
 	while (running)
 	{
-		board->initBoard (nibblerParams->width, nibblerParams->height, nibblerParams->multiplayer, nibblerParams->friendlyFire);
-
 		snakeP1->initSnake (p1InitPosX, p1IinitPosY, 4u, eSnakeDirection::East, true /* canPassThroughWall */);
 		if (nibblerParams->multiplayer)
 			snakeP2->initSnake (p2InitPosX, p2IinitPosY, 4u, eSnakeDirection::West, true /* canPassThroughWall */);
 
-		board->initPlayers (snakeP1, snakeP2);
+		board->initPlayers (snakeP1, snakeP2, nibblerParams->multiplayer, nibblerParams->friendlyFire);
 		board->loadMap (currentMap);
-
-		if (! GUI->alreadyStarted())
-			GUI->start();
 
 		gameStatus = startGame (board, snakeP1, snakeP2, nibblerParams, &guiFunc, GUI);
 		switch (gameStatus)
@@ -249,11 +316,12 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 				}
 				break;
 
-					default:
-				throw ShouldNeverOccurException (__FILE__, __LINE__);
+				default:
+					throw ShouldNeverOccurException (__FILE__, __LINE__);
 		}
 
 		board->clearBoard();
+		board->initBoard (nibblerParams->width, nibblerParams->height);
 	}
 
 	currentGUI = GUI->getGUIName();

@@ -6,19 +6,14 @@ static unsigned int _mapHeight;
 /*
  * Constructors
  */
-GUIOpenGL::GUIOpenGL(Board *board, Snake *snake)
-	: _board (board), _snakeP1 (snake), _snakeP2 (NULL),
+GUIOpenGL::GUIOpenGL(Board *board)
+	: _board (board), _snakeP1 (NULL), _snakeP2 (NULL),
 	  _wantedGUI (eGUI::openGL),
 	  _started (false)
 {
 	if (! board)
 	{
 		throw InvalidArgumentException ("GUIOpenGL::GUIOpenGL (Board *board, Snake *snake): board == null");
-	}
-
-	if (! snake)
-	{
-		throw InvalidArgumentException ("GUIOpenGL::GUIOpenGL (Board *board, Snake *snake): snake == null");
 	}
 
 	this-> _ac = new int[1];
@@ -34,36 +29,21 @@ GUIOpenGL::GUIOpenGL(Board *board, Snake *snake)
 		throw ShouldNeverOccurException (__FILE__, __LINE__);
 	}
 	this->_av[0] = (char*)"GUIOpenGL";
-}
 
-GUIOpenGL::GUIOpenGL(Board *board, Snake *snakeP1, Snake *snakeP2)
-	: _board (board), _snakeP1 (snakeP1), _snakeP2 (snakeP2),
-	  _wantedGUI (eGUI::openGL),
-	  _started (false)
-{
-	if (! board)
-	{
-		throw InvalidArgumentException ("GUIOpenGL::GUIOpenGL (Board *board, Snake *snake): board == null");
-	}
+	this->_mainMenuSinglePlayer.x = 50;
+	this->_mainMenuSinglePlayer.y = 600;
+	this->_mainMenuSinglePlayer.width = 400;
+	this->_mainMenuSinglePlayer.height = 100;
 
-	if (! snakeP1 || ! snakeP2)
-	{
-		throw InvalidArgumentException ("GUIOpenGL::GUIOpenGL (Board *board, Snake *snakeP1, Snake *snakeP2): snakeP1 and/or snakeP2 == null");
-	}
+	this->_mainMenuMultiplayer.x = 550;
+	this->_mainMenuMultiplayer.y = 600;
+	this->_mainMenuMultiplayer.width = 400;
+	this->_mainMenuMultiplayer.height = 100;
 
-	this-> _ac = new int[1];
-	if (! this-> _ac)
-	{
-		throw ShouldNeverOccurException (__FILE__, __LINE__);
-	}
-	this->_ac[0] = 1;
-
-	this-> _av = new char *[1];
-	if (! this-> _ac)
-	{
-		throw ShouldNeverOccurException (__FILE__, __LINE__);
-	}
-	this->_av[0] = (char*)"GUIOpenGL";
+	this->_mainMenuQuitGame.x = 300;
+	this->_mainMenuQuitGame.y = 750;
+	this->_mainMenuQuitGame.width = 400;
+	this->_mainMenuQuitGame.height = 100;
 }
 
 /*
@@ -82,7 +62,30 @@ GUIOpenGL::~GUIOpenGL(void)
 /*
  * Private
  */
-void				GUIOpenGL::drawBoard (void)
+void					GUIOpenGL::ajustBounds (void)
+{
+	this->_mainMenuSinglePlayer.x *= this->_mainMenuSinglePlayer.x * _mapWidth / 1000;
+	this->_mainMenuSinglePlayer.y = this->_mainMenuSinglePlayer.y * _mapHeight / 1000;
+	this->_mainMenuSinglePlayer.width = this->_mainMenuSinglePlayer.width * _mapWidth / 1000;
+	this->_mainMenuSinglePlayer.height = this->_mainMenuSinglePlayer.height * _mapHeight / 1000;
+
+	this->_mainMenuMultiplayer.x = this->_mainMenuMultiplayer.x * _mapWidth / 1000;
+	this->_mainMenuMultiplayer.y = this->_mainMenuMultiplayer.y * _mapHeight / 1000;
+	this->_mainMenuMultiplayer.width = this->_mainMenuMultiplayer.width * _mapWidth / 1000;
+	this->_mainMenuMultiplayer.height = this->_mainMenuMultiplayer.height * _mapHeight / 1000;
+
+	this->_mainMenuQuitGame.x = this->_mainMenuQuitGame.x * _mapWidth / 1000;
+	this->_mainMenuQuitGame.y = this->_mainMenuQuitGame.y * _mapHeight / 1000;
+	this->_mainMenuQuitGame.width = this->_mainMenuQuitGame.width * _mapWidth / 1000;
+	this->_mainMenuQuitGame.height = this->_mainMenuQuitGame.height * _mapHeight / 1000;
+}
+
+void					GUIOpenGL::drawMainMenu (void)
+{
+
+}
+
+void					GUIOpenGL::drawBoard (void)
 {
 	glClearColor (1.0f, 1.0f, 1.0f, 1.0f);
 	glClear (GL_COLOR_BUFFER_BIT);
@@ -113,17 +116,17 @@ void				GUIOpenGL::drawBoard (void)
 	glFlush ();
 }
 
-void				GUIOpenGL::drawSnakes (void)
+void					GUIOpenGL::drawSnakes (void)
 {
 
 }
 
-void				GUIOpenGL::drawMenu (void)
+void					GUIOpenGL::drawEndMenu (void)
 {
 
 }
 
-void				GUIOpenGL::resizeWindows (int width, int height)
+void					GUIOpenGL::resizeWindows (int width, int height)
 {
 	_mapWidth = width;
 	_mapHeight = height;
@@ -143,12 +146,12 @@ void				GUIOpenGL::resizeWindows (int width, int height)
 /*
  * Public
  */
-eGUI				GUIOpenGL::getGUIName (void) const
+eGUI					GUIOpenGL::getGUIName (void) const
 {
 	return this->_GUIName;
 }
 
-void				GUIOpenGL::start (void)
+void					GUIOpenGL::start (void)
 {
 	_mapWidth = this->_board->getWidth() * 10;
 	_mapHeight = this->_board->getHeight() * 10;
@@ -164,25 +167,52 @@ void				GUIOpenGL::start (void)
 	glutMainLoop ();
 	//	glutIdleFunc (snakeAnimation);
 
+	this->ajustBounds ();
+
 	this->_started = true;
 }
 
-bool				GUIOpenGL::alreadyStarted (void) const
+bool					GUIOpenGL::alreadyStarted (void) const
 {
 	return this->_started;
 }
 
-void				GUIOpenGL::stop (void)
+eGUI					GUIOpenGL::wantedGUI (void) const
+{
+	return this->_wantedGUI;
+}
+
+void					GUIOpenGL::stop (void)
 {
 	this->_started = false;
 }
 
-eGUIEvent			GUIOpenGL::getEvent (void)
+/* Main Menu */
+
+void					GUIOpenGL::loadMainMenu (void)
 {
-	return eGUIEvent::unknownEvent;
+
 }
 
-void				GUIOpenGL::updateGUI (void)
+eGUIMainMenuEvent		GUIOpenGL::getMainMenuEvent (void)
+{
+	return eGUIMainMenuEvent::unknownMainMenuEvent;
+}
+
+/* Game */
+
+void					GUIOpenGL::setPlayers (Snake *snakeP1, Snake *snakeP2)
+{
+	if (! snakeP1)
+	{
+		throw InvalidArgumentException ("GUIOpenGL::setPlayers: snakeP1 == null");
+	}
+
+	this->_snakeP1 = snakeP1;
+	this->_snakeP2 = snakeP2;
+}
+
+void					GUIOpenGL::updateGameGUI (void)
 {
 	this->drawBoard();
 	this->drawSnakes();
@@ -199,33 +229,33 @@ void				GUIOpenGL::updateGUI (void)
 //	SDL_Delay (100 - currentGlobalScore);
 }
 
-eGUI				GUIOpenGL::wantedGUI (void) const
+eGUIGameEvent			GUIOpenGL::getGameEvent (void)
 {
-	return this->_wantedGUI;
+	return eGUIGameEvent::unknownGameEvent;
 }
 
-void				GUIOpenGL::loadMenu (void)
+/* End Menu */
+
+void					GUIOpenGL::loadEndMenu (void)
 {
 
 }
 
-eGUIMenuEvent		GUIOpenGL::getMenuEvent (void)
+eGUIEndMenuEvent		GUIOpenGL::getEndMenuEvent (void)
 {
-	return eGUIMenuEvent::unknownMenuEvent;
+	return eGUIEndMenuEvent::unknownEndMenuEvent;
 }
 
 
 /*
  * Extern
  */
-GUIOpenGL			*createGUI (Board *board, Snake *snakeP1, Snake *snakeP2)
+GUIOpenGL				*createGUI (Board *board)
 {
-	if (! snakeP2)
-		return new GUIOpenGL (board, snakeP1);
-	return new GUIOpenGL (board, snakeP1, snakeP2);
+	return new GUIOpenGL (board);
 }
 
-void				destroyGUI (GUIOpenGL *GUI)
+void					destroyGUI (GUIOpenGL *GUI)
 {
 	delete GUI;
 }

@@ -4,7 +4,7 @@
  * Constructors
  */
 Bonus::Bonus (void)
-	: _x (0u), _y (0u), _value (eBonusValue::UnknownValue), _timeLeft (eBonusTime::UnknownTime) {}
+	: _x (0u), _y (0u), _value (eBonusValue::UnknownValue), _timeLeft (eBonusTime::UnknownTime), _isActif (false) {}
 
 Bonus::Bonus (Bonus const &src)
 {
@@ -25,6 +25,7 @@ Bonus				&Bonus::operator= (Bonus const &src)
 	this->_y = src.getY();
 	this->_value = src.getValue();
 	this->_timeLeft = src.getTimeLeft();
+	this->_isActif = src.isActif();
 
 	return *this;
 }
@@ -50,6 +51,11 @@ eBonusValue			Bonus::getValue (void) const
 unsigned int		Bonus::getTimeLeft (void) const
 {
 	return this->_timeLeft;
+}
+
+bool				Bonus::isActif (void) const
+{
+	return this->_isActif;
 }
 
 /*
@@ -98,6 +104,8 @@ void				Bonus::generate (unsigned int x, unsigned int y)
 	this->_x = x;
 	this->_y = y;
 
+	this->_isActif = true;
+
 	std::cout << "Bonus::generate: Bonus +" << this->_value << " (Time:" << this->_timeLeft;
 	std::cout << ") generated at (x = " << this->_x << " | y = " << this->_y << ")" << std::endl;
 }
@@ -114,4 +122,5 @@ void				Bonus::clear (void)
 	this->_y = 0u;
 	this->_value = eBonusValue::UnknownValue,
 	this->_timeLeft = eBonusTime::UnknownTime;
+	this->_isActif = false;
 }

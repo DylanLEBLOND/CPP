@@ -69,13 +69,11 @@ public:
 
 	unsigned int						getWidth (void) const;
 	unsigned int						getHeight (void) const;
-	bool								getMultiPlayer (void) const;
-	bool								getFriendlyFire (void) const;
 	std::vector< std::vector<int> >		*getBoardCells (void) const;
 	bool								isInitialized (void) const;
 
-	void								initBoard (unsigned int width, unsigned int height, bool multiPlayer, bool friendlyFire);
-	void								initPlayers (Snake *snakeP1, Snake *snakeP2);
+	void								initBoard (unsigned int width, unsigned int height);
+	void								initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer, bool friendlyFire);
 	void								loadMap (eBoardMaps map);
 	void								runTurn (void);
 	bool								snakesAreAlive (void);

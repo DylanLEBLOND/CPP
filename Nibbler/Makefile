@@ -24,7 +24,7 @@ INC = -I ./includes
 
 LINK = -L./libs -ldl
 
-LIB_SDL_REQUIREMENT = libsdl2-dev
+LIB_SDL_REQUIREMENT = libsdl2-dev libsdl2-image-dev
 
 LIB_OPENGL_REQUIREMENT = freeglut3-dev
 
@@ -55,30 +55,34 @@ all : info packages createlibs $(NAME)
 packages: packagesSDL packagesOpenGL
 
 packagesSDL:
-	@if ! (dpkg --get-selections | grep -q "^$(LIB_SDL_REQUIREMENT)" >/dev/null);									\
-	then																												\
-		echo "$(BLUE) package $(LIB_SDL_REQUIREMENT)$(RED) missing$(BASIC) ... starting installation$(BASIC)";		\
-		if (sudo apt install $(LIB_SDL_REQUIREMENT));																\
-		then																											\
-			echo "$(GREEN)Successfully installed $(LIB_SDL_REQUIREMENT)$(BASIC)";									\
-		else																											\
-			echo "$(RED)Error installing $(LIB_SDL_REQUIREMENT)... $(GREEN)Cannot continue exit$(BASIC)";			\
-			exit 1;																										\
-		fi																												\
-	fi
+	@for package in $(LIB_SDL_REQUIREMENT); do															\
+		if ! (dpkg --get-selections | grep -q "^$$package" >/dev/null);									\
+		then																							\
+			echo "$(BLUE) package $$package$(RED) missing$(BASIC) ... starting installation$(BASIC)";	\
+			if (sudo apt install $$package);															\
+			then																						\
+				echo "$(GREEN)Successfully installed $$package$(BASIC)";								\
+			else																						\
+				echo "$(RED)Error installing $$package... $(GREEN)Cannot continue exit$(BASIC)";		\
+				exit 1;																					\
+			fi																							\
+		fi																								\
+	done
 
 packagesOpenGL:
-	@if ! (dpkg --get-selections | grep -q "^$(LIB_OPENGL_REQUIREMENT)" >/dev/null);									\
-	then																												\
-		echo "$(BLUE) package $(LIB_OPENGL_REQUIREMENT)$(RED) missing$(BASIC) ... starting installation$(BASIC)";		\
-		if (sudo apt install $(LIB_OPENGL_REQUIREMENT));																\
-		then																											\
-			echo "$(GREEN)Successfully installed $(LIB_OPENGL_REQUIREMENT)$(BASIC)";									\
-		else																											\
-			echo "$(RED)Error installing $(LIB_OPENGL_REQUIREMENT)... $(GREEN)Cannot continue exit$(BASIC)";			\
-			exit 1;																										\
-		fi																												\
-	fi
+	@for package in $(LIB_OPENGL_REQUIREMENT); do															\
+		if ! (dpkg --get-selections | grep -q "^$$package" >/dev/null);									\
+		then																							\
+			echo "$(BLUE) package $$package$(RED) missing$(BASIC) ... starting installation$(BASIC)";	\
+			if (sudo apt install $$package);															\
+			then																						\
+				echo "$(GREEN)Successfully installed $$package$(BASIC)";								\
+			else																						\
+				echo "$(RED)Error installing $$package... $(GREEN)Cannot continue exit$(BASIC)";		\
+				exit 1;																					\
+			fi																							\
+		fi																								\
+	done
 
 createlibs: createlibSDL createlibOpenGL
 

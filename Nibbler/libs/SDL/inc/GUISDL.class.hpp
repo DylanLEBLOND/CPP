@@ -16,7 +16,8 @@
 /*
  * Personals Includes
  */
-#include <SDL2/SDL.h>
+# include <SDL2/SDL.h>
+# include <SDL2/SDL_image.h>
 # include <common.hpp>
 
 /*
@@ -39,42 +40,56 @@ private:
 	/* SDL */
 	SDL_Window*			_window;
 	SDL_Renderer*		_boardRenderer;
+	SDL_Surface*		_mainMenuImage;
+	SDL_Texture*		_mainMenuTexture;
 
 	/* GUI */
 	bool				_started;
+	bounds				_mainMenuSinglePlayer;
+	bounds				_mainMenuMultiplayer;
+	bounds				_mainMenuQuitGame;
 
 	GUISDL (void);
 	GUISDL (GUISDL const &src);
 
-	GUISDL				&operator=(GUISDL const &src);
+	GUISDL					&operator=(GUISDL const &src);
 
-	void				drawBoard (void);
-	void				drawSnakes (void);
+	void					ajustBounds (void);
 
-	void				drawMenu (void);
+	void					drawMainMenu (void);
+
+	void					drawBoard (void);
+	void					drawSnakes (void);
+
+	void					drawEndMenu (void);
 
 public:
 
-	GUISDL (Board *board, Snake *snake);
-	GUISDL (Board *board, Snake *snakeP1, Snake *snakeP2);
+	GUISDL (Board *board);
 	~GUISDL (void);
 
-	eGUI				getGUIName (void) const;
+	eGUI					getGUIName (void) const;
 
-	void				start (void);
-	bool				alreadyStarted (void) const;
-	void				stop (void);
-	eGUIEvent			getEvent (void);
-	void				updateGUI (void);
-	eGUI				wantedGUI (void) const;
-
-	void				loadMenu (void);
-	eGUIMenuEvent		getMenuEvent (void);
+	void					start (void);
+	bool					alreadyStarted (void) const;
+	eGUI					wantedGUI (void) const;
+	void					stop (void);
+	/* Main Menu */
+	void					loadMainMenu (void);
+	eGUIMainMenuEvent		getMainMenuEvent (void);
+	/* Game */
+	void					setPlayers (Snake *snakeP1, Snake *snakeP2);
+	void					updateGameGUI (void);
+	eGUIGameEvent			getGameEvent (void);
+	/* End Menu */
+	void					loadEndMenu (void);
+	eGUIEndMenuEvent		getEndMenuEvent (void);
 };
 
 extern "C" {
 
-	GUISDL				*createGUI (Board *board, Snake *snakeP1, Snake *snakeP2);
+	GUISDL				*createGUI (Board *board);
+	void				setPlayers (GUISDL *GUI, Snake *snakeP1, Snake *snakeP2);
 	void				destroyGUI (GUISDL* GUI);
 }
 

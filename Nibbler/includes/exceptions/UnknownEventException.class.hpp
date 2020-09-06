@@ -22,8 +22,9 @@ private:
 
 public:
 
-	UnknownEventException(eGUI affectedGUI, eGUIEvent receivedEvent);
-	UnknownEventException(eGUI affectedGUI, eGUIMenuEvent receivedEvent);
+	UnknownEventException(eGUI affectedGUI, eGUIMainMenuEvent receivedEvent);
+	UnknownEventException(eGUI affectedGUI, eGUIGameEvent receivedEvent);
+	UnknownEventException(eGUI affectedGUI, eGUIEndMenuEvent receivedEvent);
 	UnknownEventException(UnknownEventException const &src);
 	~UnknownEventException(void);
 

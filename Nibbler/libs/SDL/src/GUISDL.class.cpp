@@ -6,9 +6,9 @@ static unsigned int _mapHeight;
 /*
  * Constructors
  */
-GUISDL::GUISDL (Board *board, Snake *snake)
-	: _board (board), _snakeP1 (snake), _snakeP2 (NULL),
-	  _window (NULL), _boardRenderer (NULL), _wantedGUI (eGUI::SDL),
+GUISDL::GUISDL (Board *board)
+	: _board (board), _snakeP1 (NULL), _snakeP2 (NULL), _wantedGUI (eGUI::SDL),
+	  _window (NULL), _boardRenderer (NULL), _mainMenuImage (NULL), _mainMenuTexture (NULL),
 	  _started (false)
 {
 	if (! board)
@@ -16,36 +16,30 @@ GUISDL::GUISDL (Board *board, Snake *snake)
 		throw InvalidArgumentException ("GUISDL::GUISDL (Board *board, Snake *snake): board == null");
 	}
 
-	if (! snake)
-	{
-		throw InvalidArgumentException ("GUISDL::GUISDL (Board *board, Snake *snake): snake == null");
-	}
-
 	if (SDL_Init (SDL_INIT_VIDEO))
 	{
 		throw GUIException (this->_GUIName, "SDL_Init");
 	}
-}
 
-GUISDL::GUISDL (Board *board, Snake *snakeP1, Snake *snakeP2)
-	: _board (board), _snakeP1 (snakeP1), _snakeP2 (snakeP2),
-	  _window (NULL), _boardRenderer (NULL), _wantedGUI (eGUI::SDL),
-	  _started (false)
-{
-	if (! board)
+	if (! IMG_Init (IMG_INIT_PNG))
 	{
-		throw InvalidArgumentException ("GUISDL::GUISDL (Board *board, Snake *snakeP1, Snake *snakeP2): board == null");
+		throw GUIException (this->_GUIName, "IMG_Init");
 	}
 
-	if (! snakeP1 || ! snakeP2)
-	{
-		throw InvalidArgumentException ("GUISDL::GUISDL (Board *board, Snake *snakeP1, Snake *snakeP2): snakeP1 and/or snakeP2 == null");
-	}
+	this->_mainMenuSinglePlayer.x = 50;
+	this->_mainMenuSinglePlayer.y = 600;
+	this->_mainMenuSinglePlayer.width = 400;
+	this->_mainMenuSinglePlayer.height = 100;
 
-	if (SDL_Init (SDL_INIT_VIDEO))
-	{
-		throw GUIException (this->_GUIName, "SDL_Init");
-	}
+	this->_mainMenuMultiplayer.x = 550;
+	this->_mainMenuMultiplayer.y = 600;
+	this->_mainMenuMultiplayer.width = 400;
+	this->_mainMenuMultiplayer.height = 100;
+
+	this->_mainMenuQuitGame.x = 300;
+	this->_mainMenuQuitGame.y = 750;
+	this->_mainMenuQuitGame.width = 400;
+	this->_mainMenuQuitGame.height = 100;
 }
 
 /*
@@ -53,11 +47,19 @@ GUISDL::GUISDL (Board *board, Snake *snakeP1, Snake *snakeP2)
  */
 GUISDL::~GUISDL (void)
 {
+	if (this->_mainMenuTexture != NULL)
+		SDL_DestroyTexture (this->_mainMenuTexture);
+
+	if (this->_mainMenuImage != NULL)
+		SDL_FreeSurface (this->_mainMenuImage);
+
 	if (this->_boardRenderer != NULL)
 		SDL_DestroyRenderer (this->_boardRenderer);
 
 	if (this->_window != NULL)
 		SDL_DestroyWindow (this->_window);
+
+	IMG_Quit();
 
 	SDL_Quit();
 }
@@ -65,7 +67,45 @@ GUISDL::~GUISDL (void)
 /*
  * Private
  */
-void				GUISDL::drawBoard (void)
+void					GUISDL::ajustBounds (void)
+{
+	this->_mainMenuSinglePlayer.x = this->_mainMenuSinglePlayer.x * _mapWidth / 1000;
+	this->_mainMenuSinglePlayer.y = this->_mainMenuSinglePlayer.y * _mapHeight / 1000;
+	this->_mainMenuSinglePlayer.width = this->_mainMenuSinglePlayer.width * _mapWidth / 1000;
+	this->_mainMenuSinglePlayer.height = this->_mainMenuSinglePlayer.height * _mapHeight / 1000;
+
+	this->_mainMenuMultiplayer.x = this->_mainMenuMultiplayer.x * _mapWidth / 1000;
+	this->_mainMenuMultiplayer.y = this->_mainMenuMultiplayer.y * _mapHeight / 1000;
+	this->_mainMenuMultiplayer.width = this->_mainMenuMultiplayer.width * _mapWidth / 1000;
+	this->_mainMenuMultiplayer.height = this->_mainMenuMultiplayer.height * _mapHeight / 1000;
+
+	this->_mainMenuQuitGame.x = this->_mainMenuQuitGame.x * _mapWidth / 1000;
+	this->_mainMenuQuitGame.y = this->_mainMenuQuitGame.y * _mapHeight / 1000;
+	this->_mainMenuQuitGame.width = this->_mainMenuQuitGame.width * _mapWidth / 1000;
+	this->_mainMenuQuitGame.height = this->_mainMenuQuitGame.height * _mapHeight / 1000;
+}
+
+void					GUISDL::drawMainMenu (void)
+{
+	this->_mainMenuImage = IMG_Load ("res/images/main_menu.png");
+	if (this->_mainMenuImage == NULL)
+	{
+		throw GUIException (this->_GUIName, "IMG_Load GUISDL::drawMainMenu");
+	}
+
+	this->_mainMenuTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_mainMenuImage);
+	if (this->_mainMenuTexture == NULL)
+	{
+		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface GUISDL::drawMainMenu");
+	}
+
+	if (SDL_RenderCopy (this->_boardRenderer, this->_mainMenuTexture, NULL, NULL))
+	{
+		throw GUIException (this->_GUIName, "SDL_RenderCopy GUISDL::drawMainMenu");
+	}
+}
+
+void					GUISDL::drawBoard (void)
 {
 	unsigned int height, width, y, x;
 	std::vector< std::vector<int> > *boardCells;
@@ -146,7 +186,7 @@ void				GUISDL::drawBoard (void)
 	}
 }
 
-void				GUISDL::drawSnakes (void)
+void					GUISDL::drawSnakes (void)
 {
 	std::list<t_cell> snakeCells;
 	std::list<t_cell>::iterator itSnakeCell;
@@ -196,27 +236,27 @@ void				GUISDL::drawSnakes (void)
 	}
 }
 
-void				GUISDL::drawMenu (void)
+void					GUISDL::drawEndMenu (void)
 {
 	if (SDL_SetRenderDrawColor (this->_boardRenderer, 255, 255, 255, 255))
 	{
-		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawBoard");
+		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawEndMenu");
 	}
 	if (SDL_RenderClear (this->_boardRenderer))		/* use the RenderDrawColor to clear the Renderer */
 	{
-		throw GUIException (this->_GUIName, "SDL_RenderClear GUISDL::drawBoard");
+		throw GUIException (this->_GUIName, "SDL_RenderClear GUISDL::drawEndMenu");
 	}
 }
 
 /*
  * Public
  */
-eGUI				GUISDL::getGUIName (void) const
+eGUI					GUISDL::getGUIName (void) const
 {
 	return this->_GUIName;
 }
 
-void				GUISDL::start (void)
+void					GUISDL::start (void)
 {
 	_mapWidth = this->_board->getWidth() * 10;
 	_mapHeight = this->_board->getHeight() * 10;
@@ -237,15 +277,22 @@ void				GUISDL::start (void)
 		throw GUIException (this->_GUIName, "SDL_CreateRenderer");
 	}
 
+	this->ajustBounds ();
+
 	this->_started = true;
 }
 
-bool				GUISDL::alreadyStarted (void) const
+bool					GUISDL::alreadyStarted (void) const
 {
 	return this->_started;
 }
 
-void				GUISDL::stop()
+eGUI					GUISDL::wantedGUI (void) const
+{
+	return this->_wantedGUI;
+}
+
+void					GUISDL::stop()
 {
 #ifdef PROJ_DEBUG
 	std::cout << "GUISDL::stop" << std::endl;
@@ -261,7 +308,16 @@ void				GUISDL::stop()
 	this->_started = false;
 }
 
-eGUIEvent			GUISDL::getEvent (void)
+/* Main Menu */
+
+void					GUISDL::loadMainMenu (void)
+{
+	this->drawMainMenu();
+
+	SDL_RenderPresent (this->_boardRenderer);
+}
+
+eGUIMainMenuEvent		GUISDL::getMainMenuEvent (void)
 {
 	SDL_Event events;
 	int x, y;
@@ -269,73 +325,58 @@ eGUIEvent			GUISDL::getEvent (void)
 	while (SDL_PollEvent (&events))
 	{
 		if (events.type == SDL_QUIT)
-				return eGUIEvent::quitGame;
+				return eGUIMainMenuEvent::quitGame;
 		else if (events.type == SDL_KEYDOWN)
 		{
 			switch (events.key.keysym.sym)
 			{
-				case SDLK_e:
-					this->_snakeP1->eat (1);
-					break;
-
-				/* Player 1 commands */
-				case SDLK_LEFT:
-					return eGUIEvent::p1GoLeft;
-
-				case SDLK_RIGHT:
-					return eGUIEvent::p1GoRight;
-
-				case SDLK_UP:
-					return eGUIEvent::p1GoUp;
-
-				case SDLK_DOWN:
-					return eGUIEvent::p1GoDown;
-
-				/* Player 2 commands */
-				case SDLK_q:
-					if (this->_snakeP2)
-						return eGUIEvent::p2GoLeft;
-					return eGUIEvent::nothingTODO;
-
-				case SDLK_d:
-					if (this->_snakeP2)
-						return eGUIEvent::p2GoRight;
-					return eGUIEvent::nothingTODO;
-
-				case SDLK_z:
-					if (this->_snakeP2)
-						return eGUIEvent::p2GoUp;
-					return eGUIEvent::nothingTODO;
-
-				case SDLK_s:
-					if (this->_snakeP2)
-						return eGUIEvent::p2GoDown;
-					return eGUIEvent::nothingTODO;
-
 				/* GUI Switchs */
 				case SDLK_KP_2:
 				case SDLK_2:
 					this-> _wantedGUI = eGUI::MinilibX;
-					return eGUIEvent::changeGUI;
+					return eGUIMainMenuEvent::changeGUI;
 
 				case SDLK_KP_3:
 				case SDLK_3:
 					this-> _wantedGUI = eGUI::openGL;
-					return eGUIEvent::changeGUI;
+					return eGUIMainMenuEvent::changeGUI;
 
 				case SDLK_ESCAPE:
-					return eGUIEvent::quitGame;
+					return eGUIMainMenuEvent::quitGame;
 
 				default:
-					return eGUIEvent::nothingTODO;
+					return eGUIMainMenuEvent::nothingTODO;
 			}
+		}
+		else if (events.type == SDL_MOUSEBUTTONUP && SDL_BUTTON (SDL_BUTTON_LEFT))
+		{
+			SDL_GetMouseState (&x, &y);
+			if (this->_mainMenuSinglePlayer.in (x, y))
+				return eGUIMainMenuEvent::startSinglePlayerGame;
+			else if (this->_mainMenuMultiplayer.in (x, y))
+				return eGUIMainMenuEvent::startMultiPlayerGame;
+			else if (this->_mainMenuQuitGame.in (x, y))
+				return eGUIMainMenuEvent::quitGame;
 		}
 	}
 
-	return eGUIEvent::nothingTODO;
+	return eGUIMainMenuEvent::nothingTODO;
 }
 
-void				GUISDL::updateGUI (void)
+/* Game */
+
+void					GUISDL::setPlayers (Snake *snakeP1, Snake *snakeP2)
+{
+	if (! snakeP1)
+	{
+		throw InvalidArgumentException ("GUISDL::setPlayers: snakeP1 == null");
+	}
+
+	this->_snakeP1 = snakeP1;
+	this->_snakeP2 = snakeP2;
+}
+
+void					GUISDL::updateGameGUI (void)
 {
 	unsigned int currentGlobalScore;
 
@@ -359,34 +400,107 @@ void				GUISDL::updateGUI (void)
 	SDL_Delay (100 - currentGlobalScore);
 }
 
-eGUI				GUISDL::wantedGUI (void) const
+eGUIGameEvent			GUISDL::getGameEvent (void)
 {
-	return this->_wantedGUI;
+	SDL_Event events;
+
+	while (SDL_PollEvent (&events))
+	{
+		if (events.type == SDL_QUIT)
+				return eGUIGameEvent::quitGame;
+		else if (events.type == SDL_KEYDOWN)
+		{
+			switch (events.key.keysym.sym)
+			{
+				case SDLK_e:
+					this->_snakeP1->eat (1);
+					break;
+
+				/* Player 1 commands */
+				case SDLK_LEFT:
+					return eGUIGameEvent::p1GoLeft;
+
+				case SDLK_RIGHT:
+					return eGUIGameEvent::p1GoRight;
+
+				case SDLK_UP:
+					return eGUIGameEvent::p1GoUp;
+
+				case SDLK_DOWN:
+					return eGUIGameEvent::p1GoDown;
+
+				/* Player 2 commands */
+				case SDLK_q:
+					if (this->_snakeP2)
+						return eGUIGameEvent::p2GoLeft;
+					return eGUIGameEvent::nothingTODO;
+
+				case SDLK_d:
+					if (this->_snakeP2)
+						return eGUIGameEvent::p2GoRight;
+					return eGUIGameEvent::nothingTODO;
+
+				case SDLK_z:
+					if (this->_snakeP2)
+						return eGUIGameEvent::p2GoUp;
+					return eGUIGameEvent::nothingTODO;
+
+				case SDLK_s:
+					if (this->_snakeP2)
+						return eGUIGameEvent::p2GoDown;
+					return eGUIGameEvent::nothingTODO;
+
+				/* GUI Switchs */
+				case SDLK_KP_2:
+				case SDLK_2:
+					this-> _wantedGUI = eGUI::MinilibX;
+					return eGUIGameEvent::changeGUI;
+
+				case SDLK_KP_3:
+				case SDLK_3:
+					this-> _wantedGUI = eGUI::openGL;
+					return eGUIGameEvent::changeGUI;
+
+				case SDLK_ESCAPE:
+					return eGUIGameEvent::quitGame;
+
+				default:
+					return eGUIGameEvent::nothingTODO;
+			}
+		}
+	}
+
+	return eGUIGameEvent::nothingTODO;
 }
 
-void				GUISDL::loadMenu (void)
+/* End Menu */
+
+void					GUISDL::loadEndMenu (void)
 {
-	this->drawMenu();
+	this->drawEndMenu();
 
 	SDL_RenderPresent (this->_boardRenderer);
 }
 
-eGUIMenuEvent		GUISDL::getMenuEvent (void)
+eGUIEndMenuEvent		GUISDL::getEndMenuEvent (void)
 {
-	return eGUIMenuEvent::nextLevel;
+	return eGUIEndMenuEvent::nextLevel;
 }
 
 /*
  * Extern
  */
-GUISDL			*createGUI (Board *board, Snake *snakeP1, Snake *snakeP2)
+GUISDL					*createGUI (Board *board)
 {
-	if (! snakeP2)
-		return new GUISDL (board, snakeP1);
-	return new GUISDL (board, snakeP1, snakeP2);
+	return new GUISDL (board);
 }
 
-void			destroyGUI (GUISDL *GUI)
+void					setPlayers (GUISDL *GUI, Snake *snakeP1, Snake *snakeP2)
+{
+	GUI->setPlayers (snakeP1, snakeP2);
+}
+
+void					destroyGUI (GUISDL *GUI)
 {
 	delete GUI;
 }

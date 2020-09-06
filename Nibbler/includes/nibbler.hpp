@@ -33,13 +33,15 @@ typedef struct nibblerParametersStruct
 typedef struct guiFuncStruct
 {
 	void *libHandle;
-	IGUI *(*createGUI)(Board *, Snake *, Snake *);
+	IGUI *(*createGUI)(Board *);
+	void (*setPlayers)(IGUI *, Snake *, Snake *);
 	void (*destroyGUI)(IGUI *);
 
 	guiFuncStruct (void)
 	{
 		this->libHandle = NULL;
 		this->createGUI = NULL;
+		this->setPlayers = NULL;
 		this->destroyGUI = NULL;
 	}
 
@@ -52,6 +54,7 @@ typedef struct guiFuncStruct
 	{
 		this->libHandle = src.libHandle;
 		this->createGUI = src.createGUI;
+		this->setPlayers = src.setPlayers;
 		this->destroyGUI = src.destroyGUI;
 
 		return *this;

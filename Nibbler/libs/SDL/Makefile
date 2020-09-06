@@ -24,7 +24,7 @@ DEFINE = -D PROJ_DEBUG
 
 INC = -I ./inc -I ../../includes
 
-LINK = -lSDL2main -lSDL2
+LINK = -lSDL2main -lSDL2 -lSDL2_image
 
 SRC = GUISDL.class.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
 	  exceptions/GUIException.class.cpp \

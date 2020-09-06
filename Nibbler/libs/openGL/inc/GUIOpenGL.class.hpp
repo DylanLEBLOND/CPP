@@ -43,41 +43,52 @@ private:
 
 	/* GUI */
 	bool				_started;
+	bounds				_mainMenuSinglePlayer;
+	bounds				_mainMenuMultiplayer;
+	bounds				_mainMenuQuitGame;
 
 	GUIOpenGL (void);
 	GUIOpenGL (GUIOpenGL const &src);
 
-	GUIOpenGL			&operator=(GUIOpenGL const &src);
+	GUIOpenGL				&operator=(GUIOpenGL const &src);
 
-	void				drawBoard (void);
-	void				drawSnakes (void);
+	void					ajustBounds (void);
 
-	void				drawMenu (void);
+	void					drawMainMenu (void);
 
-	void				resizeWindows (int width, int height);
+	void					drawBoard (void);
+	void					drawSnakes (void);
+
+	void					drawEndMenu (void);
+
+	void					resizeWindows (int width, int height);
 
 public:
 
-	GUIOpenGL (Board *board, Snake *snake);
-	GUIOpenGL (Board *board, Snake *snakeP1, Snake *snakeP2);
+	GUIOpenGL (Board *board);
 	~GUIOpenGL (void);
 
-	eGUI				getGUIName (void) const;
+	eGUI					getGUIName (void) const;
 
-	void				start (void);
-	bool				alreadyStarted (void) const;
-	void				stop (void);
-	eGUIEvent			getEvent (void);
-	void				updateGUI (void);
-	eGUI				wantedGUI (void) const;
-
-	void				loadMenu (void);
-	eGUIMenuEvent		getMenuEvent (void);
+	void					start (void);
+	bool					alreadyStarted (void) const;
+	eGUI					wantedGUI (void) const;
+	void					stop (void);
+	/* Main Menu */
+	void					loadMainMenu (void);
+	eGUIMainMenuEvent		getMainMenuEvent (void);
+	/* Game */
+	void					setPlayers (Snake *snakeP1, Snake *snakeP2);
+	void					updateGameGUI (void);
+	eGUIGameEvent			getGameEvent (void);
+	/* End Menu */
+	void					loadEndMenu (void);
+	eGUIEndMenuEvent		getEndMenuEvent (void);
 };
 
 extern "C" {
 
-	GUIOpenGL			*createGUI (Board *board, Snake *snakeP1, Snake *snakeP2);
+	GUIOpenGL			*createGUI (Board *board);
 	void				destroyGUI (GUIOpenGL* GUI);
 }
 

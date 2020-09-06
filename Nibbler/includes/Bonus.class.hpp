@@ -49,6 +49,7 @@ private:
 	unsigned int		_y;
 	eBonusValue			_value;
 	unsigned int		_timeLeft;
+	bool				_isActif;
 
 public:
 
@@ -62,6 +63,7 @@ public:
 	unsigned int		getY (void) const;
 	eBonusValue			getValue (void) const;
 	unsigned int		getTimeLeft (void) const;
+	bool				isActif (void) const;
 
 	void				generate (unsigned int x, unsigned int y);
 	void				update (void);
