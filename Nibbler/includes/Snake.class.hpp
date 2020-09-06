@@ -64,7 +64,7 @@ public:
 
 	Snake					&operator= (Snake const &src);
 
-	bool					getIsAlive (void) const;
+	bool					isAlive (void) const;
 	std::list<t_cell>		getSnakeCells (void) const;
 	eSnakeDirection			getCurrentDirection (void) const;
 	bool					getCanPassThroughWall (void) const;

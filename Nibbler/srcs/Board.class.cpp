@@ -4,7 +4,7 @@
  * Constructors
  */
 Board::Board (void)
-	: _width (0u), _height (0u), _boardCells (NULL), _initialized (false),
+	: _width (0u), _height (0u), _boardCells (NULL), _boardCompletedScore (0u), _initialized (false),
 	  _multiPlayer (false), _friendlyFire (true),
 	  _snakeP1 (NULL), _snakeP2 (NULL), _playersInitialized (false) {}
 
@@ -82,6 +82,8 @@ void								Board::loadMapSquare (void)
 			_boardEmptyCells.push_back (emptyCell);
 		}
 	}
+
+	this->_boardCompletedScore = 20;
 }
 
 void								Board::loadMapOpen (void)
@@ -100,6 +102,8 @@ void								Board::loadMapOpen (void)
 			_boardEmptyCells.push_back (emptyCell);
 		}
 	}
+
+	this->_boardCompletedScore = 20;
 }
 
 void								Board::updateBonus (void)
@@ -367,13 +371,38 @@ bool								Board::snakesAreAlive (void)
 		throw InvalidArgumentException ("Board::snakesAreAlive: Players not initialized");
 	}
 
-	if (! this->_snakeP1->getIsAlive())
+	if (! this->_snakeP1->isAlive())
 		return false;
 
-	if (this->_multiPlayer && ! this->_snakeP2->getIsAlive())
+	if (this->_multiPlayer && ! this->_snakeP2->isAlive())
 		return false;
 
 	return true;
+}
+
+bool								Board::boardIsCompleted (void)
+{
+	if (! this->_playersInitialized)
+	{
+		throw InvalidArgumentException ("Board::boardCompleted: Players not initialized");
+	}
+
+	if (this->_snakeP1->getScore() >= this->_boardCompletedScore)
+	{
+		if (this->_multiPlayer && this->_snakeP2->getScore() < this->_boardCompletedScore)
+			this->_snakeP2->dead();
+
+		return true;
+	}
+
+	if (this->_multiPlayer && this->_snakeP2->getScore() >= this->_boardCompletedScore)
+	{
+		this->_snakeP1->dead();
+
+		return true;
+	}
+
+	return false;
 }
 
 void								Board::clearBoard (void)

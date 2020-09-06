@@ -143,7 +143,13 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 
 		if (! board->snakesAreAlive())
 		{
-			std::cout << "startGame END (Finish)" << std::endl;
+			std::cout << "startGame END (Finish Dead Snake)" << std::endl;
+			return eGameStatus::finish;
+		}
+
+		if (board->boardIsCompleted())
+		{
+			std::cout << "startGame END (Finish Completed Board)" << std::endl;
 			return eGameStatus::finish;
 		}
 	}
@@ -391,52 +397,13 @@ int main (int ac, char **av)
 					exit (0);
 				}
 
-				if (strcmp ("multiplayer:on", av[3]) && strcmp ("multiplayer:off", av[3]))
+				if (strcmp ("friendlyfire:on", av[3]) && strcmp ("friendlyfire:off", av[3]))
 				{
-					std::cerr << "Invalid multiplayer parameters. multiplayer:on || multiplayer:off (" << av[3] << ")." << std::endl;
+					std::cerr << "Invalid friendlyFire parameters. friendlyFire:on || friendlyFire:off (" << av[3] << ")." << std::endl;
 					exit (0);
 				}
 
-				nibblerParams.multiplayer = ! strcmp ("multiplayer:on", av[3]) ? true : false;
-
-				startNibbler (&nibblerParams);
-			}
-			catch (std::exception &e)
-			{
-				std::cerr << "Error : " << e.what() << std::endl;
-			}
-			break;
-		case 5:
-			try
-			{
-				nibblerParams.width = std::stoi (av[1]);
-				if (nibblerParams.width < 30 || 100 < nibblerParams.width)
-				{
-					std::cerr << "Invalid boardWdith. boardWdith < 30 || boardWdith > 100 (" << nibblerParams.width << ")." << std::endl;
-					exit (0);
-				}
-
-				nibblerParams.height = std::stoi (av[2]);
-				if (nibblerParams.height < 30 || 100 < nibblerParams.height)
-				{
-					std::cerr << "Invalid boardWdith. boardWdith < 30 || boardWdith > 100 (" << nibblerParams.height << ")." << std::endl;
-					exit (0);
-				}
-
-				if (strcmp ("multiplayer:on", av[3]) && strcmp ("multiplayer:off", av[3]))
-				{
-					std::cerr << "Invalid multiplayer parameters. multiplayer:on || multiplayer:off (" << av[3] << ")." << std::endl;
-					exit (0);
-				}
-
-				if (strcmp ("friendlyfire:on", av[4]) && strcmp ("friendlyfire:off", av[4]))
-				{
-					std::cerr << "Invalid friendlyFire parameters. friendlyFire:on || friendlyFire:off (" << av[4] << ")." << std::endl;
-					exit (0);
-				}
-
-				nibblerParams.multiplayer = ! strcmp ("multiplayer:on", av[3]) ? true : false;
-				nibblerParams.friendlyFire = ! strcmp ("friendlyfire:on", av[4]) ? true : false;
+				nibblerParams.friendlyFire = ! strcmp ("friendlyfire:on", av[3]) ? true : false;
 
 				startNibbler (&nibblerParams);
 			}

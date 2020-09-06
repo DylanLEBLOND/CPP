@@ -41,6 +41,7 @@ private:
 	unsigned int						_height;
 	std::vector< std::vector<int> >*	_boardCells;
 	std::vector<t_cell>					_boardEmptyCells;
+	unsigned int						_boardCompletedScore;
 	bool								_initialized;
 
 	bool								_multiPlayer;
@@ -77,6 +78,7 @@ public:
 	void								loadMap (eBoardMaps map);
 	void								runTurn (void);
 	bool								snakesAreAlive (void);
+	bool								boardIsCompleted (void);
 	void								clearBoard (void);
 };
 

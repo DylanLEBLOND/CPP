@@ -9,6 +9,7 @@ static unsigned int _mapHeight;
 GUISDL::GUISDL (Board *board)
 	: _board (board), _snakeP1 (NULL), _snakeP2 (NULL), _wantedGUI (eGUI::SDL),
 	  _window (NULL), _boardRenderer (NULL), _mainMenuImage (NULL), _mainMenuTexture (NULL),
+	  _endMenuImage (NULL), _endMenuTexture (NULL),
 	  _started (false)
 {
 	if (! board)
@@ -26,20 +27,20 @@ GUISDL::GUISDL (Board *board)
 		throw GUIException (this->_GUIName, "IMG_Init");
 	}
 
-	this->_mainMenuSinglePlayer.x = 50;
-	this->_mainMenuSinglePlayer.y = 600;
-	this->_mainMenuSinglePlayer.width = 400;
-	this->_mainMenuSinglePlayer.height = 100;
+	this->_menuLeftButton.x = 50;
+	this->_menuLeftButton.y = 600;
+	this->_menuLeftButton.width = 400;
+	this->_menuLeftButton.height = 100;
 
-	this->_mainMenuMultiplayer.x = 550;
-	this->_mainMenuMultiplayer.y = 600;
-	this->_mainMenuMultiplayer.width = 400;
-	this->_mainMenuMultiplayer.height = 100;
+	this->_menuRightButton.x = 550;
+	this->_menuRightButton.y = 600;
+	this->_menuRightButton.width = 400;
+	this->_menuRightButton.height = 100;
 
-	this->_mainMenuQuitGame.x = 300;
-	this->_mainMenuQuitGame.y = 750;
-	this->_mainMenuQuitGame.width = 400;
-	this->_mainMenuQuitGame.height = 100;
+	this->_menuQuitButton.x = 300;
+	this->_menuQuitButton.y = 750;
+	this->_menuQuitButton.width = 400;
+	this->_menuQuitButton.height = 100;
 }
 
 /*
@@ -47,6 +48,12 @@ GUISDL::GUISDL (Board *board)
  */
 GUISDL::~GUISDL (void)
 {
+	if (this->_endMenuTexture != NULL)
+		SDL_DestroyTexture (this->_endMenuTexture);
+
+	if (this->_endMenuImage != NULL)
+		SDL_FreeSurface (this->_endMenuImage);
+
 	if (this->_mainMenuTexture != NULL)
 		SDL_DestroyTexture (this->_mainMenuTexture);
 
@@ -69,34 +76,40 @@ GUISDL::~GUISDL (void)
  */
 void					GUISDL::ajustBounds (void)
 {
-	this->_mainMenuSinglePlayer.x = this->_mainMenuSinglePlayer.x * _mapWidth / 1000;
-	this->_mainMenuSinglePlayer.y = this->_mainMenuSinglePlayer.y * _mapHeight / 1000;
-	this->_mainMenuSinglePlayer.width = this->_mainMenuSinglePlayer.width * _mapWidth / 1000;
-	this->_mainMenuSinglePlayer.height = this->_mainMenuSinglePlayer.height * _mapHeight / 1000;
+	this->_menuLeftButton.x = this->_menuLeftButton.x * _mapWidth / 1000;
+	this->_menuLeftButton.y = this->_menuLeftButton.y * _mapHeight / 1000;
+	this->_menuLeftButton.width = this->_menuLeftButton.width * _mapWidth / 1000;
+	this->_menuLeftButton.height = this->_menuLeftButton.height * _mapHeight / 1000;
 
-	this->_mainMenuMultiplayer.x = this->_mainMenuMultiplayer.x * _mapWidth / 1000;
-	this->_mainMenuMultiplayer.y = this->_mainMenuMultiplayer.y * _mapHeight / 1000;
-	this->_mainMenuMultiplayer.width = this->_mainMenuMultiplayer.width * _mapWidth / 1000;
-	this->_mainMenuMultiplayer.height = this->_mainMenuMultiplayer.height * _mapHeight / 1000;
+	this->_menuRightButton.x = this->_menuRightButton.x * _mapWidth / 1000;
+	this->_menuRightButton.y = this->_menuRightButton.y * _mapHeight / 1000;
+	this->_menuRightButton.width = this->_menuRightButton.width * _mapWidth / 1000;
+	this->_menuRightButton.height = this->_menuRightButton.height * _mapHeight / 1000;
 
-	this->_mainMenuQuitGame.x = this->_mainMenuQuitGame.x * _mapWidth / 1000;
-	this->_mainMenuQuitGame.y = this->_mainMenuQuitGame.y * _mapHeight / 1000;
-	this->_mainMenuQuitGame.width = this->_mainMenuQuitGame.width * _mapWidth / 1000;
-	this->_mainMenuQuitGame.height = this->_mainMenuQuitGame.height * _mapHeight / 1000;
+	this->_menuQuitButton.x = this->_menuQuitButton.x * _mapWidth / 1000;
+	this->_menuQuitButton.y = this->_menuQuitButton.y * _mapHeight / 1000;
+	this->_menuQuitButton.width = this->_menuQuitButton.width * _mapWidth / 1000;
+	this->_menuQuitButton.height = this->_menuQuitButton.height * _mapHeight / 1000;
 }
 
 void					GUISDL::drawMainMenu (void)
 {
-	this->_mainMenuImage = IMG_Load ("res/images/main_menu.png");
 	if (this->_mainMenuImage == NULL)
 	{
-		throw GUIException (this->_GUIName, "IMG_Load GUISDL::drawMainMenu");
+		this->_mainMenuImage = IMG_Load ("res/images/main_menu.png");
+		if (this->_mainMenuImage == NULL)
+		{
+			throw GUIException (this->_GUIName, "IMG_Load GUISDL::drawMainMenu");
+		}
 	}
 
-	this->_mainMenuTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_mainMenuImage);
 	if (this->_mainMenuTexture == NULL)
 	{
-		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface GUISDL::drawMainMenu");
+		this->_mainMenuTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_mainMenuImage);
+		if (this->_mainMenuTexture == NULL)
+		{
+			throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface GUISDL::drawMainMenu");
+		}
 	}
 
 	if (SDL_RenderCopy (this->_boardRenderer, this->_mainMenuTexture, NULL, NULL))
@@ -238,13 +251,51 @@ void					GUISDL::drawSnakes (void)
 
 void					GUISDL::drawEndMenu (void)
 {
-	if (SDL_SetRenderDrawColor (this->_boardRenderer, 255, 255, 255, 255))
+	if (this->_endMenuImage != NULL)
+		SDL_FreeSurface (this->_endMenuImage);
+
+	if (this->_snakeP1->isAlive())
 	{
-		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawEndMenu");
+		if (this->_snakeP2)
+		{
+			if (this->_snakeP2->isAlive())
+				this->_endMenuImage = IMG_Load ("res/images/multiplayer_draw.png");
+			else
+				this->_endMenuImage = IMG_Load ("res/images/multiplayer_player1_win.png");
+		}
+		else
+			this->_endMenuImage = IMG_Load ("res/images/singleplayer_win.png");
 	}
-	if (SDL_RenderClear (this->_boardRenderer))		/* use the RenderDrawColor to clear the Renderer */
+	else
 	{
-		throw GUIException (this->_GUIName, "SDL_RenderClear GUISDL::drawEndMenu");
+		if (this->_snakeP2)
+		{
+			if (this->_snakeP2->isAlive())
+				this->_endMenuImage = IMG_Load ("res/images/multiplayer_player2_win.png");
+			else
+				this->_endMenuImage = IMG_Load ("res/images/multiplayer_draw.png");
+		}
+		else
+			this->_endMenuImage = IMG_Load ("res/images/singleplayer_lose.png");
+	}
+
+	if (this->_endMenuImage == NULL)
+	{
+		throw GUIException (this->_GUIName, "IMG_Load GUISDL::drawEndMenu");
+	}
+
+	if (this->_endMenuTexture != NULL)
+		SDL_DestroyTexture (this->_endMenuTexture);
+
+	this->_endMenuTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_endMenuImage);
+	if (this->_endMenuTexture == NULL)
+	{
+		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface GUISDL::drawEndMenu");
+	}
+
+	if (SDL_RenderCopy (this->_boardRenderer, this->_endMenuTexture, NULL, NULL))
+	{
+		throw GUIException (this->_GUIName, "SDL_RenderCopy GUISDL::drawEndMenu");
 	}
 }
 
@@ -351,11 +402,11 @@ eGUIMainMenuEvent		GUISDL::getMainMenuEvent (void)
 		else if (events.type == SDL_MOUSEBUTTONUP && SDL_BUTTON (SDL_BUTTON_LEFT))
 		{
 			SDL_GetMouseState (&x, &y);
-			if (this->_mainMenuSinglePlayer.in (x, y))
+			if (this->_menuLeftButton.in (x, y))
 				return eGUIMainMenuEvent::startSinglePlayerGame;
-			else if (this->_mainMenuMultiplayer.in (x, y))
+			else if (this->_menuRightButton.in (x, y))
 				return eGUIMainMenuEvent::startMultiPlayerGame;
-			else if (this->_mainMenuQuitGame.in (x, y))
+			else if (this->_menuQuitButton.in (x, y))
 				return eGUIMainMenuEvent::quitGame;
 		}
 	}
@@ -484,7 +535,48 @@ void					GUISDL::loadEndMenu (void)
 
 eGUIEndMenuEvent		GUISDL::getEndMenuEvent (void)
 {
-	return eGUIEndMenuEvent::nextLevel;
+	SDL_Event events;
+	int x, y;
+
+	while (SDL_PollEvent (&events))
+	{
+		if (events.type == SDL_QUIT)
+				return eGUIEndMenuEvent::quitGame;
+		else if (events.type == SDL_KEYDOWN)
+		{
+			switch (events.key.keysym.sym)
+			{
+				/* GUI Switchs */
+				case SDLK_KP_2:
+				case SDLK_2:
+					this-> _wantedGUI = eGUI::MinilibX;
+					return eGUIEndMenuEvent::changeGUI;
+
+				case SDLK_KP_3:
+				case SDLK_3:
+					this-> _wantedGUI = eGUI::openGL;
+					return eGUIEndMenuEvent::changeGUI;
+
+				case SDLK_ESCAPE:
+					return eGUIEndMenuEvent::quitGame;
+
+				default:
+					return eGUIEndMenuEvent::nothingTODO;
+			}
+		}
+		else if (events.type == SDL_MOUSEBUTTONUP && SDL_BUTTON (SDL_BUTTON_LEFT))
+		{
+			SDL_GetMouseState (&x, &y);
+			if (this->_menuLeftButton.in (x, y))
+				return eGUIEndMenuEvent::restartLevel;
+			else if (this->_menuRightButton.in (x, y))
+				return eGUIEndMenuEvent::nextLevel;
+			else if (this->_menuQuitButton.in (x, y))
+				return eGUIEndMenuEvent::quitGame;
+		}
+	}
+
+	return eGUIEndMenuEvent::nothingTODO;
 }
 
 /*

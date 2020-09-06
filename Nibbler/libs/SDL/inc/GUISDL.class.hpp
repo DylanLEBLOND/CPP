@@ -42,12 +42,14 @@ private:
 	SDL_Renderer*		_boardRenderer;
 	SDL_Surface*		_mainMenuImage;
 	SDL_Texture*		_mainMenuTexture;
+	SDL_Surface*		_endMenuImage;
+	SDL_Texture*		_endMenuTexture;
 
 	/* GUI */
 	bool				_started;
-	bounds				_mainMenuSinglePlayer;
-	bounds				_mainMenuMultiplayer;
-	bounds				_mainMenuQuitGame;
+	bounds				_menuLeftButton;
+	bounds				_menuRightButton;
+	bounds				_menuQuitButton;
 
 	GUISDL (void);
 	GUISDL (GUISDL const &src);

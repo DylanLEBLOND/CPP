@@ -27,7 +27,7 @@ Snake					&Snake::operator= (Snake const &src)
 	this->_mapWidth = src.getMapWidth();
 	this->_mapHeight = src.getMapHeight();
 	this->_eatCounter = 0;		/* always start with a eatCounter of 0 */
-	this->_isAlive = src.getIsAlive();
+	this->_isAlive = src.isAlive();
 
 	return *this;
 }
@@ -35,7 +35,7 @@ Snake					&Snake::operator= (Snake const &src)
 /*
  * Getter
  */
-bool					Snake::getIsAlive (void) const
+bool					Snake::isAlive (void) const
 {
 	return this->_isAlive;
 }
