@@ -31,7 +31,7 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 				return true;
 
 			case eGUIMainMenuEvent::changeGUI:
-				std::cout << "==> Switch GUI <==";
+				std::cout << "==> Switch GUI <==" << std::endl;
 				wantedGUI = GUI->wantedGUI();
 
 				GUI->stop();
@@ -116,7 +116,7 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 					throw UnknownEventException (currentGUI, currentEvent);
 				break;
 			case eGUIGameEvent::changeGUI:
-				std::cout << "==> Switch GUI <==";
+				std::cout << "==> Switch GUI <==" << std::endl;
 				wantedGUI = GUI->wantedGUI();
 
 				GUI->stop();
@@ -177,7 +177,7 @@ static eGameStatus		endGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 		switch (currentEvent)
 		{
 			case eGUIEndMenuEvent::changeGUI:
-				std::cout << "==> Switch GUI <==";
+				std::cout << "==> Switch GUI <=="  << std::endl;
 				wantedGUI = GUI->wantedGUI();
 
 				GUI->stop();

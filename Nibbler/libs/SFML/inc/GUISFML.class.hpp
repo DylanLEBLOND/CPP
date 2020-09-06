@@ -1,7 +1,7 @@
 // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
-//   GUISDL.class.hpp                                   :+:      :+:    :+:   //
+//   GUISFML.class.hpp                                   :+:      :+:    :+:   //
 //                                                    +:+ +:+         +:+     //
 //   By: dle-blon <marvin@42.fr>                    +#+  +:+       +#+        //
 //                                                +#+#+#+#+#+   +#+           //
@@ -10,14 +10,13 @@
 //                                                                            //
 // ************************************************************************** //
 
-#ifndef GUISDL_CLASS_HPP
-# define GUISDL_CLASS_HPP
+#ifndef GUISFML_CLASS_HPP
+# define GUISFML_CLASS_HPP
 
 /*
  * Personals Includes
  */
-# include <SDL2/SDL.h>
-# include <SDL2/SDL_image.h>
+# include <SFML/Graphics.hpp>
 # include <common.hpp>
 
 /*
@@ -25,11 +24,11 @@
  */
 
 
-class GUISDL : public IGUI
+class GUISFML : public IGUI
 {
 private:
 
-	eGUI const			_GUIName = eGUI::SDL;
+	eGUI const			_GUIName = eGUI::SFML;
 
 	/* common */
 	Board*				_board;
@@ -37,13 +36,13 @@ private:
 	Snake*				_snakeP2;
 	eGUI				_wantedGUI;
 
-	/* SDL */
-	SDL_Window*			_window;
-	SDL_Renderer*		_boardRenderer;
-	SDL_Surface*		_mainMenuImage;
-	SDL_Texture*		_mainMenuTexture;
-	SDL_Surface*		_endMenuImage;
-	SDL_Texture*		_endMenuTexture;
+	/* SFML */
+	sf::RenderWindow*	_window;
+//	SFML_Renderer*		_boardRenderer;
+//	SFML_Surface*		_mainMenuImage;
+//	SFML_Texture*		_mainMenuTexture;
+//	SFML_Surface*		_endMenuImage;
+//	SFML_Texture*		_endMenuTexture;
 
 	/* GUI */
 	bool				_started;
@@ -51,10 +50,10 @@ private:
 	bounds				_menuRightButton;
 	bounds				_menuQuitButton;
 
-	GUISDL (void);
-	GUISDL (GUISDL const &src);
+	GUISFML (void);
+	GUISFML (GUISFML const &src);
 
-	GUISDL					&operator=(GUISDL const &src);
+	GUISFML					&operator=(GUISFML const &src);
 
 	void					ajustBounds (void);
 
@@ -67,8 +66,8 @@ private:
 
 public:
 
-	GUISDL (Board *board);
-	~GUISDL (void);
+	GUISFML (Board *board);
+	~GUISFML (void);
 
 	eGUI					getGUIName (void) const;
 
@@ -90,9 +89,9 @@ public:
 
 extern "C" {
 
-	GUISDL					*createGUI (Board *board);
-	void					setPlayers (GUISDL *GUI, Snake *snakeP1, Snake *snakeP2);
-	void					destroyGUI (GUISDL* GUI);
+	GUISFML					*createGUI (Board *board);
+	void					setPlayers (GUISFML *GUI, Snake *snakeP1, Snake *snakeP2);
+	void					destroyGUI (GUISFML* GUI);
 }
 
-#endif /* GUISDL_CLASS_HPP */
+#endif /* GUISFML_CLASS_HPP */

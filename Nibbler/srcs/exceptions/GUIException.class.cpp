@@ -11,8 +11,8 @@ GUIException::GUIException (eGUI affectedGUI, std::string const &GUIFunc)
 		case eGUI::SDL:
 			this->_message += "SDL";
 			break;
-		case eGUI::MinilibX:
-			this->_message += "MinilibX";
+		case eGUI::SFML:
+			this->_message += "SFML";
 			break;
 		case eGUI::openGL:
 			this->_message += "openGLL";
@@ -34,8 +34,8 @@ GUIException::GUIException (eGUI affectedGUI, const char *GUIFunc)
 		case eGUI::SDL:
 			this->_message += "SDL";
 			break;
-		case eGUI::MinilibX:
-			this->_message += "MinilibX";
+		case eGUI::SFML:
+			this->_message += "SFML";
 			break;
 		case eGUI::openGL:
 			this->_message += "openGLL";

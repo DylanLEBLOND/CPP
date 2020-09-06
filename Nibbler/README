@@ -1,5 +1,5 @@
 make
-./nibbler boardWidth boardHeight [multiplayer:off/on] [friendlyfire:on/off]
+./nibbler boardWidth boardHeight [friendlyfire:on/off]
 
 with
 30 <= boardWidth <= 100

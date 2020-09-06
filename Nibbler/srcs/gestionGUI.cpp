@@ -57,6 +57,33 @@ static void		openOpenGL (guiFuncStruct *guiFunc)
 	}
 }
 
+static void		openSFML (guiFuncStruct *guiFunc)
+{
+	guiFunc->libHandle = dlopen ("./libguisfml.so", RTLD_LAZY);
+	if (guiFunc->libHandle == NULL)
+	{
+		throw DynamicLoadGUIException (eGUI::openGL, "dlopen", dlerror());
+	}
+
+	guiFunc->createGUI = (IGUI *(*)(Board *)) dlsym (guiFunc->libHandle, "createGUI");
+	if (guiFunc->createGUI == NULL)
+	{
+		throw DynamicLoadGUIException (eGUI::openGL, "dlsym createGUI", dlerror());
+	}
+
+	guiFunc->setPlayers = (void (*)(IGUI *, Snake *, Snake *)) dlsym (guiFunc->libHandle, "setPlayers");
+	if (guiFunc->setPlayers == NULL)
+	{
+		throw DynamicLoadGUIException (eGUI::openGL, "dlsym setPlayers", dlerror());
+	}
+
+	guiFunc->destroyGUI = (void (*)(IGUI *)) dlsym (guiFunc->libHandle, "destroyGUI");
+	if (guiFunc->destroyGUI == NULL)
+	{
+		throw DynamicLoadGUIException (eGUI::openGL, "dlsym destroyGUI", dlerror());
+	}
+}
+
 void			openGUILibrary (eGUI wantedGUI, guiFuncStruct *guiFunc)
 {
 	switch (wantedGUI)
@@ -69,9 +96,9 @@ void			openGUILibrary (eGUI wantedGUI, guiFuncStruct *guiFunc)
 			std::cout << "Open GUI: OpenGL" << std::endl;
 			openOpenGL (guiFunc);
 			break;
-		case eGUI::MinilibX:
-			std::cout << "Open GUI: MinilibX" << std::endl;
-//			openMinilibX (guiFunc);
+		case eGUI::SFML:
+			std::cout << "Open GUI: SFML" << std::endl;
+			openSFML (guiFunc);
 			break;
 		default:
 			throw ShouldNeverOccurException (__FILE__, __LINE__);
@@ -98,6 +125,14 @@ static void		closeOpenGL (guiFuncStruct *guiFunc)
 	}
 }
 
+static void		closeSFML (guiFuncStruct *guiFunc)
+{
+	if (dlclose (guiFunc->libHandle))
+	{
+		throw DynamicLoadGUIException (eGUI::SFML, "dlclose", dlerror());
+	}
+}
+
 void			closeGUILibrary (eGUI currentGUI, guiFuncStruct *guiFunc)
 {
 	switch (currentGUI)
@@ -110,9 +145,9 @@ void			closeGUILibrary (eGUI currentGUI, guiFuncStruct *guiFunc)
 			std::cout << "Close GUI: OpenGL" << std::endl;
 			closeOpenGL (guiFunc);
 			break;
-		case eGUI::MinilibX:
-			std::cout << "Close GUI: MinilibX" << std::endl;
-//			closeMinilibX (guiFunc);
+		case eGUI::SFML:
+			std::cout << "Close GUI: SFML" << std::endl;
+			closeSFML (guiFunc);
 			break;
 		default:
 			throw ShouldNeverOccurException (__FILE__, __LINE__);

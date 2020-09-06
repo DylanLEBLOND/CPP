@@ -26,6 +26,8 @@ INC = -I ./inc -I ../../includes
 
 LINK = -lSDL2main -lSDL2 -lSDL2_image
 
+LIB_REQUIREMENT = libsdl2-dev libsdl2-image-dev
+
 SRC = GUISDL.class.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
 	  exceptions/GUIException.class.cpp \
 	  exceptions/DynamicLoadGUIException.class.cpp \
@@ -50,7 +52,7 @@ BASIC =		\033[0m
 
 .PHONY: all clean fclean re
 
-all : info $(NAME)
+all : info packages $(NAME)
 
 info :
 	@if ! (test -e $(LIB));												\
@@ -64,12 +66,30 @@ info :
 		echo "$(WHITE) Links: $(BASIC) $(LINK)";						\
 	fi
 
+packages:
+	@for package in $(LIB_REQUIREMENT); do																\
+		if ! (dpkg --get-selections | grep -q "^$$package" >/dev/null);									\
+		then																							\
+			echo "$(BLUE) package $$package$(RED) missing$(BASIC) ... starting installation$(BASIC)";	\
+			if (sudo apt install $$package);															\
+			then																						\
+				echo "$(GREEN)Successfully installed $$package$(BASIC)";								\
+			else																						\
+				echo "$(RED)Error installing $$package... $(GREEN)Cannot continue exit$(BASIC)";		\
+				exit 1;																					\
+			fi																							\
+		fi																								\
+	done
+
 $(NAME) :
 	@if ! (test -e $(LIB));																			\
 	then																							\
-		mkdir ./lib;																				\
+		mkdir -p ./lib;																				\
 		$(CC) $(VERSION) $(FLAGS) $(DEFINE) $(INC) -o $(LIB) $(SRCS) $(LINK);						\
-		echo "$(BLUE) created $(WHITE)->$(RED) $@ $(GREEN) (emplacement: ./lib) $(BASIC)";			\
+		if (test -e $(LIB));																		\
+		then																						\
+			echo "$(BLUE) created $(WHITE)->$(RED) $@ $(GREEN) (emplacement: ./lib) $(BASIC)";		\
+		fi																							\
 	else																							\
 		echo "$(BLUE) already created $(WHITE)->$(RED) $@ $(GREEN) (emplacement: ./lib) $(BASIC)";	\
 	fi

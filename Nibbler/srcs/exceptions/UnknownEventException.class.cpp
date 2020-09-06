@@ -11,8 +11,8 @@ UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIMainMenuEvent
 		case eGUI::SDL:
 			this->_message += "SDL";
 			break;
-		case eGUI::MinilibX:
-			this->_message += "MinilibX";
+		case eGUI::SFML:
+			this->_message += "SFML";
 			break;
 		case eGUI::openGL:
 			this->_message += "openGLL";
@@ -51,8 +51,8 @@ UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIGameEvent rec
 		case eGUI::SDL:
 			this->_message += "SDL";
 			break;
-		case eGUI::MinilibX:
-			this->_message += "MinilibX";
+		case eGUI::SFML:
+			this->_message += "SFML";
 			break;
 		case eGUI::openGL:
 			this->_message += "openGLL";
@@ -112,8 +112,8 @@ UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIEndMenuEvent 
 		case eGUI::SDL:
 			this->_message += "SDL";
 			break;
-		case eGUI::MinilibX:
-			this->_message += "MinilibX";
+		case eGUI::SFML:
+			this->_message += "SFML";
 			break;
 		case eGUI::openGL:
 			this->_message += "openGLL";

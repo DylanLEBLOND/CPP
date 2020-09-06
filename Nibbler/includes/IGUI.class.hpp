@@ -16,7 +16,7 @@
 /*
  * Enumerations
  */
-enum class eGUI { openGL, SDL, MinilibX, unknownGUI };
+enum class eGUI { openGL, SDL, SFML, unknownGUI };
 
 enum class eGUIMainMenuEvent { startSinglePlayerGame, startMultiPlayerGame, changeGUI, quitGame, nothingTODO, unknownMainMenuEvent };
 

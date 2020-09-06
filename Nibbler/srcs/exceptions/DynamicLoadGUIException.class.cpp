@@ -11,8 +11,8 @@ DynamicLoadGUIException::DynamicLoadGUIException (eGUI affectedGUI, std::string 
 		case eGUI::SDL:
 			this->_message += "SDL";
 			break;
-		case eGUI::MinilibX:
-			this->_message += "MinilibX";
+		case eGUI::SFML:
+			this->_message += "SFML";
 			break;
 		case eGUI::openGL:
 			this->_message += "openGLL";
@@ -36,8 +36,8 @@ DynamicLoadGUIException::DynamicLoadGUIException (eGUI affectedGUI, const char *
 		case eGUI::SDL:
 			this->_message += "SDL";
 			break;
-		case eGUI::MinilibX:
-			this->_message += "MinilibX";
+		case eGUI::SFML:
+			this->_message += "SFML";
 			break;
 		case eGUI::openGL:
 			this->_message += "openGLL";

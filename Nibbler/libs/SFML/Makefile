@@ -10,9 +10,9 @@
 #                                                                              #
 #******************************************************************************#
 
-PROJECT_NAME = Shared Library \"GUI OpenGL\"
+PROJECT_NAME = Shared Library \"GUI SFML\"
 
-NAME = libguiopengl.so
+NAME = libguisfml.so
 
 CC = g++
 
@@ -20,13 +20,20 @@ VERSION = -std=c++11
 
 FLAGS = -shared -fPIC #-Wall -Wextra -Werror
 
-DEFINE = # -D PROJ_DEBUG
+DEFINE = -D PROJ_DEBUG
 
 INC = -I ./inc -I ../../includes
 
-LINK = -lglut -lGLU -lGL
+LINK = -lsfml-graphics -lsfml-window -lsfml-system
 
-SRC = GUIOpenGL.class.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp
+LIB_REQUIREMENT = libsfml-dev
+
+SRC = GUISFML.class.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
+	  exceptions/GUIException.class.cpp \
+	  exceptions/DynamicLoadGUIException.class.cpp \
+	  exceptions/UnknownEventException.class.cpp \
+	  exceptions/InvalidArgumentException.class.cpp \
+	  exceptions/ShouldNeverOccurException.class.cpp \
 
 SRC_DIR = ./src
 
@@ -45,7 +52,7 @@ BASIC =		\033[0m
 
 .PHONY: all clean fclean re
 
-all : info $(NAME)
+all : info packages $(NAME)
 
 info :
 	@if ! (test -e $(LIB));												\
@@ -59,17 +66,37 @@ info :
 		echo "$(WHITE) Links: $(BASIC) $(LINK)";						\
 	fi
 
+packages:
+	@for package in $(LIB_REQUIREMENT); do																\
+		if ! (dpkg --get-selections | grep -q "^$$package" >/dev/null);									\
+		then																							\
+			echo "$(BLUE) package $$package$(RED) missing$(BASIC) ... starting installation$(BASIC)";	\
+			if (sudo apt install $$package);															\
+			then																						\
+				echo "$(GREEN)Successfully installed $$package$(BASIC)";								\
+			else																						\
+				echo "$(RED)Error installing $$package... $(GREEN)Cannot continue exit$(BASIC)";		\
+				exit 1;																					\
+			fi																							\
+		fi																								\
+	done
+
 $(NAME) :
 	@if ! (test -e $(LIB));																			\
 	then																							\
+		mkdir -p ./lib;																				\
 		$(CC) $(VERSION) $(FLAGS) $(DEFINE) $(INC) -o $(LIB) $(SRCS) $(LINK);						\
-		echo "$(BLUE) created $(WHITE)->$(RED) $@ $(GREEN) (emplacement: ./lib) $(BASIC)";			\
+		if (test -e $(LIB));																		\
+		then																						\
+			echo "$(BLUE) created $(WHITE)->$(RED) $@ $(GREEN) (emplacement: ./lib) $(BASIC)";		\
+		fi																							\
 	else																							\
 		echo "$(BLUE) already created $(WHITE)->$(RED) $@ $(GREEN) (emplacement: ./lib) $(BASIC)";	\
 	fi
 
 clean :
 	@rm -f $(LIB)
+	@rm -rf lib
 	@echo "$(BLUE) $(NAME) $(WHITE)->$(RED) DELETED $(BASIC)"
 
 fclean: clean

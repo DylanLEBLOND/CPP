@@ -10,32 +10,38 @@
 #                                                                              #
 #******************************************************************************#
 
-NAME = nibbler
+PROJECT_NAME = Shared Library \"GUI OpenGL\"
+
+NAME = libguiopengl.so
 
 CC = g++
 
 VERSION = -std=c++11
 
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -shared -fPIC #-Wall -Wextra -Werror
 
 DEFINE = # -D PROJ_DEBUG
 
-INC = -I ./includes
+INC = -I ./inc -I ../../includes
 
-LINK = -L./libs -ldl
+LINK = -lglut -lGLU -lGL
 
-SRC = main.cpp gestionGUI.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
+LIB_REQUIREMENT = freeglut3-dev
+
+SRC = GUIOpenGL.class.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
 	  exceptions/GUIException.class.cpp \
 	  exceptions/DynamicLoadGUIException.class.cpp \
 	  exceptions/UnknownEventException.class.cpp \
 	  exceptions/InvalidArgumentException.class.cpp \
 	  exceptions/ShouldNeverOccurException.class.cpp \
 
-SRC_DIR = ./srcs
+SRC_DIR = ./src
 
 SRCS = $(addprefix $(SRC_DIR)/,$(SRC))
 
-OBJS = $(SRCS:.cpp=.o)
+LIB_DIR = ./lib
+
+LIB =  $(addprefix $(LIB_DIR)/,$(NAME))
 
 WHITE =		\033[37;01m
 RED =		\033[31;01m
@@ -46,49 +52,12 @@ BASIC =		\033[0m
 
 .PHONY: all clean fclean re
 
-all : info createlibs $(NAME)
-
-createlibs: createlibSDL createlibOpenGL createlibSFML
-
-createlibSDL:
-	@if (! (test -e libguisdl.so));										\
-	then																\
-		make -C ./libs/SDL;												\
-		ln -s ./libs/SDL/lib/libguisdl.so libguisdl.so;					\
-	fi
-
-createlibOpenGL:
-	@if (! (test -e libguiopengl.so));									\
-	then																\
-		make -C ./libs/OpenGL;											\
-		ln -s ./libs/OpenGL/lib/libguiopengl.so libguiopengl.so;		\
-	fi
-
-createlibSFML:
-	@if (! (test -e libguisfml.so));									\
-	then																\
-		make -C ./libs/SFML;											\
-		ln -s ./libs/SFML/lib/libguisfml.so libguisfml.so;				\
-	fi
-
-destroylibs: destroylibSDL destroylibOpenGL destroylibSFML
-
-destroylibSDL:
-	@make fclean -C ./libs/SDL
-	@rm -f libguisdl.so
-
-destroylibOpenGL:
-	@make fclean -C ./libs/OpenGL
-	@rm -f libguiopengl.so
-
-destroylibSFML:
-	@make fclean -C ./libs/SFML
-	@rm -f libguisfml.so
+all : info packages $(NAME)
 
 info :
-	@if (! (test -e $(NAME) && test -e srcs/main.o));					\
+	@if ! (test -e $(LIB));												\
 	then																\
-		echo "$(WHITE) Project: $(BASIC) $(NAME)";						\
+		echo "$(WHITE) Project: $(BASIC) $(PROJECT_NAME)";				\
 		echo "$(WHITE) C++ Compiler: $(BASIC) $(CC)";					\
 		echo "$(WHITE) C++ Version: $(BASIC) $(VERSION)";				\
 		echo "$(WHITE) C++ Flags: $(BASIC) $(FLAGS)";					\
@@ -97,24 +66,39 @@ info :
 		echo "$(WHITE) Links: $(BASIC) $(LINK)";						\
 	fi
 
-%.o : %.cpp
-	@$(CC) $(FLAGS) $(DEFINE) $(INC) -c -o $@ $<
-	@echo "$(BLUE) $< $(WHITE)->$(RED) $@ $(BASIC)"
+packages:
+	@for package in $(LIB_REQUIREMENT); do																\
+		if ! (dpkg --get-selections | grep -q "^$$package" >/dev/null);									\
+		then																							\
+			echo "$(BLUE) package $$package$(RED) missing$(BASIC) ... starting installation$(BASIC)";	\
+			if (sudo apt install $$package);															\
+			then																						\
+				echo "$(GREEN)Successfully installed $$package$(BASIC)";								\
+			else																						\
+				echo "$(RED)Error installing $$package... $(GREEN)Cannot continue exit$(BASIC)";		\
+				exit 1;																					\
+			fi																							\
+		fi																								\
+	done
 
-$(NAME) : $(OBJS)
-	@$(CC) $(VERSION) $(FLAGS) $(DEFINE) $(OBJS) $(LINK) -o \
-	 $(NAME)
-	@echo "$(BLUE) objs $(WHITE)->$(RED) $@ $(BASIC)"
-
-print :
-	@echo $(OBJS)
+$(NAME) :
+	@if ! (test -e $(LIB));																			\
+	then																							\
+		mkdir -p ./lib;																				\
+		$(CC) $(VERSION) $(FLAGS) $(DEFINE) $(INC) -o $(LIB) $(SRCS) $(LINK);						\
+		if (test -e $(LIB));																		\
+		then																						\
+			echo "$(BLUE) created $(WHITE)->$(RED) $@ $(GREEN) (emplacement: ./lib) $(BASIC)";		\
+		fi																							\
+	else																							\
+		echo "$(BLUE) already created $(WHITE)->$(RED) $@ $(GREEN) (emplacement: ./lib) $(BASIC)";	\
+	fi
 
 clean :
-	@rm -f $(OBJS)
-	@echo "$(BLUE) objs $(WHITE)->$(RED) DELETED $(BASIC)"
-
-fclean: clean destroylibs
-	@rm -f $(NAME)
+	@rm -f $(LIB)
+	@rm -rf lib
 	@echo "$(BLUE) $(NAME) $(WHITE)->$(RED) DELETED $(BASIC)"
+
+fclean: clean
 
 re: fclean all;

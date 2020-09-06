@@ -384,7 +384,7 @@ eGUIMainMenuEvent		GUISDL::getMainMenuEvent (void)
 				/* GUI Switchs */
 				case SDLK_KP_2:
 				case SDLK_2:
-					this-> _wantedGUI = eGUI::MinilibX;
+					this-> _wantedGUI = eGUI::SFML;
 					return eGUIMainMenuEvent::changeGUI;
 
 				case SDLK_KP_3:
@@ -504,7 +504,7 @@ eGUIGameEvent			GUISDL::getGameEvent (void)
 				/* GUI Switchs */
 				case SDLK_KP_2:
 				case SDLK_2:
-					this-> _wantedGUI = eGUI::MinilibX;
+					this-> _wantedGUI = eGUI::SFML;
 					return eGUIGameEvent::changeGUI;
 
 				case SDLK_KP_3:
@@ -549,7 +549,7 @@ eGUIEndMenuEvent		GUISDL::getEndMenuEvent (void)
 				/* GUI Switchs */
 				case SDLK_KP_2:
 				case SDLK_2:
-					this-> _wantedGUI = eGUI::MinilibX;
+					this-> _wantedGUI = eGUI::SFML;
 					return eGUIEndMenuEvent::changeGUI;
 
 				case SDLK_KP_3:
