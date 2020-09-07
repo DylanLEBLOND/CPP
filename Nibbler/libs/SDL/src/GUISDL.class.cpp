@@ -452,67 +452,74 @@ eGUIGameEvent			GUISDL::getGameEvent (void)
 
 	while (SDL_PollEvent (&events))
 	{
-		if (events.type == SDL_QUIT)
-				return eGUIGameEvent::quitGame;
-		else if (events.type == SDL_KEYDOWN)
+		switch (events.type)
 		{
-			switch (events.key.keysym.sym)
-			{
-				case SDLK_e:
-					this->_snakeP1->eat (1);
-					break;
+			case SDL_QUIT:
+				return eGUIGameEvent::quitGame;
 
-				/* Player 1 commands */
-				case SDLK_LEFT:
-					return eGUIGameEvent::p1GoLeft;
+			case SDL_KEYDOWN:
 
-				case SDLK_RIGHT:
-					return eGUIGameEvent::p1GoRight;
+				switch (events.key.keysym.sym)
+				{
+					case SDLK_e:
+						this->_snakeP1->eat (1);
+						break;
 
-				case SDLK_UP:
-					return eGUIGameEvent::p1GoUp;
+					/* Player 1 commands */
+					case SDLK_LEFT:
+						return eGUIGameEvent::p1GoLeft;
 
-				case SDLK_DOWN:
-					return eGUIGameEvent::p1GoDown;
+					case SDLK_RIGHT:
+						return eGUIGameEvent::p1GoRight;
 
-				/* Player 2 commands */
-				case SDLK_q:
-					if (this->_snakeP2)
-						return eGUIGameEvent::p2GoLeft;
-					return eGUIGameEvent::nothingTODO;
+					case SDLK_UP:
+						return eGUIGameEvent::p1GoUp;
 
-				case SDLK_d:
-					if (this->_snakeP2)
-						return eGUIGameEvent::p2GoRight;
-					return eGUIGameEvent::nothingTODO;
+					case SDLK_DOWN:
+						return eGUIGameEvent::p1GoDown;
 
-				case SDLK_z:
-					if (this->_snakeP2)
-						return eGUIGameEvent::p2GoUp;
-					return eGUIGameEvent::nothingTODO;
+					/* Player 2 commands */
+					case SDLK_q:
+						if (this->_snakeP2)
+							return eGUIGameEvent::p2GoLeft;
+						break;
 
-				case SDLK_s:
-					if (this->_snakeP2)
-						return eGUIGameEvent::p2GoDown;
-					return eGUIGameEvent::nothingTODO;
+					case SDLK_d:
+						if (this->_snakeP2)
+							return eGUIGameEvent::p2GoRight;
+						break;
 
-				/* GUI Switchs */
-				case SDLK_KP_2:
-				case SDLK_2:
-					this-> _wantedGUI = eGUI::SFML;
-					return eGUIGameEvent::changeGUI;
+					case SDLK_z:
+						if (this->_snakeP2)
+							return eGUIGameEvent::p2GoUp;
+						break;
 
-				case SDLK_KP_3:
-				case SDLK_3:
-					this-> _wantedGUI = eGUI::openGL;
-					return eGUIGameEvent::changeGUI;
+					case SDLK_s:
+						if (this->_snakeP2)
+							return eGUIGameEvent::p2GoDown;
+						break;
 
-				case SDLK_ESCAPE:
-					return eGUIGameEvent::quitGame;
+					/* GUI Switchs */
+					case SDLK_KP_2:
+					case SDLK_2:
+						this-> _wantedGUI = eGUI::SFML;
+						return eGUIGameEvent::changeGUI;
 
-				default:
-					return eGUIGameEvent::nothingTODO;
-			}
+					case SDLK_KP_3:
+					case SDLK_3:
+						this-> _wantedGUI = eGUI::openGL;
+						return eGUIGameEvent::changeGUI;
+
+					case SDLK_ESCAPE:
+						return eGUIGameEvent::quitGame;
+
+					default:
+						break;
+				}
+				break;
+
+			default:
+				break;
 		}
 	}
 

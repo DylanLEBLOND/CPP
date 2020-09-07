@@ -363,7 +363,6 @@ eGUIGameEvent			GUISFML::getGameEvent (void)
 				return eGUIGameEvent::quitGame;
 
 			case sf::Event::KeyPressed:
-
 				switch (events.key.code)
 				{
 					case sf::Keyboard::E:
@@ -387,22 +386,22 @@ eGUIGameEvent			GUISFML::getGameEvent (void)
 					case sf::Keyboard::Q:
 						if (this->_snakeP2)
 							return eGUIGameEvent::p2GoLeft;
-						return eGUIGameEvent::nothingTODO;
+						break;
 
 					case sf::Keyboard::D:
 						if (this->_snakeP2)
 							return eGUIGameEvent::p2GoRight;
-						return eGUIGameEvent::nothingTODO;
+						break;
 
 					case sf::Keyboard::Z:
 						if (this->_snakeP2)
 							return eGUIGameEvent::p2GoUp;
-						return eGUIGameEvent::nothingTODO;
+						break;
 
 					case sf::Keyboard::S:
 						if (this->_snakeP2)
 							return eGUIGameEvent::p2GoDown;
-						return eGUIGameEvent::nothingTODO;
+						break;
 
 					/* GUI Switchs */
 					case sf::Keyboard::Num1:
@@ -419,11 +418,12 @@ eGUIGameEvent			GUISFML::getGameEvent (void)
 						return eGUIGameEvent::quitGame;
 
 					default:
-						return eGUIGameEvent::nothingTODO;
+						break;
 				}
+				break;
 
 			default:
-				return eGUIGameEvent::nothingTODO;
+				break;
 		}
 	}
 
