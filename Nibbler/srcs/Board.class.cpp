@@ -5,7 +5,7 @@
  */
 Board::Board (void)
 	: _width (0u), _height (0u), _boardCells (NULL), _boardCompletedScore (0u), _initialized (false),
-	  _multiPlayer (false), _friendlyFire (true),
+	  _multiPlayer (false), _friendlyFire (true), _endless (false),
 	  _snakeP1 (NULL), _snakeP2 (NULL), _playersInitialized (false) {}
 
 Board::Board (Board const &src)
@@ -293,7 +293,7 @@ void								Board::initBoard (unsigned int width, unsigned int height)
 	this->_initialized = true;
 }
 
-void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer, bool friendlyFire)
+void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer, bool friendlyFire, bool endless)
 {
 	if (! snakeP1)
 	{
@@ -331,6 +331,7 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer
 	}
 	this->_multiPlayer = multiPlayer;
 	this->_friendlyFire = friendlyFire;
+	this->_endless = endless;
 	this->_playersInitialized = true;
 }
 
@@ -385,6 +386,11 @@ bool								Board::boardIsCompleted (void)
 	if (! this->_playersInitialized)
 	{
 		throw InvalidArgumentException ("Board::boardCompleted: Players not initialized");
+	}
+
+	if (this->_endless)
+	{
+		return false;
 	}
 
 	if (this->_snakeP1->getScore() >= this->_boardCompletedScore)

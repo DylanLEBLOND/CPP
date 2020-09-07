@@ -223,7 +223,7 @@ void					GUISFML::start (void)
 	std::cout << "GUISFML::start" << std::endl;
 #endif
 
-	this->_window.create (sf::VideoMode (_mapWidth, _mapHeight), "Nibbler (SFML GUI)");
+	this->_window.create (sf::VideoMode (_mapWidth, _mapHeight), "Nibbler (SFML GUI)", sf::Style::Titlebar | sf::Style::Close);
 	this->_window.setPosition (sf::Vector2i (100, 100));
 	this->_window.setFramerateLimit (60);
 	this->_window.setVerticalSyncEnabled (true);

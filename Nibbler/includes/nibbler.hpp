@@ -27,6 +27,7 @@ typedef struct nibblerParametersStruct
 	eBoardMaps		selectedMap;
 	bool			multiplayer;
 	bool			friendlyFire;
+	bool			endless;
 
 } nibblerParametersStruct, *nibblerParametersPointer;
 

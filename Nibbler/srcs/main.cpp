@@ -292,7 +292,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 		if (nibblerParams->multiplayer)
 			snakeP2->initSnake (p2InitPosX, p2IinitPosY, 4u, eSnakeDirection::West, true /* canPassThroughWall */);
 
-		board->initPlayers (snakeP1, snakeP2, nibblerParams->multiplayer, nibblerParams->friendlyFire);
+		board->initPlayers (snakeP1, snakeP2, nibblerParams->multiplayer, nibblerParams->friendlyFire, nibblerParams->endless);
 		board->loadMap (currentMap);
 
 		gameStatus = startGame (board, snakeP1, snakeP2, nibblerParams, &guiFunc, GUI);
@@ -346,13 +346,16 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 
 int main (int ac, char **av)
 {
+	std::string validParameters ("friendlyFire:on|friendlyFire:off|endless:on|endless:off");
 	nibblerParametersStruct nibblerParams;
+	unsigned int param, i;
 
 	/* default */
 	nibblerParams.width = 40u;
 	nibblerParams.height = 40u;
 	nibblerParams.multiplayer = false;
 	nibblerParams.friendlyFire = true;
+	nibblerParams.endless = false;
 	nibblerParams.selectedMap = eBoardMaps::Square;
 
 	switch (ac)
@@ -381,7 +384,7 @@ int main (int ac, char **av)
 				std::cerr << "Error : " << e.what() << std::endl;
 			}
 			break;
-		case 4:
+		case 4 ... 5:
 			try
 			{
 				nibblerParams.width = std::stoi (av[1]);
@@ -398,13 +401,33 @@ int main (int ac, char **av)
 					exit (0);
 				}
 
-				if (strcmp ("friendlyfire:on", av[3]) && strcmp ("friendlyfire:off", av[3]))
+				for (i = 3; i < (unsigned int)ac; i++)
 				{
-					std::cerr << "Invalid friendlyFire parameters. friendlyFire:on || friendlyFire:off (" << av[3] << ")." << std::endl;
-					exit (0);
-				}
+					param = validParameters.find (av[i]);
+					if (param == validParameters.length())
+					{
+						std::cerr << "Invalid parameter "<< i - 1 << "(" << av[i] << ")." << std::endl;
+					}
 
-				nibblerParams.friendlyFire = ! strcmp ("friendlyfire:on", av[3]) ? true : false;
+					switch (param)
+					{
+						case 0:
+							nibblerParams.friendlyFire = true;
+							break;
+						case 16:
+							nibblerParams.friendlyFire = false;
+							break;
+						case 33:
+							nibblerParams.endless = true;
+							break;
+						case 44:
+							nibblerParams.endless = false;
+							break;
+						default:
+							std::cerr << "Should never occur (i = " << i << ") => " << __FILE__ << ":" << __LINE__ << std::endl;
+							exit (0);
+					}
+				}
 
 				startNibbler (&nibblerParams);
 			}

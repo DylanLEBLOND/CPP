@@ -46,6 +46,7 @@ private:
 
 	bool								_multiPlayer;
 	bool								_friendlyFire;
+	bool								_endless;
 
 	Snake*								_snakeP1;
 	Snake*								_snakeP2;
@@ -74,7 +75,7 @@ public:
 	bool								isInitialized (void) const;
 
 	void								initBoard (unsigned int width, unsigned int height);
-	void								initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer, bool friendlyFire);
+	void								initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer, bool friendlyFire, bool endless);
 	void								loadMap (eBoardMaps map);
 	void								runTurn (void);
 	bool								snakesAreAlive (void);
