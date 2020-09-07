@@ -431,11 +431,6 @@ void					GUISDL::updateGameGUI (void)
 {
 	unsigned int currentGlobalScore;
 
-//	if (! this->_snakeP1->getIsAlive())
-//		return;
-//	if (this->_snakeP2 && ! this->_snakeP2->getIsAlive())
-//		return;
-
 	this->drawBoard();
 	this->drawSnakes();
 

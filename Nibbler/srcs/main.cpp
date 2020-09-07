@@ -1,7 +1,7 @@
 #include <nibbler.hpp>
 
 static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerParams,
-									   guiFuncStruct *guiFunc, IGUI *GUI)
+									   guiFuncStruct *guiFunc, IGUI* &GUI)
 {
 	eGUIMainMenuEvent currentEvent;
 	eGUI currentGUI, wantedGUI;
@@ -41,6 +41,7 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 				openGUILibrary (wantedGUI, guiFunc);
 				GUI = guiFunc->createGUI (board);
 				GUI->start();
+				GUI->loadMainMenu();
 
 				currentGUI = wantedGUI;
 				break;
@@ -64,7 +65,7 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 
 static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 								   nibblerParametersPointer nibblerParams,
-								   guiFuncStruct *guiFunc, IGUI *GUI)
+								   guiFuncStruct *guiFunc, IGUI* &GUI)
 {
 	eGUIGameEvent currentEvent;
 	eGUI currentGUI, wantedGUI;
@@ -160,7 +161,7 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 }
 
 static eGameStatus		endGame (Board *board, Snake *snakeP1, Snake *snakeP2,
-								 guiFuncStruct *guiFunc, IGUI *GUI)
+								 guiFuncStruct *guiFunc, IGUI* &GUI)
 {
 	eGUIEndMenuEvent currentEvent;
 	eGUI currentGUI, wantedGUI;
@@ -331,12 +332,12 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 	}
 
 	currentGUI = GUI->getGUIName();
-
 	GUI->stop();
 	guiFunc.destroyGUI (GUI);
 	closeGUILibrary (currentGUI, &guiFunc);
 
-	delete snakeP2;
+	if (snakeP2 != NULL)
+		delete snakeP2;
 	delete snakeP1;
 	delete board;
 

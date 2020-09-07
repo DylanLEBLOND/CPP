@@ -28,27 +28,26 @@ class GUISFML : public IGUI
 {
 private:
 
-	eGUI const			_GUIName = eGUI::SFML;
+	eGUI const				_GUIName = eGUI::SFML;
 
 	/* common */
-	Board*				_board;
-	Snake*				_snakeP1;
-	Snake*				_snakeP2;
-	eGUI				_wantedGUI;
+	Board*					_board;
+	Snake*					_snakeP1;
+	Snake*					_snakeP2;
+	eGUI					_wantedGUI;
 
 	/* SFML */
-	sf::RenderWindow*	_window;
-//	SFML_Renderer*		_boardRenderer;
-//	SFML_Surface*		_mainMenuImage;
-//	SFML_Texture*		_mainMenuTexture;
-//	SFML_Surface*		_endMenuImage;
-//	SFML_Texture*		_endMenuTexture;
+	sf::RenderWindow		_window;
+	sf::Texture				_mainMenuTexture;
+	sf::Sprite				_mainMenuSprite;
+	sf::Texture				_endMenuTexture;
+	sf::Sprite				_endMenuSprite;
 
 	/* GUI */
-	bool				_started;
-	bounds				_menuLeftButton;
-	bounds				_menuRightButton;
-	bounds				_menuQuitButton;
+	bool					_started;
+	bounds					_menuLeftButton;
+	bounds					_menuRightButton;
+	bounds					_menuQuitButton;
 
 	GUISFML (void);
 	GUISFML (GUISFML const &src);
