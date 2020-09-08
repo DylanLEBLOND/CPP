@@ -31,7 +31,7 @@ SRC = main.cpp gestionGUI.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
 	  exceptions/InvalidArgumentException.class.cpp \
 	  exceptions/ShouldNeverOccurException.class.cpp \
 
-SRC_DIR = ./srcs
+SRC_DIR = ./sources
 
 SRCS = $(addprefix $(SRC_DIR)/,$(SRC))
 
@@ -54,21 +54,21 @@ createlibSDL:
 	@if (! (test -e libguisdl.so));										\
 	then																\
 		make -C ./libs/SDL;												\
-		ln -s ./libs/SDL/lib/libguisdl.so libguisdl.so;					\
+		ln -fs ./libs/SDL/lib/libguisdl.so libguisdl.so;					\
 	fi
 
 createlibOpenGL:
 	@if (! (test -e libguiopengl.so));									\
 	then																\
 		make -C ./libs/OpenGL;											\
-		ln -s ./libs/OpenGL/lib/libguiopengl.so libguiopengl.so;		\
+		ln -fs ./libs/OpenGL/lib/libguiopengl.so libguiopengl.so;		\
 	fi
 
 createlibSFML:
 	@if (! (test -e libguisfml.so));									\
 	then																\
 		make -C ./libs/SFML;											\
-		ln -s ./libs/SFML/lib/libguisfml.so libguisfml.so;				\
+		ln -fs ./libs/SFML/lib/libguisfml.so libguisfml.so;				\
 	fi
 
 destroylibs: destroylibSDL destroylibOpenGL destroylibSFML

@@ -22,11 +22,11 @@ FLAGS = -shared -fPIC #-Wall -Wextra -Werror
 
 DEFINE = -D PROJ_DEBUG
 
-INC = -I ./inc -I ../../includes
+INC = -I ./includes -I ../../includes
 
-LINK = -lSDL2main -lSDL2 -lSDL2_image
+LINK = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer
 
-LIB_REQUIREMENT = libsdl2-dev libsdl2-image-dev
+LIB_REQUIREMENT = libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev
 
 SRC = GUISDL.class.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
 	  exceptions/GUIException.class.cpp \
@@ -35,7 +35,7 @@ SRC = GUISDL.class.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
 	  exceptions/InvalidArgumentException.class.cpp \
 	  exceptions/ShouldNeverOccurException.class.cpp \
 
-SRC_DIR = ./src
+SRC_DIR = ./sources
 
 SRCS = $(addprefix $(SRC_DIR)/,$(SRC))
 

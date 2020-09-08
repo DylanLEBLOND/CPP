@@ -22,9 +22,9 @@ FLAGS = -shared -fPIC #-Wall -Wextra -Werror
 
 DEFINE = -D PROJ_DEBUG
 
-INC = -I ./inc -I ../../includes
+INC = -I ./includes -I ../../includes
 
-LINK = -lsfml-graphics -lsfml-window -lsfml-system
+LINK = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 LIB_REQUIREMENT = libsfml-dev
 
@@ -35,7 +35,7 @@ SRC = GUISFML.class.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
 	  exceptions/InvalidArgumentException.class.cpp \
 	  exceptions/ShouldNeverOccurException.class.cpp \
 
-SRC_DIR = ./src
+SRC_DIR = ./sources
 
 SRCS = $(addprefix $(SRC_DIR)/,$(SRC))
 

@@ -40,6 +40,7 @@ public:
 	virtual void					loadMainMenu (void) = 0;
 	virtual eGUIMainMenuEvent		getMainMenuEvent (void) = 0;
 
+	virtual void					loadBoard (unsigned int soundTrack) = 0;
 	virtual void					updateGameGUI (void) = 0;
 	virtual eGUIGameEvent			getGameEvent (void) = 0;
 

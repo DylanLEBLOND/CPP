@@ -41,6 +41,8 @@ enum eBonusTime : unsigned int { CommonTime = 50,
 								 GodlikeTime = 5,
 								 UnknownTime = 0 };
 
+enum class eBonusMapScale { Small, Medium, Large, UnknownMapScale };
+
 class Bonus
 {
 private:
@@ -65,7 +67,7 @@ public:
 	unsigned int		getTimeLeft (void) const;
 	bool				isActif (void) const;
 
-	void				generate (unsigned int x, unsigned int y);
+	void				generate (unsigned int x, unsigned int y, eBonusMapScale mapSize);
 	void				update (void);
 	void				clear (void);
 };

@@ -27,11 +27,14 @@
 # include <algorithm>
 # include <stdlib.h>
 # include <time.h>
+# include <tgmath.h>
 
 /*
  * Enumerations
  */
-enum class eBoardMaps { Square, Open, UnknownMap };
+enum class eBoardMaps { Classic, Lines, Blocks, Tribal, Borderless, LinesBorderless, BlocksBorderless, UnknownMap };
+
+enum class eBoardStatus { Playing, Player1Win, Player1Lose, Player2Win, Player2Lose, Draw, UnknownStatus };
 
 class Board
 {
@@ -39,6 +42,8 @@ private:
 
 	unsigned int						_width;
 	unsigned int						_height;
+	eBonusMapScale						_mapSize;
+	eBoardMaps							_currentMap;
 	std::vector< std::vector<int> >*	_boardCells;
 	std::vector<t_cell>					_boardEmptyCells;
 	unsigned int						_boardCompletedScore;
@@ -50,13 +55,19 @@ private:
 
 	Snake*								_snakeP1;
 	Snake*								_snakeP2;
+	eBoardStatus						_boardStatus;
 	bool								_playersInitialized;
 
 	Bonus								_bonus1;
 	Bonus								_bonus2;
 
-	void								loadMapSquare (void);
-	void								loadMapOpen (void);
+	void								loadMapClassic (void);
+	void								loadMapLines (void);
+	void								loadMapBlocks (void);
+	void								loadMapTribal (void);
+	void								loadMapBorderless (void);
+	void								loadMapLinesBorderless (void);
+	void								loadMapBlocksBorderless (void);
 
 	void								updateBonus (void);
 	void								checkSnakesCollision (void);
@@ -72,11 +83,12 @@ public:
 	unsigned int						getWidth (void) const;
 	unsigned int						getHeight (void) const;
 	std::vector< std::vector<int> >		*getBoardCells (void) const;
+	eBoardStatus						getBoardStatus (void) const;
 	bool								isInitialized (void) const;
 
 	void								initBoard (unsigned int width, unsigned int height);
-	void								initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer, bool friendlyFire, bool endless);
 	void								loadMap (eBoardMaps map);
+	void								initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer, bool friendlyFire, bool endless);
 	void								runTurn (void);
 	bool								snakesAreAlive (void);
 	bool								boardIsCompleted (void);

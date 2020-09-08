@@ -11,20 +11,22 @@ private:
 
 	std::string 	_file;
 	unsigned int 	_line;
-	ShouldNeverOccurException(void);
+	std::string 	_message;
+	ShouldNeverOccurException (void);
 
 public:
 
-	ShouldNeverOccurException(char const *file, unsigned int line);
-	ShouldNeverOccurException(ShouldNeverOccurException const &src);
-	~ShouldNeverOccurException(void);
+	ShouldNeverOccurException (char const *file, unsigned int line);
+	ShouldNeverOccurException (ShouldNeverOccurException const &src);
+	~ShouldNeverOccurException (void);
 
-	ShouldNeverOccurException		&operator=(ShouldNeverOccurException const &src);
+	ShouldNeverOccurException		&operator= (ShouldNeverOccurException const &src);
 
-	const char*						what(void) const throw();
+	const char*						what (void) const throw();
 
-	char const						*getFile(void) const;
-	unsigned int					getLine(void) const;
+	char const*						getFile (void) const;
+	unsigned int					getLine (void) const;
+	std::string						getMessage (void) const;
 };
 
 #endif // SHOULDNEVEROCCUREXCEPTION_CLASS_HPP
