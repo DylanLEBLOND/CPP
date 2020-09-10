@@ -803,10 +803,23 @@ bool								Board::snakesAreAlive (void)
 	}
 
 	if (! this->_snakeP1->isAlive())
+	{
+		this->_boardStatus = eBoardStatus::Player1Lose;
+		if (this->_multiPlayer)
+		{
+			if (this->_snakeP2->isAlive())
+				this->_boardStatus = eBoardStatus::Player2Win;
+			else
+				this->_boardStatus = eBoardStatus::Draw;
+		}
 		return false;
+	}
 
 	if (this->_multiPlayer && ! this->_snakeP2->isAlive())
+	{
+		this->_boardStatus = eBoardStatus::Player1Win;
 		return false;
+	}
 
 	return true;
 }

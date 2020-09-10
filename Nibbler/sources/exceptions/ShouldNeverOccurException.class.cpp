@@ -12,7 +12,7 @@ ShouldNeverOccurException::ShouldNeverOccurException (const char *file, unsigned
 		this->_message = "Should Never Occur exception was thrown at line ";
 
 		this->_message.append (std::to_string (line));
-		this->_message.append ("of the file ");
+		this->_message.append (" of the file ");
 		this->_message.append (file);
 
 		this->_file = file;

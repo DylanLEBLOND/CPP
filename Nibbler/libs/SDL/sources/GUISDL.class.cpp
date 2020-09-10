@@ -761,8 +761,8 @@ void					GUISDL::loadEndMenu (void)
 		case eBoardStatus::Player1Win:
 		case eBoardStatus::Player2Win:
 		case eBoardStatus::Player2Lose:
-				endMenuMusicName = "ressources/sounds/end_menu_win.wav";
-				break;
+			endMenuMusicName = "ressources/sounds/end_menu_win.wav";
+			break;
 		case eBoardStatus::Player1Lose:
 			if (! this->_snakeP2)
 				endMenuMusicName = "ressources/sounds/end_menu_game_over.wav";
