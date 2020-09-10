@@ -10,6 +10,9 @@ GUISDL::GUISDL (Board *board)
 	: _board (board), _snakeP1 (NULL), _snakeP2 (NULL), _wantedGUI (eGUI::SDL),
 	  _window (NULL), _boardRenderer (NULL), _mainMenuImage (NULL), _mainMenuTexture (NULL),
 	  _endMenuImage (NULL), _endMenuTexture (NULL),
+	  _textHeight (26), _mainPolice (NULL), _mainImage (NULL), _mainTexture (NULL),
+	  _scorePolice (NULL), _scoreP1Image (NULL), _scoreP1Texture (NULL),
+	  _scoreP2Image (NULL), _scoreP2Texture (NULL),
 	  _mainMenuMusic (NULL), _boardMusic (NULL), _endMenuMusic (NULL), _musicVolume (MIX_MAX_VOLUME / 2),
 	  _started (false)
 {
@@ -26,6 +29,11 @@ GUISDL::GUISDL (Board *board)
 	if (! IMG_Init (IMG_INIT_PNG))
 	{
 		throw GUIException (this->_GUIName, "IMG_Init", IMG_GetError());
+	}
+
+	if (TTF_Init () == -1)
+	{
+		throw GUIException (this->_GUIName, "TTF_Init", TTF_GetError());
 	}
 
 	if (Mix_OpenAudio (44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
@@ -54,6 +62,24 @@ GUISDL::GUISDL (Board *board)
  */
 GUISDL::~GUISDL (void)
 {
+	if (this->_scoreP2Texture != NULL)
+		SDL_DestroyTexture (this->_scoreP2Texture);
+
+	if (this->_scoreP2Image != NULL)
+		SDL_FreeSurface (this->_scoreP2Image);
+
+	if (this->_scoreP1Texture != NULL)
+		SDL_DestroyTexture (this->_scoreP1Texture);
+
+	if (this->_scoreP1Image != NULL)
+		SDL_FreeSurface (this->_scoreP1Image);
+
+	if (this->_mainTexture != NULL)
+		SDL_DestroyTexture (this->_mainTexture);
+
+	if (this->_mainImage != NULL)
+		SDL_FreeSurface (this->_mainImage);
+
 	if (this->_endMenuTexture != NULL)
 		SDL_DestroyTexture (this->_endMenuTexture);
 
@@ -73,6 +99,8 @@ GUISDL::~GUISDL (void)
 		SDL_DestroyWindow (this->_window);
 
 	Mix_Quit();
+
+	TTF_Quit();
 
 	IMG_Quit();
 
@@ -102,6 +130,12 @@ void					GUISDL::ajustBounds (void)
 
 void					GUISDL::drawMainMenu (void)
 {
+	eboadMode boardCurrentMode;
+	std::string mainString;
+	SDL_Rect textDimension;
+	SDL_Color textColor, textBGColor;
+	unsigned int scalingFactor;
+
 	if (this->_mainMenuImage == NULL)
 	{
 		this->_mainMenuImage = IMG_Load ("ressources/images/main_menu.png");
@@ -123,6 +157,73 @@ void					GUISDL::drawMainMenu (void)
 	if (SDL_RenderCopy (this->_boardRenderer, this->_mainMenuTexture, NULL, NULL))
 	{
 		throw GUIException (this->_GUIName, "SDL_RenderCopy GUISDL::drawMainMenu", SDL_GetError());
+	}
+
+	/* Printing Nibbler Mode */
+
+	boardCurrentMode = this->_board->getBoardMode();
+
+	mainString = "Current Mode: ";
+	if ((boardCurrentMode | eboadMode::Default) == eboadMode::Default)
+		mainString += "Default";
+	else
+	{
+		switch (boardCurrentMode)
+		{
+			case eboadMode::NoFriendlyFire:
+				mainString += "NoFriendlyFire";
+				break;
+			case eboadMode::Endless:
+				mainString += "Endless";
+				break;
+			case eboadMode::NoFriendlyFire | eboadMode::Endless:
+				mainString += "NoFriendlyFire | Endless";
+				break;
+			default:
+				mainString += "????";
+				break;
+		}
+	}
+	if (this->_mainImage != NULL)
+		SDL_FreeSurface (this->_mainImage);
+
+	textColor.r = 0;
+	textColor.g = 0;
+	textColor.b = 0;
+	textColor.a = 255;
+
+	textBGColor.r = 255;
+	textBGColor.g = 255;
+	textBGColor.b = 255;
+	textBGColor.a = 255;
+
+	this->_mainImage = TTF_RenderUTF8_Shaded (this->_mainPolice, mainString.c_str(), textColor, textBGColor);
+	if (this->_mainImage == NULL)
+	{
+		throw GUIException (this->_GUIName, "TTF_RenderUTF8_Shaded 0", TTF_GetError());
+	}
+
+	/* Printing Score Text */
+
+	if (this->_mainTexture != NULL)
+		SDL_DestroyTexture (this->_mainTexture);
+
+	this->_mainTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_mainImage);
+	if (this->_mainTexture == NULL)
+	{
+		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface 0 GUISDL::drawScore", SDL_GetError());
+	}
+
+	scalingFactor = (this->_board->getWidth() + this->_board->getHeight()) * 100 / (100 + 100 /* maximum possible board size*/);
+
+	textDimension.x = 10;
+	textDimension.y = 3;
+	textDimension.w = this->_mainImage->w * scalingFactor / 100;
+	textDimension.h = this->_mainImage->h * scalingFactor / 100;
+
+	if (SDL_RenderCopy (this->_boardRenderer, this->_mainTexture, NULL, &textDimension))
+	{
+		throw GUIException (this->_GUIName, "SDL_RenderCopy 0 GUISDL::drawScore", SDL_GetError());
 	}
 }
 
@@ -194,7 +295,7 @@ void					GUISDL::drawBoard (void)
 				}
 
 				boardCellDraw.x = x * 10;
-				boardCellDraw.y = y * 10;
+				boardCellDraw.y = this->_textHeight + y * 10;
 				boardCellDraw.w = 10;
 				boardCellDraw.h = 10;
 
@@ -220,7 +321,7 @@ void					GUISDL::drawSnakes (void)
 	for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
 	{
 		snakeCellDraw.x = itSnakeCell->positionX * 10;
-		snakeCellDraw.y = itSnakeCell->positionY * 10;
+		snakeCellDraw.y = this->_textHeight + itSnakeCell->positionY * 10;
 		snakeCellDraw.w = 10;
 		snakeCellDraw.h = 10;
 
@@ -260,7 +361,7 @@ void					GUISDL::drawSnakes (void)
 		for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
 		{
 			snakeCellDraw.x = itSnakeCell->positionX * 10;
-			snakeCellDraw.y = itSnakeCell->positionY * 10;
+			snakeCellDraw.y = this->_textHeight + itSnakeCell->positionY * 10;
 			snakeCellDraw.w = 10;
 			snakeCellDraw.h = 10;
 
@@ -290,6 +391,123 @@ void					GUISDL::drawSnakes (void)
 					throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawSnake P2", SDL_GetError());
 				}
 			}
+		}
+	}
+}
+
+void					GUISDL::drawScore (void)
+{
+	SDL_Color textColor, textBGColor;
+	std::string scoreString;
+	int boardCompletedScore;
+	SDL_Rect textDimension;
+
+	/* Clearing Score zone */
+
+	textColor.r = 255;
+	textColor.g = 255;
+	textColor.b = 255;
+	textColor.a = 255;
+
+	textBGColor.r = 0x33;
+	textBGColor.g = 0x33;
+	textBGColor.b = 0x33;
+	textBGColor.a = 255;
+
+	if (SDL_SetRenderDrawColor (this->_boardRenderer, textBGColor.r, textBGColor.g, textBGColor.b, textBGColor.a))
+	{
+		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawBoard", SDL_GetError());
+	}
+
+	textDimension.x = 0;
+	textDimension.y = 0;
+	textDimension.w = _mapWidth;
+	textDimension.h = this->_textHeight;
+
+	if (SDL_RenderFillRect (this->_boardRenderer, &textDimension))
+	{
+		throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawBoard", SDL_GetError());
+	}
+
+	/* Setting Score Text */
+
+	scoreString = "Player1: ";
+	scoreString += std::to_string (this->_snakeP1->getScore());
+	scoreString += "/";
+	boardCompletedScore = this->_board->getBoardCompletedScore();
+	if (boardCompletedScore != -1)
+		scoreString += std::to_string (boardCompletedScore);
+	else
+		scoreString += "∞";
+
+	if (this->_scoreP1Image != NULL)
+		SDL_FreeSurface (this->_scoreP1Image);
+
+	this->_scoreP1Image = TTF_RenderUTF8_Shaded (this->_scorePolice, scoreString.c_str(), textColor, textBGColor);
+	if (this->_scoreP1Image == NULL)
+	{
+		throw GUIException (this->_GUIName, "TTF_RenderUTF8_Shaded 1", TTF_GetError());
+	}
+
+	if (this->_snakeP2)
+	{
+		scoreString = "Player2: ";
+		scoreString += std::to_string (this->_snakeP2->getScore());
+		scoreString += "/";
+		boardCompletedScore = this->_board->getBoardCompletedScore();
+		if (boardCompletedScore != -1)
+			scoreString += std::to_string (boardCompletedScore);
+		else
+			scoreString += "∞";
+
+		if (this->_scoreP2Image != NULL)
+			SDL_FreeSurface (this->_scoreP2Image);
+
+		this->_scoreP2Image = TTF_RenderUTF8_Shaded (this->_scorePolice, scoreString.c_str(), textColor, textBGColor);
+		if (this->_scoreP2Image == NULL)
+		{
+			throw GUIException (this->_GUIName, "TTF_RenderUTF8_Shaded 2", TTF_GetError());
+		}
+	}
+
+	/* Printing Score Text */
+
+	if (this->_scoreP1Texture != NULL)
+		SDL_DestroyTexture (this->_scoreP1Texture);
+
+	this->_scoreP1Texture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_scoreP1Image);
+	if (this->_scoreP1Texture == NULL)
+	{
+		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface 1 GUISDL::drawScore", SDL_GetError());
+	}
+
+	textDimension.x = 10;
+	textDimension.y = 3;
+	textDimension.w = this->_scoreP1Image->w;
+	textDimension.h = this->_textHeight - 6;
+	if (SDL_RenderCopy (this->_boardRenderer, this->_scoreP1Texture, NULL, &textDimension))
+	{
+		throw GUIException (this->_GUIName, "SDL_RenderCopy 1 GUISDL::drawScore", SDL_GetError());
+	}
+
+	if (this->_snakeP2)
+	{
+		if (this->_scoreP2Texture != NULL)
+			SDL_DestroyTexture (this->_scoreP2Texture);
+
+		this->_scoreP2Texture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_scoreP2Image);
+		if (this->_scoreP2Texture == NULL)
+		{
+			throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface 2 GUISDL::drawScore", SDL_GetError());
+		}
+
+		textDimension.x = (_mapWidth - 10) - this->_scoreP2Image->w;
+		textDimension.y = 3;
+		textDimension.w = this->_scoreP2Image->w;
+		textDimension.h = this->_textHeight - 6;
+		if (SDL_RenderCopy (this->_boardRenderer, this->_scoreP2Texture, NULL, &textDimension))
+		{
+			throw GUIException (this->_GUIName, "SDL_RenderCopy 2 GUISDL::drawScore", SDL_GetError());
 		}
 	}
 }
@@ -360,7 +578,7 @@ eGUI					GUISDL::getGUIName (void) const
 void					GUISDL::start (void)
 {
 	_mapWidth = this->_board->getWidth() * 10;
-	_mapHeight = this->_board->getHeight() * 10;
+	_mapHeight = this->_textHeight + this->_board->getHeight() * 10;
 
 #ifdef PROJ_DEBUG
 	std::cout << "GUISDL::start" << std::endl;
@@ -379,6 +597,18 @@ void					GUISDL::start (void)
 	}
 
 	this->ajustBounds ();
+
+	this->_mainPolice = TTF_OpenFont ("ressources/fonts/FreeMonoBold.ttf", 35);
+	if (! this->_mainPolice)
+	{
+		throw GUIException (this->_GUIName, "TTF_OpenFont 1", TTF_GetError());
+	}
+
+	this->_scorePolice = TTF_OpenFont ("ressources/fonts/Ubuntu-MI.ttf", 18);
+	if (! this->_scorePolice)
+	{
+		throw GUIException (this->_GUIName, "TTF_OpenFont 3", TTF_GetError());
+	}
 
 	this->_mainMenuMusic = Mix_LoadMUS ("ressources/sounds/ff_main_menu.wav");
 	if (! this->_mainMenuMusic)
@@ -428,6 +658,18 @@ void					GUISDL::stop()
 	{
 		Mix_FreeMusic (this->_endMenuMusic);
 		this->_endMenuMusic = NULL;
+	}
+
+	if (this->_mainPolice != NULL)
+	{
+		TTF_CloseFont (this->_mainPolice);
+		this->_mainPolice = NULL;
+	}
+
+	if (this->_scorePolice != NULL)
+	{
+		TTF_CloseFont (this->_scorePolice);
+		this->_scorePolice = NULL;
 	}
 
 	SDL_DestroyWindow (this->_window);
@@ -492,11 +734,6 @@ eGUIMainMenuEvent		GUISDL::getMainMenuEvent (void)
 						if (Mix_PausedMusic() == 1)
 							Mix_ResumeMusic();
 						else
-							Mix_PauseMusic();
-						break;
-
-					case SDLK_m:
-						if (Mix_PlayingMusic())
 							Mix_PauseMusic();
 						break;
 
@@ -618,6 +855,7 @@ void					GUISDL::updateGameGUI (void)
 
 	this->drawBoard();
 	this->drawSnakes();
+	this->drawScore();
 
 	SDL_RenderPresent (this->_boardRenderer);
 
@@ -634,6 +872,11 @@ void					GUISDL::updateGameGUI (void)
 eGUIGameEvent			GUISDL::getGameEvent (void)
 {
 	SDL_Event events;
+	eSnakeDirection snakeP1CurrentDirection, snakeP2CurrentDirection;
+
+	snakeP1CurrentDirection = this->_snakeP1->getCurrentDirection();
+	if (this->_snakeP2)
+		snakeP2CurrentDirection = this->_snakeP2->getCurrentDirection();
 
 	while (SDL_PollEvent (&events))
 	{
@@ -655,36 +898,56 @@ eGUIGameEvent			GUISDL::getGameEvent (void)
 
 					/* Player 1 commands */
 					case SDLK_LEFT:
-						return eGUIGameEvent::p1GoLeft;
+						if ((snakeP1CurrentDirection != eSnakeDirection::West) &&
+							(snakeP1CurrentDirection != eSnakeDirection::East))
+							return eGUIGameEvent::p1GoLeft;
+						break;
 
 					case SDLK_RIGHT:
-						return eGUIGameEvent::p1GoRight;
+						if ((snakeP1CurrentDirection != eSnakeDirection::West) &&
+							(snakeP1CurrentDirection != eSnakeDirection::East))
+							return eGUIGameEvent::p1GoRight;
+						break;
 
 					case SDLK_UP:
-						return eGUIGameEvent::p1GoUp;
+						if ((snakeP1CurrentDirection != eSnakeDirection::North) &&
+							(snakeP1CurrentDirection != eSnakeDirection::South))
+							return eGUIGameEvent::p1GoUp;
+						break;
 
 					case SDLK_DOWN:
-						return eGUIGameEvent::p1GoDown;
+						if ((snakeP1CurrentDirection != eSnakeDirection::North) &&
+							(snakeP1CurrentDirection != eSnakeDirection::South))
+							return eGUIGameEvent::p1GoDown;
+						break;
 
 					/* Player 2 commands */
 					case SDLK_q:
 						if (this->_snakeP2)
-							return eGUIGameEvent::p2GoLeft;
+							if ((snakeP2CurrentDirection != eSnakeDirection::West) &&
+								(snakeP2CurrentDirection != eSnakeDirection::East))
+								return eGUIGameEvent::p2GoLeft;
 						break;
 
 					case SDLK_d:
 						if (this->_snakeP2)
-							return eGUIGameEvent::p2GoRight;
+							if ((snakeP2CurrentDirection != eSnakeDirection::West) &&
+								(snakeP2CurrentDirection != eSnakeDirection::East))
+								return eGUIGameEvent::p2GoRight;
 						break;
 
 					case SDLK_z:
 						if (this->_snakeP2)
-							return eGUIGameEvent::p2GoUp;
+							if ((snakeP2CurrentDirection != eSnakeDirection::North) &&
+								(snakeP2CurrentDirection != eSnakeDirection::South))
+								return eGUIGameEvent::p2GoUp;
 						break;
 
 					case SDLK_s:
 						if (this->_snakeP2)
-							return eGUIGameEvent::p2GoDown;
+							if ((snakeP2CurrentDirection != eSnakeDirection::North) &&
+								(snakeP2CurrentDirection != eSnakeDirection::South))
+								return eGUIGameEvent::p2GoDown;
 						break;
 
 					/* GUI Switchs */
@@ -705,11 +968,6 @@ eGUIGameEvent			GUISDL::getGameEvent (void)
 						if (Mix_PausedMusic() == 1)
 							Mix_ResumeMusic();
 						else
-							Mix_PauseMusic();
-						break;
-
-					case SDLK_m:
-						if (Mix_PlayingMusic())
 							Mix_PauseMusic();
 						break;
 
@@ -835,11 +1093,6 @@ eGUIEndMenuEvent		GUISDL::getEndMenuEvent (void)
 						if (Mix_PausedMusic() == 1)
 							Mix_ResumeMusic();
 						else
-							Mix_PauseMusic();
-						break;
-
-					case SDLK_m:
-						if (Mix_PlayingMusic())
 							Mix_PauseMusic();
 						break;
 

@@ -50,6 +50,7 @@ private:
 	std::list<t_cell>		_snakeCells;
 	eSnakeDirection			_currentDirection;
 	bool					_canPassThroughWall;
+	bool					_canEatHimself;
 	unsigned int			_mapWidth;
 	unsigned int			_mapHeight;
 	int						_eatCounter;
@@ -68,6 +69,7 @@ public:
 	std::list<t_cell>		getSnakeCells (void) const;
 	eSnakeDirection			getCurrentDirection (void) const;
 	bool					getCanPassThroughWall (void) const;
+	bool					getCanEatHimself (void) const;
 	unsigned int			getMapWidth (void) const;
 	unsigned int			getMapHeight (void) const;
 	unsigned int			getScore (void) const;
@@ -75,7 +77,9 @@ public:
 	void					setMapWidth (unsigned int newWidth);
 	void					setMapHeight (unsigned int newHeight);
 
-	void					initSnake (unsigned int initPosX, unsigned int initPosY, unsigned int initSize, eSnakeDirection initDirection, bool canPassThroughWall);
+	void					initSnake (unsigned int initPosX, unsigned int initPosY,
+									   unsigned int initSize, eSnakeDirection initDirection,
+									   bool canPassThroughWall, bool canEatHimself);
 	void					passThroughWall (bool active);
 	void					eat (int value);
 	void					dead (void);

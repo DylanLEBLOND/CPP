@@ -6,8 +6,6 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 	eGUIMainMenuEvent currentEvent;
 	eGUI currentGUI, wantedGUI;
 
-	(void)nibblerParams;
-
 	std::cout << "launchNibbler BEGIN" << std::endl;
 
 	currentGUI = GUI->getGUIName();
@@ -21,12 +19,16 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 		switch (currentEvent)
 		{
 			case eGUIMainMenuEvent::startSinglePlayerGame:
-				nibblerParams->multiplayer = false;
+				board->setMultiPlayerMode (false);
+				nibblerParams->boardMode = static_cast<eboadMode>
+										   (nibblerParams->boardMode & ~eboadMode::Multiplayer);
 				std::cout << "launchNibbler END (startSinglePlayerGame)" << std::endl;
 				return true;
 
 			case eGUIMainMenuEvent::startMultiPlayerGame:
-				nibblerParams->multiplayer = true;
+				board->setMultiPlayerMode (true);
+				nibblerParams->boardMode = static_cast<eboadMode>
+										   (nibblerParams->boardMode | eboadMode::Multiplayer);
 				std::cout << "launchNibbler END (startMultiPlayerGame)" << std::endl;
 				return true;
 
@@ -97,25 +99,25 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 				snakeP1->goDown();
 				break;
 			case eGUIGameEvent::p2GoLeft:
-				if (nibblerParams->multiplayer)
+				if (nibblerParams->boardMode & eboadMode::Multiplayer)
 					snakeP2->goLeft();
 				else
 					throw UnknownEventException (currentGUI, currentEvent);
 				break;
 			case eGUIGameEvent::p2GoRight:
-				if (nibblerParams->multiplayer)
+				if (nibblerParams->boardMode & eboadMode::Multiplayer)
 					snakeP2->goRight();
 				else
 					throw UnknownEventException (currentGUI, currentEvent);
 				break;
 			case eGUIGameEvent::p2GoUp:
-				if (nibblerParams->multiplayer)
+				if (nibblerParams->boardMode & eboadMode::Multiplayer)
 					snakeP2->goUp();
 				else
 					throw UnknownEventException (currentGUI, currentEvent);
 				break;
 			case eGUIGameEvent::p2GoDown:
-				if (nibblerParams->multiplayer)
+				if (nibblerParams->boardMode & eboadMode::Multiplayer)
 					snakeP2->goDown();
 				else
 					throw UnknownEventException (currentGUI, currentEvent);
@@ -308,7 +310,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 	openGUILibrary (eGUI::SDL, &guiFunc);
 	GUI = guiFunc.createGUI (board);
 
-	board->initBoard (nibblerParams->width, nibblerParams->height);
+	board->initBoard (nibblerParams->width, nibblerParams->height, nibblerParams->boardMode);
 
 	running = launchNibbler (board, nibblerParams, &guiFunc, GUI);
 
@@ -316,7 +318,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 	if (! snakeP1)
 		throw ShouldNeverOccurException (__FILE__, __LINE__);
 
-	if (nibblerParams->multiplayer)
+	if (nibblerParams->boardMode & eboadMode::Multiplayer)
 	{
 		snakeP2 = new Snake ();
 		if (! snakeP1)
@@ -330,7 +332,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 	while (running)
 	{
 		board->loadMap (currentMap);
-		board->initPlayers (snakeP1, snakeP2, nibblerParams->multiplayer, nibblerParams->friendlyFire, nibblerParams->endless);
+		board->initPlayers (snakeP1, snakeP2);
 
 		gameStatus = startGame (board, snakeP1, snakeP2, soundTrack, nibblerParams, &guiFunc, GUI);
 		switch (gameStatus)
@@ -366,7 +368,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 		}
 
 		board->clearBoard();
-		board->initBoard (nibblerParams->width, nibblerParams->height);
+		board->initBoard (nibblerParams->width, nibblerParams->height, nibblerParams->boardMode);
 	}
 
 	currentGUI = GUI->getGUIName();
@@ -384,16 +386,14 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 
 int main (int ac, char **av)
 {
-	std::string validParameters ("friendlyFire:on|friendlyFire:off|endless:on|endless:off");
+	std::string validParameters ("friendlyfire:on|friendlyfire:off|endless:on|endless:off");
 	nibblerParametersStruct nibblerParams;
 	unsigned int param, i;
 
 	/* default */
 	nibblerParams.width = 40u;
 	nibblerParams.height = 40u;
-	nibblerParams.multiplayer = false;
-	nibblerParams.friendlyFire = true;
-	nibblerParams.endless = false;
+	nibblerParams.boardMode = eboadMode::Default;
 	nibblerParams.selectedMap = eBoardMaps::Classic;
 
 	switch (ac)
@@ -442,27 +442,26 @@ int main (int ac, char **av)
 				for (i = 3; i < (unsigned int)ac; i++)
 				{
 					param = validParameters.find (av[i]);
-					if (param == validParameters.length())
-					{
-						std::cerr << "Invalid parameter "<< i - 1 << "(" << av[i] << ")." << std::endl;
-					}
-
 					switch (param)
 					{
 						case 0:
-							nibblerParams.friendlyFire = true;
+							nibblerParams.boardMode = static_cast<eboadMode>
+													  (nibblerParams.boardMode & ~eboadMode::NoFriendlyFire);
 							break;
 						case 16:
-							nibblerParams.friendlyFire = false;
+							nibblerParams.boardMode = static_cast<eboadMode>
+													  (nibblerParams.boardMode | eboadMode::NoFriendlyFire);
 							break;
 						case 33:
-							nibblerParams.endless = true;
+							nibblerParams.boardMode = static_cast<eboadMode>
+													  (nibblerParams.boardMode | eboadMode::Endless);
 							break;
 						case 44:
-							nibblerParams.endless = false;
+							nibblerParams.boardMode = static_cast<eboadMode>
+													  (nibblerParams.boardMode & ~eboadMode::Endless);
 							break;
 						default:
-							std::cerr << "Should never occur (i = " << i << ") => " << __FILE__ << ":" << __LINE__ << std::endl;
+							std::cerr << "Invalid parameter "<< i << " (" << av[i] << ")." << std::endl;
 							exit (0);
 					}
 				}
@@ -475,7 +474,7 @@ int main (int ac, char **av)
 			}
 			break;
 		default:
-			std::cerr << "Invalid parameters.See README" << std::endl;
+			std::cerr << "Invalid parameters. See README" << std::endl;
 			exit (0);
 			break;
 	}

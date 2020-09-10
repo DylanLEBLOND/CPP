@@ -38,11 +38,20 @@ private:
 	eGUI					_wantedGUI;
 
 	/* SFML */
+		/* Renderer */
 	sf::RenderWindow		_window;
 	sf::Texture				_mainMenuTexture;
 	sf::Sprite				_mainMenuSprite;
 	sf::Texture				_endMenuTexture;
 	sf::Sprite				_endMenuSprite;
+		/* Text */
+	unsigned int			_textHeight;
+	sf::Font				_mainPolice;
+	sf::Text				_mainText;
+	sf::Font				_scorePolice;
+	sf::Text				_scoreP1Text;
+	sf::Text				_scoreP2Text;
+		/* Music */
 	sf::Music				_mainMenuMusic;
 	sf::Music				_boardMusic;
 	sf::Music				_endMenuMusic;
@@ -66,6 +75,7 @@ private:
 
 	void					drawBoard (void);
 	void					drawSnakes (void);
+	void					drawScore (void);
 
 	void					drawEndMenu (void);
 

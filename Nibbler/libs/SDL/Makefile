@@ -24,9 +24,9 @@ DEFINE = -D PROJ_DEBUG
 
 INC = -I ./includes -I ../../includes
 
-LINK = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer
+LINK = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
-LIB_REQUIREMENT = libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev
+LIB_REQUIREMENT = libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-mixer-dev
 
 SRC = GUISDL.class.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
 	  exceptions/GUIException.class.cpp \

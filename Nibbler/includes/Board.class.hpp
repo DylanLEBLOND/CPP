@@ -36,6 +36,14 @@ enum class eBoardMaps { Classic, Lines, Blocks, Tribal, Borderless, LinesBorderl
 
 enum class eBoardStatus { Playing, Player1Win, Player1Lose, Player2Win, Player2Lose, Draw, UnknownStatus };
 
+enum eboadMode
+{
+	Default			= 0,		/* SiglePlayer / FriendlyFire / Finish Score (this flag and all others are mutually exclusive) */
+	Multiplayer		= 1 << 0,	/* Multiplayer */
+	NoFriendlyFire	= 1 << 1,	/* Cannot eat himself or an ally */
+	Endless			= 1 << 2	/* The map doesn't end before at least one player is dead */
+};
+
 class Board
 {
 private:
@@ -49,12 +57,9 @@ private:
 	unsigned int						_boardCompletedScore;
 	bool								_initialized;
 
-	bool								_multiPlayer;
-	bool								_friendlyFire;
-	bool								_endless;
-
 	Snake*								_snakeP1;
 	Snake*								_snakeP2;
+	eboadMode							_boardMode;
 	eBoardStatus						_boardStatus;
 	bool								_playersInitialized;
 
@@ -83,12 +88,15 @@ public:
 	unsigned int						getWidth (void) const;
 	unsigned int						getHeight (void) const;
 	std::vector< std::vector<int> >		*getBoardCells (void) const;
+	int									getBoardCompletedScore (void) const;
+	eboadMode							getBoardMode (void) const;
 	eBoardStatus						getBoardStatus (void) const;
 	bool								isInitialized (void) const;
 
-	void								initBoard (unsigned int width, unsigned int height);
+	void								initBoard (unsigned int width, unsigned int height, eboadMode boardMode);
+	void								setMultiPlayerMode (bool activate);
 	void								loadMap (eBoardMaps map);
-	void								initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer, bool friendlyFire, bool endless);
+	void								initPlayers (Snake *snakeP1, Snake *snakeP2);
 	void								runTurn (void);
 	bool								snakesAreAlive (void);
 	bool								boardIsCompleted (void);

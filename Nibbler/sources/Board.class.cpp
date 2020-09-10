@@ -6,8 +6,8 @@
 Board::Board (void)
 	: _width (0u), _height (0u), _mapSize (eBonusMapScale::UnknownMapScale), _currentMap (eBoardMaps::UnknownMap),
 	  _boardCells (NULL), _boardCompletedScore (0u), _initialized (false),
-	  _multiPlayer (false), _friendlyFire (true), _endless (false),
-	  _snakeP1 (NULL), _snakeP2 (NULL), _boardStatus (eBoardStatus::UnknownStatus), _playersInitialized (false) {}
+	  _snakeP1 (NULL), _snakeP2 (NULL), _boardMode (eboadMode::Default), _boardStatus (eBoardStatus::UnknownStatus),
+	  _playersInitialized (false) {}
 
 Board::Board (Board const &src)
 {
@@ -32,7 +32,7 @@ Board								&Board::operator= (Board const &src)
 {
 	if (src.isInitialized())
 	{
-		this->initBoard (src.getWidth(), src.getHeight());
+		this->initBoard (src.getWidth(), src.getHeight(), src.getBoardMode());
 	}
 
 	return *this;
@@ -54,6 +54,19 @@ unsigned int						Board::getHeight (void) const
 std::vector< std::vector<int> >		*Board::getBoardCells (void) const
 {
 	return this->_boardCells;
+}
+
+int									Board::getBoardCompletedScore (void) const
+{
+	if (this->_boardMode & eboadMode::Endless)
+		return -1;
+
+	return this->_boardCompletedScore;
+}
+
+eboadMode							Board::getBoardMode (void) const
+{
+	return this->_boardMode;
 }
 
 eBoardStatus						Board::getBoardStatus (void) const
@@ -422,7 +435,7 @@ void								Board::updateBonus (void)
 		this->_boardEmptyCells.erase (this->_boardEmptyCells.begin() + numEmptyCell);
 	}
 
-	if (this->_multiPlayer)
+	if (this->_boardMode & eboadMode::Multiplayer)
 	{
 		if (this->_bonus2.getTimeLeft())
 			this->_bonus2.update();
@@ -492,7 +505,7 @@ void								Board::checkSnakesCollision (void)
 		this->_boardEmptyCells.push_back (snakeP1Head);		/* snakeP1 Head become an empty cell */
 	}
 
-	if (this->_multiPlayer)
+	if (this->_boardMode & eboadMode::Multiplayer)
 	{
 		/* check if snakeP2 hit a wall */
 		snakeP2Cells = this->_snakeP2->getSnakeCells();
@@ -523,7 +536,7 @@ void								Board::checkSnakesCollision (void)
 			this->_boardEmptyCells.push_back (snakeP2Head);		/* snakeP2 Head become an empty cell */
 		}
 
-		if (this->_friendlyFire)
+		if (! (this->_boardMode & eboadMode::NoFriendlyFire))
 		{
 			/* check if snakeP1 hit snakeP2 */
 			it = std::find (snakeP2Cells.begin(), snakeP2Cells.end(), snakeP1Head);
@@ -554,7 +567,7 @@ void								Board::checkSnakesCollision (void)
 /*
  * Public
  */
-void								Board::initBoard (unsigned int width, unsigned int height)
+void								Board::initBoard (unsigned int width, unsigned int height, eboadMode boardMode)
 {
 	if (width < 30 || 100 < width)
 	{
@@ -603,7 +616,22 @@ void								Board::initBoard (unsigned int width, unsigned int height)
 			throw ShouldNeverOccurException (__FILE__, __LINE__);
 	}
 
+	this->_boardMode = boardMode;
 	this->_initialized = true;
+}
+
+void								Board::setMultiPlayerMode (bool activate)
+{
+	if (activate)
+	{
+		this->_boardMode = static_cast<eboadMode>
+							(this->_boardMode | eboadMode::Multiplayer);
+	}
+	else
+	{
+		this->_boardMode = static_cast<eboadMode>
+							(this->_boardMode & ~eboadMode::Multiplayer);
+	}
 }
 
 void								Board::loadMap (eBoardMaps map)
@@ -645,7 +673,7 @@ void								Board::loadMap (eBoardMaps map)
 	this->_currentMap = map;
 }
 
-void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer, bool friendlyFire, bool endless)
+void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2)
 {
 	unsigned int p1InitPosX, p1InitPosY, p2InitPosX, p2InitPosY;
 
@@ -654,7 +682,7 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer
 		throw InvalidArgumentException ("Board::initPlayers: snakeP1 == null");
 	}
 
-	if (! multiPlayer)
+	if (! (this->_boardMode & eboadMode::Multiplayer))
 	{
 		if (snakeP2)
 		{
@@ -679,7 +707,7 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer
 	{
 		case eBoardMaps::Classic:
 		case eBoardMaps::Borderless:
-			if (! multiPlayer)
+			if (! (this->_boardMode & eboadMode::Multiplayer))
 			{
 				p1InitPosX = floor (this->_width / 2.0f);
 				p1InitPosY = floor (this->_height / 2.0f);
@@ -694,7 +722,7 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer
 			break;
 		case eBoardMaps::Lines:
 		case eBoardMaps::LinesBorderless:
-			if (! multiPlayer)
+			if (! (this->_boardMode & eboadMode::Multiplayer))
 			{
 				p1InitPosX = floor (this->_width / 2.0f);
 				p1InitPosY = floor (this->_height / 2.0f);
@@ -712,7 +740,7 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer
 						 floor (this->_height / 10.0f) : 4;
 			break;
 		case eBoardMaps::Tribal:
-			if (! multiPlayer)
+			if (! (this->_boardMode & eboadMode::Multiplayer))
 			{
 				p1InitPosX = floor (this->_width / 2.0f);
 				p1InitPosY = floor (this->_height / 2.0f);
@@ -726,11 +754,14 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer
 		default:
 			throw ShouldNeverOccurException (__FILE__, __LINE__);
 	}
-	this->_snakeP1->initSnake (p1InitPosX, p1InitPosY, 4u, eSnakeDirection::East, true /* canPassThroughWall */);
+
+	this->_snakeP1->initSnake (p1InitPosX, p1InitPosY, 4u,
+							   eSnakeDirection::East, true /* canPassThroughWall */,
+							   (bool)! (this->_boardMode & eboadMode::NoFriendlyFire));
 	this->_snakeP1->setMapWidth (this->_width);
 	this->_snakeP1->setMapHeight (this->_height);
 
-	if (multiPlayer)
+	if (this->_boardMode & eboadMode::Multiplayer)
 	{
 		this->_snakeP2 = snakeP2;
 		switch (this->_currentMap)
@@ -768,14 +799,13 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2, bool multiPlayer
 			default:
 				throw ShouldNeverOccurException (__FILE__, __LINE__);
 		}
-		this->_snakeP2->initSnake (p2InitPosX, p2InitPosY, 4u, eSnakeDirection::West, true /* canPassThroughWall */);
+		this->_snakeP2->initSnake (p2InitPosX, p2InitPosY, 4u,
+								   eSnakeDirection::West, true /* canPassThroughWall */,
+								   (bool)! (this->_boardMode & eboadMode::NoFriendlyFire));
 		this->_snakeP2->setMapWidth (this->_width);
 		this->_snakeP2->setMapHeight (this->_height);
 	}
 
-	this->_multiPlayer = multiPlayer;
-	this->_friendlyFire = friendlyFire;
-	this->_endless = endless;
 	this->_boardStatus = eBoardStatus::Playing;
 	this->_playersInitialized = true;
 }
@@ -788,7 +818,7 @@ void								Board::runTurn (void)
 	}
 
 	this->_snakeP1->moveStraight();
-	if (this->_multiPlayer)
+	if (this->_boardMode & eboadMode::Multiplayer)
 		this->_snakeP2->moveStraight();
 
 	this->checkSnakesCollision();
@@ -805,7 +835,7 @@ bool								Board::snakesAreAlive (void)
 	if (! this->_snakeP1->isAlive())
 	{
 		this->_boardStatus = eBoardStatus::Player1Lose;
-		if (this->_multiPlayer)
+		if (this->_boardMode & eboadMode::Multiplayer)
 		{
 			if (this->_snakeP2->isAlive())
 				this->_boardStatus = eBoardStatus::Player2Win;
@@ -815,7 +845,7 @@ bool								Board::snakesAreAlive (void)
 		return false;
 	}
 
-	if (this->_multiPlayer && ! this->_snakeP2->isAlive())
+	if ((this->_boardMode & eboadMode::Multiplayer) && ! this->_snakeP2->isAlive())
 	{
 		this->_boardStatus = eBoardStatus::Player1Win;
 		return false;
@@ -831,14 +861,14 @@ bool								Board::boardIsCompleted (void)
 		throw InvalidArgumentException ("Board::boardCompleted: Players not initialized");
 	}
 
-	if (this->_endless)
+	if (this->_boardMode & eboadMode::Endless)
 	{
 		return false;
 	}
 
 	if (this->_snakeP1->getScore() >= this->_boardCompletedScore)
 	{
-		if (this->_multiPlayer)
+		if (this->_boardMode & eboadMode::Multiplayer)
 		{
 			if (this->_snakeP2->getScore() < this->_boardCompletedScore)
 			{
@@ -854,7 +884,8 @@ bool								Board::boardIsCompleted (void)
 		return true;
 	}
 
-	if (this->_multiPlayer && this->_snakeP2->getScore() >= this->_boardCompletedScore)
+	if ((this->_boardMode & eboadMode::Multiplayer) &&
+		(this->_snakeP2->getScore() >= this->_boardCompletedScore))
 	{
 		this->_snakeP1->dead();
 		this->_boardStatus = eBoardStatus::Player2Win;
@@ -877,8 +908,7 @@ void								Board::clearBoard (void)
 	this->_width = 0u;
 	this->_height = 0u;
 	this->_initialized = false,
-	this->_multiPlayer = false;
-	this->_friendlyFire = true,
+	this->_boardMode = eboadMode::Default;
 	this->_snakeP1 = NULL;
 	this->_snakeP2 = NULL;
 	this->_playersInitialized = false,

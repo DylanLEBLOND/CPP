@@ -4,7 +4,8 @@
  * Constructors
  */
 Snake::Snake (void)
-	: _currentDirection (eSnakeDirection::East), _canPassThroughWall (true), _mapWidth (0u), _mapHeight (0u), _eatCounter (0), _score (0), _isAlive (true) { }
+	: _currentDirection (eSnakeDirection::East), _canPassThroughWall (true), _canEatHimself (true),
+	  _mapWidth (0u), _mapHeight (0u), _eatCounter (0), _score (0), _isAlive (true) { }
 
 Snake::Snake (Snake const &src)
 {
@@ -24,6 +25,7 @@ Snake					&Snake::operator= (Snake const &src)
 	this->_snakeCells = src.getSnakeCells();
 	this->_currentDirection = src.getCurrentDirection();
 	this->_canPassThroughWall = src.getCanPassThroughWall();
+	this->_canEatHimself = src.getCanEatHimself();
 	this->_mapWidth = src.getMapWidth();
 	this->_mapHeight = src.getMapHeight();
 	this->_eatCounter = 0;		/* always start with a eatCounter of 0 */
@@ -53,6 +55,11 @@ eSnakeDirection			Snake::getCurrentDirection (void) const
 bool					Snake::getCanPassThroughWall (void) const
 {
 	return this->_canPassThroughWall;
+}
+
+bool					Snake::getCanEatHimself (void) const
+{
+	return this->_canEatHimself;
 }
 
 unsigned int			Snake::getMapWidth (void) const
@@ -207,12 +214,15 @@ void					Snake::moveStraight (void)
 			throw ShouldNeverOccurException (__FILE__, __LINE__);
 	}
 
-	it = std::find (this->_snakeCells.begin(), this->_snakeCells.end(), new_head);
-	if (it != this->_snakeCells.end())
+	if (this->_canEatHimself)
 	{
-		/* new_head match another cell, which mean that the snake eat himself */
-		this->_isAlive = false;
-		return;
+		it = std::find (this->_snakeCells.begin(), this->_snakeCells.end(), new_head);
+		if (it != this->_snakeCells.end())
+		{
+			/* new_head match another cell, which mean that the snake eat himself */
+			this->_isAlive = false;
+			return;
+		}
 	}
 
 	this->_snakeCells.push_front (new_head);
@@ -223,7 +233,9 @@ void					Snake::moveStraight (void)
 		this->_snakeCells.pop_back();
 }
 
-void					Snake::initSnake (unsigned int initPosX, unsigned int initPosY, unsigned int initSize, eSnakeDirection initDirection, bool canPassThroughWall)
+void					Snake::initSnake (unsigned int initPosX, unsigned int initPosY,
+										  unsigned int initSize, eSnakeDirection initDirection,
+										  bool canPassThroughWall, bool canEatHimself)
 {
 	t_cell cur_cell;
 	unsigned int i;
@@ -266,6 +278,7 @@ void					Snake::initSnake (unsigned int initPosX, unsigned int initPosY, unsigne
 
 	this->_currentDirection = initDirection;
 	this->_canPassThroughWall = canPassThroughWall;
+	this->_canEatHimself = canEatHimself;
 	this->_mapWidth = 0u;
 	this->_mapHeight = 0u;
 	this->_eatCounter = 0;

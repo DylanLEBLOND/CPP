@@ -8,6 +8,7 @@ static unsigned int _mapHeight;
  */
 GUISFML::GUISFML (Board *board)
 	: _board (board), _snakeP1 (NULL), _snakeP2 (NULL), _wantedGUI (eGUI::SFML),
+	  _textHeight (26),
 	  _musicVolume (50), _muted (false),
 	  _started (false)
 {
@@ -60,6 +61,9 @@ void					GUISFML::ajustBounds (void)
 
 void					GUISFML::drawMainMenu (void)
 {
+	eboadMode boardCurrentMode;
+	std::string mainString;
+
 	this->_window.clear (sf::Color::White);
 
 	if (! this->_mainMenuTexture.loadFromFile ("ressources/images/main_menu.png"))
@@ -72,6 +76,38 @@ void					GUISFML::drawMainMenu (void)
 	this->_mainMenuSprite.setScale (sf::Vector2f ((float)_mapWidth / 1000.0f, (float)_mapHeight / 1000.0f));
 
 	this->_window.draw (this->_mainMenuSprite);
+
+	/* Printing Nibbler Mode */
+
+	boardCurrentMode = this->_board->getBoardMode();
+
+	mainString = "Current Mode: ";
+	if ((boardCurrentMode | eboadMode::Default) == eboadMode::Default)
+		mainString += "Default";
+	else
+	{
+		switch (boardCurrentMode)
+		{
+			case eboadMode::NoFriendlyFire:
+				mainString += "NoFriendlyFire";
+				break;
+			case eboadMode::Endless:
+				mainString += "Endless";
+				break;
+			case eboadMode::NoFriendlyFire | eboadMode::Endless:
+				mainString += "NoFriendlyFire | Endless";
+				break;
+			default:
+				mainString += "????";
+				break;
+		}
+	}
+	this->_mainText.setString (mainString);
+
+	/* Printing Score Text */
+
+	this->_mainText.setPosition (10, 3);
+	this->_window.draw (this->_mainText);
 }
 
 void					GUISFML::drawBoard (void)
@@ -129,7 +165,7 @@ void					GUISFML::drawBoard (void)
 				}
 
 				boardCellDraw.setFillColor (sf::Color (r, g, b));
-				boardCellDraw.setPosition (x * 10, y * 10);
+				boardCellDraw.setPosition (x * 10, this->_textHeight + y * 10);
 				this->_window.draw (boardCellDraw);
 			}
 		}
@@ -156,13 +192,13 @@ void					GUISFML::drawSnakes (void)
 	{
 		if (head)
 		{
-			snakeHeadDraw.setPosition (itSnakeCell->positionX * 10, itSnakeCell->positionY * 10);
+			snakeHeadDraw.setPosition (itSnakeCell->positionX * 10, this->_textHeight + itSnakeCell->positionY * 10);
 			this->_window.draw (snakeHeadDraw);
 			head = false;
 		}
 		else
 		{
-			snakeCellDraw.setPosition (itSnakeCell->positionX * 10, itSnakeCell->positionY * 10);
+			snakeCellDraw.setPosition (itSnakeCell->positionX * 10, this->_textHeight + itSnakeCell->positionY * 10);
 			this->_window.draw (snakeCellDraw);
 		}
 	}
@@ -178,16 +214,69 @@ void					GUISFML::drawSnakes (void)
 		{
 			if (head)
 			{
-				snakeHeadDraw.setPosition (itSnakeCell->positionX * 10, itSnakeCell->positionY * 10);
+				snakeHeadDraw.setPosition (itSnakeCell->positionX * 10, this->_textHeight + itSnakeCell->positionY * 10);
 				this->_window.draw (snakeHeadDraw);
 				head = false;
 			}
 			else
 			{
-				snakeCellDraw.setPosition (itSnakeCell->positionX * 10, itSnakeCell->positionY * 10);
+				snakeCellDraw.setPosition (itSnakeCell->positionX * 10, this->_textHeight + itSnakeCell->positionY * 10);
 				this->_window.draw (snakeCellDraw);
 			}
 		}
+	}
+}
+
+void					GUISFML::drawScore (void)
+{
+	sf::RectangleShape scoreZone;
+	std::wstring scoreString;
+	int boardCompletedScore;
+
+	/* Clearing Score zone */
+
+	scoreZone.setSize (sf::Vector2f (_mapWidth, this->_textHeight));
+	scoreZone.setFillColor (sf::Color (0x33, 0x33, 0x33));
+	scoreZone.setPosition (0, 0);
+
+	this->_window.draw (scoreZone);
+
+	/* Setting Score Text */
+
+	scoreString = L"Player1: ";
+	scoreString += std::to_wstring (this->_snakeP1->getScore());
+	scoreString += L"/";
+	boardCompletedScore = this->_board->getBoardCompletedScore();
+	if (boardCompletedScore != -1)
+		scoreString += std::to_wstring (boardCompletedScore);
+	else
+		scoreString += L"∞";
+
+	this->_scoreP1Text.setString (scoreString);
+
+	if (this->_snakeP2)
+	{
+		scoreString = L"Player2: ";
+		scoreString += std::to_wstring (this->_snakeP2->getScore());
+		scoreString += L"/";
+		boardCompletedScore = this->_board->getBoardCompletedScore();
+		if (boardCompletedScore != -1)
+			scoreString += std::to_wstring (boardCompletedScore);
+		else
+			scoreString += L"∞";
+
+		this->_scoreP2Text.setString (scoreString);
+	}
+
+	/* Printing Score Text */
+
+	this->_scoreP1Text.setPosition (10, 3);
+	this->_window.draw (this->_scoreP1Text);
+
+	if (this->_snakeP2)
+	{
+		this->_scoreP2Text.setPosition ((_mapWidth - 10) - this->_scoreP2Text.getGlobalBounds().width, 3);
+		this->_window.draw (this->_scoreP2Text);
 	}
 }
 
@@ -246,8 +335,11 @@ eGUI					GUISFML::getGUIName (void) const
 
 void					GUISFML::start (void)
 {
+	unsigned int scalingFactor;
+
 	_mapWidth = this->_board->getWidth() * 10;
-	_mapHeight = this->_board->getHeight() * 10;
+	_mapHeight = this->_textHeight + this->_board->getHeight() * 10;
+	scalingFactor = (this->_board->getWidth() + this->_board->getHeight()) * 100 / (100 + 100 /* maximum possible board size*/);
 
 #ifdef PROJ_DEBUG
 	std::cout << "GUISFML::start" << std::endl;
@@ -259,6 +351,26 @@ void					GUISFML::start (void)
 	this->_window.setVerticalSyncEnabled (true);
 
 	this->ajustBounds ();
+
+	if (! this->_mainPolice.loadFromFile ("ressources/fonts/FreeMono.ttf"))
+	{
+		throw GUIException (this->_GUIName, "loadFromFile 1 (*** FONT FILE ***)");
+	}
+	this->_mainText.setFont (this->_mainPolice);
+	this->_mainText.setCharacterSize (30 * scalingFactor / 100);
+	this->_mainText.setFillColor (sf::Color::Black);
+
+	if (! this->_scorePolice.loadFromFile ("ressources/fonts/Ubuntu-MI.ttf"))
+	{
+		throw GUIException (this->_GUIName, "loadFromFile 2 (*** FONT FILE ***)");
+	}
+	this->_scoreP1Text.setFont (this->_scorePolice);
+	this->_scoreP1Text.setCharacterSize (this->_textHeight - 8);
+	this->_scoreP1Text.setFillColor (sf::Color::White);
+
+	this->_scoreP2Text.setFont (this->_scorePolice);
+	this->_scoreP2Text.setCharacterSize (this->_textHeight - 8);
+	this->_scoreP2Text.setFillColor (sf::Color::White);
 
 	if (! this->_mainMenuMusic.openFromFile ("ressources/sounds/ff_main_menu.wav"))
 	{
@@ -293,7 +405,10 @@ void					GUISFML::stop()
 
 void					GUISFML::loadMainMenu (void)
 {
+	this->_endMenuMusic.stop();
 	this->_mainMenuMusic.play();
+	if (this->_muted)
+		this->_mainMenuMusic.pause();
 	this->_mainMenuMusic.setLoop (true);
 	this->_mainMenuMusic.setVolume (this->_musicVolume);
 
@@ -345,19 +460,6 @@ eGUIMainMenuEvent		GUISFML::getMainMenuEvent (void)
 						{
 							this->_mainMenuMusic.pause();
 							this->_muted = true;
-						}
-						break;
-
-					case sf::Keyboard::M:
-						if (this->_mainMenuMusic.getStatus() == sf::SoundSource::Status::Playing)
-						{
-							this->_mainMenuMusic.pause();
-							this->_muted = true;
-						}
-						else
-						{
-							this->_mainMenuMusic.play();
-							this->_muted = false;
 						}
 						break;
 
@@ -465,6 +567,7 @@ void					GUISFML::updateGameGUI (void)
 
 	this->drawBoard();
 	this->drawSnakes();
+	this->drawScore();
 
 	this->_window.display();
 
@@ -481,6 +584,11 @@ void					GUISFML::updateGameGUI (void)
 eGUIGameEvent			GUISFML::getGameEvent (void)
 {
 	sf::Event events;
+	eSnakeDirection snakeP1CurrentDirection, snakeP2CurrentDirection;
+
+	snakeP1CurrentDirection = this->_snakeP1->getCurrentDirection();
+	if (this->_snakeP2)
+		snakeP2CurrentDirection = this->_snakeP2->getCurrentDirection();
 
 	while (this->_window.pollEvent (events))
 	{
@@ -501,36 +609,56 @@ eGUIGameEvent			GUISFML::getGameEvent (void)
 
 					/* Player 1 commands */
 					case sf::Keyboard::Left:
-						return eGUIGameEvent::p1GoLeft;
+						if ((snakeP1CurrentDirection != eSnakeDirection::West) &&
+							(snakeP1CurrentDirection != eSnakeDirection::East))
+							return eGUIGameEvent::p1GoLeft;
+						break;
 
 					case sf::Keyboard::Right:
-						return eGUIGameEvent::p1GoRight;
+						if ((snakeP1CurrentDirection != eSnakeDirection::West) &&
+							(snakeP1CurrentDirection != eSnakeDirection::East))
+							return eGUIGameEvent::p1GoRight;
+						break;
 
 					case sf::Keyboard::Up:
-						return eGUIGameEvent::p1GoUp;
+						if ((snakeP1CurrentDirection != eSnakeDirection::North) &&
+							(snakeP1CurrentDirection != eSnakeDirection::South))
+							return eGUIGameEvent::p1GoUp;
+						break;
 
 					case sf::Keyboard::Down:
-						return eGUIGameEvent::p1GoDown;
+						if ((snakeP1CurrentDirection != eSnakeDirection::North) &&
+							(snakeP1CurrentDirection != eSnakeDirection::South))
+							return eGUIGameEvent::p1GoDown;
+						break;
 
 					/* Player 2 commands */
 					case sf::Keyboard::Q:
 						if (this->_snakeP2)
-							return eGUIGameEvent::p2GoLeft;
+							if ((snakeP2CurrentDirection != eSnakeDirection::West) &&
+								(snakeP2CurrentDirection != eSnakeDirection::East))
+								return eGUIGameEvent::p2GoLeft;
 						break;
 
 					case sf::Keyboard::D:
 						if (this->_snakeP2)
-							return eGUIGameEvent::p2GoRight;
+							if ((snakeP2CurrentDirection != eSnakeDirection::West) &&
+								(snakeP2CurrentDirection != eSnakeDirection::East))
+								return eGUIGameEvent::p2GoRight;
 						break;
 
 					case sf::Keyboard::Z:
 						if (this->_snakeP2)
-							return eGUIGameEvent::p2GoUp;
+							if ((snakeP2CurrentDirection != eSnakeDirection::North) &&
+								(snakeP2CurrentDirection != eSnakeDirection::South))
+								return eGUIGameEvent::p2GoUp;
 						break;
 
 					case sf::Keyboard::S:
 						if (this->_snakeP2)
-							return eGUIGameEvent::p2GoDown;
+							if ((snakeP2CurrentDirection != eSnakeDirection::North) &&
+								(snakeP2CurrentDirection != eSnakeDirection::South))
+								return eGUIGameEvent::p2GoDown;
 						break;
 
 					/* GUI Switchs */
@@ -557,19 +685,6 @@ eGUIGameEvent			GUISFML::getGameEvent (void)
 						{
 							this->_boardMusic.pause();
 							this->_muted = true;
-						}
-						break;
-
-					case sf::Keyboard::M:
-						if (this->_boardMusic.getStatus() == sf::SoundSource::Status::Playing)
-						{
-							this->_boardMusic.pause();
-							this->_muted = true;
-						}
-						else
-						{
-							this->_boardMusic.play();
-							this->_muted = false;
 						}
 						break;
 
@@ -638,7 +753,6 @@ void					GUISFML::loadEndMenu (void)
 	this->_endMenuMusic.play();
 	if (this->_muted)
 		this->_endMenuMusic.pause();
-//	this->_endMenuMusic.setLoop (true);
 	this->_endMenuMusic.setVolume (this->_musicVolume);
 
 	this->_window.clear (sf::Color::White);
@@ -689,19 +803,6 @@ eGUIEndMenuEvent		GUISFML::getEndMenuEvent (void)
 						{
 							this->_endMenuMusic.pause();
 							this->_muted = true;
-						}
-						break;
-
-					case sf::Keyboard::M:
-						if (this->_endMenuMusic.getStatus() == sf::SoundSource::Status::Playing)
-						{
-							this->_endMenuMusic.pause();
-							this->_muted = true;
-						}
-						else
-						{
-							this->_endMenuMusic.play();
-							this->_muted = false;
 						}
 						break;
 
