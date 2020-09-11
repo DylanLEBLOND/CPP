@@ -15,7 +15,7 @@
 /*
  * Enumerations
  */
-enum class eGameStatus { finish, restart, changeLevel, quit, UnknownStatus };
+enum class eGameStatus { finish, restart, changeLevel, backMainMenu, quit, UnknownStatus };
 
 /*
  * Structures

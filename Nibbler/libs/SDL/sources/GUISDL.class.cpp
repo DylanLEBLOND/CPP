@@ -10,9 +10,9 @@ GUISDL::GUISDL (Board *board)
 	: _board (board), _snakeP1 (NULL), _snakeP2 (NULL), _wantedGUI (eGUI::SDL),
 	  _window (NULL), _boardRenderer (NULL), _mainMenuImage (NULL), _mainMenuTexture (NULL),
 	  _endMenuImage (NULL), _endMenuTexture (NULL),
-	  _textHeight (26), _mainPolice (NULL), _mainImage (NULL), _mainTexture (NULL),
-	  _scorePolice (NULL), _scoreP1Image (NULL), _scoreP1Texture (NULL),
-	  _scoreP2Image (NULL), _scoreP2Texture (NULL),
+	  _textHeight (26), _mainTextPolice (NULL), _mainTextImage (NULL), _mainTextTexture (NULL),
+	  _scoreTextPolice (NULL), _scoreP1TextImage (NULL), _scoreP1TextTexture (NULL),
+	  _scoreP2TextImage (NULL), _scoreP2TextTexture (NULL),
 	  _mainMenuMusic (NULL), _boardMusic (NULL), _endMenuMusic (NULL), _musicVolume (MIX_MAX_VOLUME / 2),
 	  _started (false)
 {
@@ -42,19 +42,24 @@ GUISDL::GUISDL (Board *board)
 	}
 
 	this->_menuLeftButton.x = 50;
-	this->_menuLeftButton.y = 600;
+	this->_menuLeftButton.y = 550;
 	this->_menuLeftButton.width = 400;
 	this->_menuLeftButton.height = 100;
 
 	this->_menuRightButton.x = 550;
-	this->_menuRightButton.y = 600;
+	this->_menuRightButton.y = 550;
 	this->_menuRightButton.width = 400;
 	this->_menuRightButton.height = 100;
 
-	this->_menuQuitButton.x = 300;
-	this->_menuQuitButton.y = 750;
-	this->_menuQuitButton.width = 400;
-	this->_menuQuitButton.height = 100;
+	this->_menuMiddleButton.x = 300;
+	this->_menuMiddleButton.y = 700;
+	this->_menuMiddleButton.width = 400;
+	this->_menuMiddleButton.height = 100;
+
+	this->_menuBottomButton.x = 300;
+	this->_menuBottomButton.y = 850;
+	this->_menuBottomButton.width = 400;
+	this->_menuBottomButton.height = 100;
 }
 
 /*
@@ -62,23 +67,23 @@ GUISDL::GUISDL (Board *board)
  */
 GUISDL::~GUISDL (void)
 {
-	if (this->_scoreP2Texture != NULL)
-		SDL_DestroyTexture (this->_scoreP2Texture);
+	if (this->_scoreP2TextTexture != NULL)
+		SDL_DestroyTexture (this->_scoreP2TextTexture);
 
-	if (this->_scoreP2Image != NULL)
-		SDL_FreeSurface (this->_scoreP2Image);
+	if (this->_scoreP2TextImage != NULL)
+		SDL_FreeSurface (this->_scoreP2TextImage);
 
-	if (this->_scoreP1Texture != NULL)
-		SDL_DestroyTexture (this->_scoreP1Texture);
+	if (this->_scoreP1TextTexture != NULL)
+		SDL_DestroyTexture (this->_scoreP1TextTexture);
 
-	if (this->_scoreP1Image != NULL)
-		SDL_FreeSurface (this->_scoreP1Image);
+	if (this->_scoreP1TextImage != NULL)
+		SDL_FreeSurface (this->_scoreP1TextImage);
 
-	if (this->_mainTexture != NULL)
-		SDL_DestroyTexture (this->_mainTexture);
+	if (this->_mainTextTexture != NULL)
+		SDL_DestroyTexture (this->_mainTextTexture);
 
-	if (this->_mainImage != NULL)
-		SDL_FreeSurface (this->_mainImage);
+	if (this->_mainTextImage != NULL)
+		SDL_FreeSurface (this->_mainTextImage);
 
 	if (this->_endMenuTexture != NULL)
 		SDL_DestroyTexture (this->_endMenuTexture);
@@ -122,10 +127,15 @@ void					GUISDL::ajustBounds (void)
 	this->_menuRightButton.width = this->_menuRightButton.width * _mapWidth / 1000;
 	this->_menuRightButton.height = this->_menuRightButton.height * _mapHeight / 1000;
 
-	this->_menuQuitButton.x = this->_menuQuitButton.x * _mapWidth / 1000;
-	this->_menuQuitButton.y = this->_menuQuitButton.y * _mapHeight / 1000;
-	this->_menuQuitButton.width = this->_menuQuitButton.width * _mapWidth / 1000;
-	this->_menuQuitButton.height = this->_menuQuitButton.height * _mapHeight / 1000;
+	this->_menuMiddleButton.x = this->_menuMiddleButton.x * _mapWidth / 1000;
+	this->_menuMiddleButton.y = this->_menuMiddleButton.y * _mapHeight / 1000;
+	this->_menuMiddleButton.width = this->_menuMiddleButton.width * _mapWidth / 1000;
+	this->_menuMiddleButton.height = this->_menuMiddleButton.height * _mapHeight / 1000;
+
+	this->_menuBottomButton.x = this->_menuBottomButton.x * _mapWidth / 1000;
+	this->_menuBottomButton.y = this->_menuBottomButton.y * _mapHeight / 1000;
+	this->_menuBottomButton.width = this->_menuBottomButton.width * _mapWidth / 1000;
+	this->_menuBottomButton.height = this->_menuBottomButton.height * _mapHeight / 1000;
 }
 
 void					GUISDL::drawMainMenu (void)
@@ -134,24 +144,23 @@ void					GUISDL::drawMainMenu (void)
 	std::string mainString;
 	SDL_Rect textDimension;
 	SDL_Color textColor, textBGColor;
-	unsigned int scalingFactor;
 
+	if (this->_mainMenuImage != NULL)
+		SDL_FreeSurface (this->_mainMenuImage);
+
+	this->_mainMenuImage = IMG_Load ("ressources/images/main_menu.png");
 	if (this->_mainMenuImage == NULL)
 	{
-		this->_mainMenuImage = IMG_Load ("ressources/images/main_menu.png");
-		if (this->_mainMenuImage == NULL)
-		{
-			throw GUIException (this->_GUIName, "IMG_Load GUISDL::drawMainMenu", IMG_GetError());
-		}
+		throw GUIException (this->_GUIName, "IMG_Load GUISDL::drawMainMenu", IMG_GetError());
 	}
 
+	if (this->_mainMenuTexture != NULL)
+		SDL_DestroyTexture (this->_mainMenuTexture);
+
+	this->_mainMenuTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_mainMenuImage);
 	if (this->_mainMenuTexture == NULL)
 	{
-		this->_mainMenuTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_mainMenuImage);
-		if (this->_mainMenuTexture == NULL)
-		{
-			throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface GUISDL::drawMainMenu", SDL_GetError());
-		}
+		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface GUISDL::drawMainMenu", SDL_GetError());
 	}
 
 	if (SDL_RenderCopy (this->_boardRenderer, this->_mainMenuTexture, NULL, NULL))
@@ -184,8 +193,6 @@ void					GUISDL::drawMainMenu (void)
 				break;
 		}
 	}
-	if (this->_mainImage != NULL)
-		SDL_FreeSurface (this->_mainImage);
 
 	textColor.r = 0;
 	textColor.g = 0;
@@ -197,31 +204,32 @@ void					GUISDL::drawMainMenu (void)
 	textBGColor.b = 255;
 	textBGColor.a = 255;
 
-	this->_mainImage = TTF_RenderUTF8_Shaded (this->_mainPolice, mainString.c_str(), textColor, textBGColor);
-	if (this->_mainImage == NULL)
+	if (this->_mainTextImage != NULL)
+		SDL_FreeSurface (this->_mainTextImage);
+
+	this->_mainTextImage = TTF_RenderUTF8_Shaded (this->_mainTextPolice, mainString.c_str(), textColor, textBGColor);
+	if (this->_mainTextImage == NULL)
 	{
 		throw GUIException (this->_GUIName, "TTF_RenderUTF8_Shaded 0", TTF_GetError());
 	}
 
 	/* Printing Score Text */
 
-	if (this->_mainTexture != NULL)
-		SDL_DestroyTexture (this->_mainTexture);
+	if (this->_mainTextTexture != NULL)
+		SDL_DestroyTexture (this->_mainTextTexture);
 
-	this->_mainTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_mainImage);
-	if (this->_mainTexture == NULL)
+	this->_mainTextTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_mainTextImage);
+	if (this->_mainTextTexture == NULL)
 	{
 		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface 0 GUISDL::drawScore", SDL_GetError());
 	}
 
-	scalingFactor = (this->_board->getWidth() + this->_board->getHeight()) * 100 / (100 + 100 /* maximum possible board size*/);
-
 	textDimension.x = 10;
 	textDimension.y = 3;
-	textDimension.w = this->_mainImage->w * scalingFactor / 100;
-	textDimension.h = this->_mainImage->h * scalingFactor / 100;
+	textDimension.w = this->_mainTextImage->w;
+	textDimension.h = this->_mainTextImage->h;
 
-	if (SDL_RenderCopy (this->_boardRenderer, this->_mainTexture, NULL, &textDimension))
+	if (SDL_RenderCopy (this->_boardRenderer, this->_mainTextTexture, NULL, &textDimension))
 	{
 		throw GUIException (this->_GUIName, "SDL_RenderCopy 0 GUISDL::drawScore", SDL_GetError());
 	}
@@ -440,11 +448,11 @@ void					GUISDL::drawScore (void)
 	else
 		scoreString += "∞";
 
-	if (this->_scoreP1Image != NULL)
-		SDL_FreeSurface (this->_scoreP1Image);
+	if (this->_scoreP1TextImage != NULL)
+		SDL_FreeSurface (this->_scoreP1TextImage);
 
-	this->_scoreP1Image = TTF_RenderUTF8_Shaded (this->_scorePolice, scoreString.c_str(), textColor, textBGColor);
-	if (this->_scoreP1Image == NULL)
+	this->_scoreP1TextImage = TTF_RenderUTF8_Shaded (this->_scoreTextPolice, scoreString.c_str(), textColor, textBGColor);
+	if (this->_scoreP1TextImage == NULL)
 	{
 		throw GUIException (this->_GUIName, "TTF_RenderUTF8_Shaded 1", TTF_GetError());
 	}
@@ -460,11 +468,11 @@ void					GUISDL::drawScore (void)
 		else
 			scoreString += "∞";
 
-		if (this->_scoreP2Image != NULL)
-			SDL_FreeSurface (this->_scoreP2Image);
+		if (this->_scoreP2TextImage != NULL)
+			SDL_FreeSurface (this->_scoreP2TextImage);
 
-		this->_scoreP2Image = TTF_RenderUTF8_Shaded (this->_scorePolice, scoreString.c_str(), textColor, textBGColor);
-		if (this->_scoreP2Image == NULL)
+		this->_scoreP2TextImage = TTF_RenderUTF8_Shaded (this->_scoreTextPolice, scoreString.c_str(), textColor, textBGColor);
+		if (this->_scoreP2TextImage == NULL)
 		{
 			throw GUIException (this->_GUIName, "TTF_RenderUTF8_Shaded 2", TTF_GetError());
 		}
@@ -472,40 +480,40 @@ void					GUISDL::drawScore (void)
 
 	/* Printing Score Text */
 
-	if (this->_scoreP1Texture != NULL)
-		SDL_DestroyTexture (this->_scoreP1Texture);
+	if (this->_scoreP1TextTexture != NULL)
+		SDL_DestroyTexture (this->_scoreP1TextTexture);
 
-	this->_scoreP1Texture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_scoreP1Image);
-	if (this->_scoreP1Texture == NULL)
+	this->_scoreP1TextTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_scoreP1TextImage);
+	if (this->_scoreP1TextTexture == NULL)
 	{
 		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface 1 GUISDL::drawScore", SDL_GetError());
 	}
 
 	textDimension.x = 10;
 	textDimension.y = 3;
-	textDimension.w = this->_scoreP1Image->w;
+	textDimension.w = this->_scoreP1TextImage->w;
 	textDimension.h = this->_textHeight - 6;
-	if (SDL_RenderCopy (this->_boardRenderer, this->_scoreP1Texture, NULL, &textDimension))
+	if (SDL_RenderCopy (this->_boardRenderer, this->_scoreP1TextTexture, NULL, &textDimension))
 	{
 		throw GUIException (this->_GUIName, "SDL_RenderCopy 1 GUISDL::drawScore", SDL_GetError());
 	}
 
 	if (this->_snakeP2)
 	{
-		if (this->_scoreP2Texture != NULL)
-			SDL_DestroyTexture (this->_scoreP2Texture);
+		if (this->_scoreP2TextTexture != NULL)
+			SDL_DestroyTexture (this->_scoreP2TextTexture);
 
-		this->_scoreP2Texture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_scoreP2Image);
-		if (this->_scoreP2Texture == NULL)
+		this->_scoreP2TextTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_scoreP2TextImage);
+		if (this->_scoreP2TextTexture == NULL)
 		{
 			throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface 2 GUISDL::drawScore", SDL_GetError());
 		}
 
-		textDimension.x = (_mapWidth - 10) - this->_scoreP2Image->w;
+		textDimension.x = (_mapWidth - 10) - this->_scoreP2TextImage->w;
 		textDimension.y = 3;
-		textDimension.w = this->_scoreP2Image->w;
+		textDimension.w = this->_scoreP2TextImage->w;
 		textDimension.h = this->_textHeight - 6;
-		if (SDL_RenderCopy (this->_boardRenderer, this->_scoreP2Texture, NULL, &textDimension))
+		if (SDL_RenderCopy (this->_boardRenderer, this->_scoreP2TextTexture, NULL, &textDimension))
 		{
 			throw GUIException (this->_GUIName, "SDL_RenderCopy 2 GUISDL::drawScore", SDL_GetError());
 		}
@@ -577,6 +585,8 @@ eGUI					GUISDL::getGUIName (void) const
 
 void					GUISDL::start (void)
 {
+	unsigned int scalingFactor, mainFontSize;
+
 	_mapWidth = this->_board->getWidth() * 10;
 	_mapHeight = this->_textHeight + this->_board->getHeight() * 10;
 
@@ -598,14 +608,21 @@ void					GUISDL::start (void)
 
 	this->ajustBounds ();
 
-	this->_mainPolice = TTF_OpenFont ("ressources/fonts/FreeMonoBold.ttf", 35);
-	if (! this->_mainPolice)
+	scalingFactor = (this->_board->getWidth() + this->_board->getHeight()) * 100 / (30 + 30 /* minimum possible board size*/);
+	mainFontSize = 10 * scalingFactor / 100;
+
+	std::cout << "Scaling Factor = " << scalingFactor;
+	std::cout << " | mainFontSize = " << mainFontSize << std::endl;
+
+//	this->_mainTextPolice = TTF_OpenFont ("ressources/fonts/FreeMono.ttf", 35);
+	this->_mainTextPolice = TTF_OpenFont ("ressources/fonts/FreeMono.ttf", mainFontSize);
+	if (! this->_mainTextPolice)
 	{
 		throw GUIException (this->_GUIName, "TTF_OpenFont 1", TTF_GetError());
 	}
 
-	this->_scorePolice = TTF_OpenFont ("ressources/fonts/Ubuntu-MI.ttf", 18);
-	if (! this->_scorePolice)
+	this->_scoreTextPolice = TTF_OpenFont ("ressources/fonts/Ubuntu-MI.ttf", 18);
+	if (! this->_scoreTextPolice)
 	{
 		throw GUIException (this->_GUIName, "TTF_OpenFont 3", TTF_GetError());
 	}
@@ -660,16 +677,16 @@ void					GUISDL::stop()
 		this->_endMenuMusic = NULL;
 	}
 
-	if (this->_mainPolice != NULL)
+	if (this->_mainTextPolice != NULL)
 	{
-		TTF_CloseFont (this->_mainPolice);
-		this->_mainPolice = NULL;
+		TTF_CloseFont (this->_mainTextPolice);
+		this->_mainTextPolice = NULL;
 	}
 
-	if (this->_scorePolice != NULL)
+	if (this->_scoreTextPolice != NULL)
 	{
-		TTF_CloseFont (this->_scorePolice);
-		this->_scorePolice = NULL;
+		TTF_CloseFont (this->_scoreTextPolice);
+		this->_scoreTextPolice = NULL;
 	}
 
 	SDL_DestroyWindow (this->_window);
@@ -766,7 +783,7 @@ eGUIMainMenuEvent		GUISDL::getMainMenuEvent (void)
 						return eGUIMainMenuEvent::startSinglePlayerGame;
 					else if (this->_menuRightButton.in (x, y))
 						return eGUIMainMenuEvent::startMultiPlayerGame;
-					else if (this->_menuQuitButton.in (x, y))
+					else if (this->_menuMiddleButton.in (x, y))
 						return eGUIMainMenuEvent::quitGame;
 				}
 				break;
@@ -1125,7 +1142,9 @@ eGUIEndMenuEvent		GUISDL::getEndMenuEvent (void)
 						return eGUIEndMenuEvent::restartLevel;
 					else if (this->_menuRightButton.in (x, y))
 						return eGUIEndMenuEvent::nextLevel;
-					else if (this->_menuQuitButton.in (x, y))
+					else if (this->_menuMiddleButton.in (x, y))
+						return eGUIEndMenuEvent::backToLobby;
+					else if (this->_menuBottomButton.in (x, y))
 						return eGUIEndMenuEvent::quitGame;
 				}
 				break;

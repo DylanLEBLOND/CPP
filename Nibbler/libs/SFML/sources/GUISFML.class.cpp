@@ -18,19 +18,24 @@ GUISFML::GUISFML (Board *board)
 	}
 
 	this->_menuLeftButton.x = 50;
-	this->_menuLeftButton.y = 600;
+	this->_menuLeftButton.y = 550;
 	this->_menuLeftButton.width = 400;
 	this->_menuLeftButton.height = 100;
 
 	this->_menuRightButton.x = 550;
-	this->_menuRightButton.y = 600;
+	this->_menuRightButton.y = 550;
 	this->_menuRightButton.width = 400;
 	this->_menuRightButton.height = 100;
 
-	this->_menuQuitButton.x = 300;
-	this->_menuQuitButton.y = 750;
-	this->_menuQuitButton.width = 400;
-	this->_menuQuitButton.height = 100;
+	this->_menuMiddleButton.x = 300;
+	this->_menuMiddleButton.y = 700;
+	this->_menuMiddleButton.width = 400;
+	this->_menuMiddleButton.height = 100;
+
+	this->_menuBottomButton.x = 300;
+	this->_menuBottomButton.y = 850;
+	this->_menuBottomButton.width = 400;
+	this->_menuBottomButton.height = 100;
 }
 
 /*
@@ -53,10 +58,15 @@ void					GUISFML::ajustBounds (void)
 	this->_menuRightButton.width = this->_menuRightButton.width * _mapWidth / 1000;
 	this->_menuRightButton.height = this->_menuRightButton.height * _mapHeight / 1000;
 
-	this->_menuQuitButton.x = this->_menuQuitButton.x * _mapWidth / 1000;
-	this->_menuQuitButton.y = this->_menuQuitButton.y * _mapHeight / 1000;
-	this->_menuQuitButton.width = this->_menuQuitButton.width * _mapWidth / 1000;
-	this->_menuQuitButton.height = this->_menuQuitButton.height * _mapHeight / 1000;
+	this->_menuMiddleButton.x = this->_menuMiddleButton.x * _mapWidth / 1000;
+	this->_menuMiddleButton.y = this->_menuMiddleButton.y * _mapHeight / 1000;
+	this->_menuMiddleButton.width = this->_menuMiddleButton.width * _mapWidth / 1000;
+	this->_menuMiddleButton.height = this->_menuMiddleButton.height * _mapHeight / 1000;
+
+	this->_menuBottomButton.x = this->_menuBottomButton.x * _mapWidth / 1000;
+	this->_menuBottomButton.y = this->_menuBottomButton.y * _mapHeight / 1000;
+	this->_menuBottomButton.width = this->_menuBottomButton.width * _mapWidth / 1000;
+	this->_menuBottomButton.height = this->_menuBottomButton.height * _mapHeight / 1000;
 }
 
 void					GUISFML::drawMainMenu (void)
@@ -365,11 +375,11 @@ void					GUISFML::start (void)
 		throw GUIException (this->_GUIName, "loadFromFile 2 (*** FONT FILE ***)");
 	}
 	this->_scoreP1Text.setFont (this->_scorePolice);
-	this->_scoreP1Text.setCharacterSize (this->_textHeight - 8);
+	this->_scoreP1Text.setCharacterSize (this->_textHeight - 10);
 	this->_scoreP1Text.setFillColor (sf::Color::White);
 
 	this->_scoreP2Text.setFont (this->_scorePolice);
-	this->_scoreP2Text.setCharacterSize (this->_textHeight - 8);
+	this->_scoreP2Text.setCharacterSize (this->_textHeight - 10);
 	this->_scoreP2Text.setFillColor (sf::Color::White);
 
 	if (! this->_mainMenuMusic.openFromFile ("ressources/sounds/ff_main_menu.wav"))
@@ -489,7 +499,7 @@ eGUIMainMenuEvent		GUISFML::getMainMenuEvent (void)
 						return eGUIMainMenuEvent::startSinglePlayerGame;
 					else if (this->_menuRightButton.in (events.mouseButton.x, events.mouseButton.y))
 						return eGUIMainMenuEvent::startMultiPlayerGame;
-					else if (this->_menuQuitButton.in (events.mouseButton.x, events.mouseButton.y))
+					else if (this->_menuMiddleButton.in (events.mouseButton.x, events.mouseButton.y))
 						return eGUIMainMenuEvent::quitGame;
 				}
 				break;
@@ -832,7 +842,9 @@ eGUIEndMenuEvent		GUISFML::getEndMenuEvent (void)
 						return eGUIEndMenuEvent::restartLevel;
 					else if (this->_menuRightButton.in (events.mouseButton.x, events.mouseButton.y))
 						return eGUIEndMenuEvent::nextLevel;
-					else if (this->_menuQuitButton.in (events.mouseButton.x, events.mouseButton.y))
+					else if (this->_menuMiddleButton.in (events.mouseButton.x, events.mouseButton.y))
+						return eGUIEndMenuEvent::backToLobby;
+					else if (this->_menuBottomButton.in (events.mouseButton.x, events.mouseButton.y))
 						return eGUIEndMenuEvent::quitGame;
 				}
 				break;

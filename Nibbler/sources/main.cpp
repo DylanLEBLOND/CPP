@@ -10,7 +10,6 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 
 	currentGUI = GUI->getGUIName();
 
-	GUI->start();
 	GUI->loadMainMenu();
 
 	while (true)
@@ -209,6 +208,10 @@ static eGameStatus		endGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 				std::cout << "endGame END (changeLevel)" << std::endl;
 				return eGameStatus::changeLevel;
 
+			case eGUIEndMenuEvent::backToLobby:
+				std::cout << "endGame END (backToLobby)" << std::endl;
+				return eGameStatus::backMainMenu;
+
 			case eGUIEndMenuEvent::quitGame:
 				std::cout << "endGame END (quit)" << std::endl;
 				return eGameStatus::quit;
@@ -289,14 +292,14 @@ static unsigned int		selectSoundTrack (eBoardMaps currentLevel)
 static void				startNibbler (nibblerParametersPointer nibblerParams)
 {
 	Board *board;
-	Snake *snakeP1, *snakeP2;
+	Snake *snakeP1, *snakeP2, *save_snakeP2;
 	guiFuncStruct guiFunc;
 	IGUI *GUI;
 	eGUI currentGUI;
 	eBoardMaps currentMap;
 	unsigned int soundTrack;
 	eGameStatus gameStatus;
-	bool running;
+	bool running, playing;
 
 	std::cout << "startNibbler BEGIN" << std::endl;
 
@@ -304,71 +307,90 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 	if (! board)
 		throw ShouldNeverOccurException (__FILE__, __LINE__);
 
-	currentMap = nibblerParams->selectedMap;
-	soundTrack = selectSoundTrack (currentMap);
+	snakeP1 = new Snake ();
+	if (! snakeP1)
+		throw ShouldNeverOccurException (__FILE__, __LINE__);
+
+	save_snakeP2 = new Snake ();
+	if (! save_snakeP2)
+		throw ShouldNeverOccurException (__FILE__, __LINE__);
 
 	openGUILibrary (eGUI::SDL, &guiFunc);
 	GUI = guiFunc.createGUI (board);
 
 	board->initBoard (nibblerParams->width, nibblerParams->height, nibblerParams->boardMode);
 
-	running = launchNibbler (board, nibblerParams, &guiFunc, GUI);
+	GUI->start();
 
-	snakeP1 = new Snake ();
-	if (! snakeP1)
-		throw ShouldNeverOccurException (__FILE__, __LINE__);
-
-	if (nibblerParams->boardMode & eboadMode::Multiplayer)
-	{
-		snakeP2 = new Snake ();
-		if (! snakeP1)
-			throw ShouldNeverOccurException (__FILE__, __LINE__);
-	}
-	else
-		snakeP2 = NULL;
-
-	guiFunc.setPlayers (GUI, snakeP1, snakeP2);
-
+	running = true;
 	while (running)
 	{
-		board->loadMap (currentMap);
-		board->initPlayers (snakeP1, snakeP2);
+		if (! launchNibbler (board, nibblerParams, &guiFunc, GUI))
+			break;
 
-		gameStatus = startGame (board, snakeP1, snakeP2, soundTrack, nibblerParams, &guiFunc, GUI);
-		switch (gameStatus)
+		if (nibblerParams->boardMode & eboadMode::Multiplayer)
 		{
-			case eGameStatus::quit:
-				running = false;
-				break;
+			snakeP2 = save_snakeP2;
+		}
+		else
+			snakeP2 = NULL;
 
-			case eGameStatus::finish:
-				gameStatus = endGame (board, snakeP1, snakeP2, &guiFunc, GUI);
-				switch (gameStatus)
-				{
-					case eGameStatus::restart:
-						/* nothing to do */
-						break;
+		currentMap = nibblerParams->selectedMap;
+		soundTrack = selectSoundTrack (currentMap);
+		guiFunc.setPlayers (GUI, snakeP1, snakeP2);
 
-					case eGameStatus::changeLevel:
-						currentMap = loadNextLevel (currentMap);
-						soundTrack = selectSoundTrack (currentMap);
-						break;
+		playing = true;
+		while (playing)
+		{
+			board->loadMap (currentMap);
+			board->initPlayers (snakeP1, snakeP2);
 
-					case eGameStatus::quit:
-						running = false;
-						break;
+			gameStatus = startGame (board, snakeP1, snakeP2, soundTrack, nibblerParams, &guiFunc, GUI);
+			switch (gameStatus)
+			{
+				case eGameStatus::quit:
+					playing = false;
+					running = false;
+					break;
+
+				case eGameStatus::finish:
+					gameStatus = endGame (board, snakeP1, snakeP2, &guiFunc, GUI);
+					switch (gameStatus)
+					{
+						case eGameStatus::restart:
+							/* nothing to do */
+							break;
+
+						case eGameStatus::changeLevel:
+							currentMap = loadNextLevel (currentMap);
+							soundTrack = selectSoundTrack (currentMap);
+							break;
+
+						case eGameStatus::backMainMenu:
+							playing = false;
+							break;
+
+						case eGameStatus::quit:
+							playing = false;
+							running = false;
+							break;
+
+						default:
+							throw ShouldNeverOccurException (__FILE__, __LINE__);
+					}
+					break;
 
 					default:
 						throw ShouldNeverOccurException (__FILE__, __LINE__);
-				}
-				break;
+			}
 
-				default:
-					throw ShouldNeverOccurException (__FILE__, __LINE__);
+			board->clearBoard();
+
+			nibblerParams->boardMode = static_cast<eboadMode>
+									   (nibblerParams->boardMode & ~eboadMode::Multiplayer);
+
+			board->initBoard (nibblerParams->width, nibblerParams->height, nibblerParams->boardMode);
 		}
-
-		board->clearBoard();
-		board->initBoard (nibblerParams->width, nibblerParams->height, nibblerParams->boardMode);
 	}
 
 	currentGUI = GUI->getGUIName();
@@ -376,8 +398,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 	guiFunc.destroyGUI (GUI);
 	closeGUILibrary (currentGUI, &guiFunc);
 
-	if (snakeP2 != NULL)
-		delete snakeP2;
+	delete save_snakeP2;
 	delete snakeP1;
 	delete board;
 

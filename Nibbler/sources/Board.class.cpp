@@ -212,23 +212,28 @@ void								Board::loadMapLines (void)
 
 void								Board::loadMapBlocks (void)
 {
-	unsigned int beginY, endY, y, blockYCount, beginX, endX, x, blockXCount;
+	unsigned int blockYSize, yJump, blockXSize, xJump, j, y, yBegin, yEnd, i, x, xBegin, xEnd;
 	std::vector<t_cell>::iterator it;
 	t_cell emptyCell;
 
 	this->loadMapClassic();
 
-	for (blockYCount = 1; blockYCount < 4; blockYCount++)
+	blockYSize = std::round (this->_height / 20.0f);
+	yJump = std::round (this->_height / 4.0f);
+	blockXSize = std::round (this->_width / 20.0f);
+	xJump = std::round (this->_width / 4.0f);
+
+	for (j = 1; j <= 3; j++)
 	{
-		beginY = blockYCount * (this->_height / 4) - (this->_height / 20);
-		endY = blockYCount * (this->_height / 4) + (this->_height / 20);
-		for (y = beginY + 1; y <= endY; y++)
+		yBegin = (j * yJump) - blockYSize;
+		yEnd = (j * yJump) + blockYSize;
+		for (y = yBegin; y < yEnd; y++)
 		{
-			for (blockXCount = 1; blockXCount < 4; blockXCount++)
+			for (i = 1; i <= 3; i++)
 			{
-				beginX = blockXCount * (this->_width / 4) - (this->_width / 20);
-				endX = blockXCount * (this->_width / 4) + (this->_width / 20);
-				for (x = beginX + 1; x <= endX; x++)
+				xBegin = (i * xJump) - blockXSize;
+				xEnd = (i * xJump) + blockXSize;
+				for (x = xBegin; x < xEnd; x++)
 				{
 					this->_boardCells->at (y).at (x) = -1;
 
@@ -371,23 +376,28 @@ void								Board::loadMapLinesBorderless (void)
 
 void								Board::loadMapBlocksBorderless (void)
 {
-	unsigned int beginY, endY, y, blockYCount, beginX, endX, x, blockXCount;
+	unsigned int blockYSize, yJump, blockXSize, xJump, j, y, yBegin, yEnd, i, x, xBegin, xEnd;
 	std::vector<t_cell>::iterator it;
 	t_cell emptyCell;
 
 	this->loadMapBorderless();
 
-	for (blockYCount = 1; blockYCount < 4; blockYCount++)
+	blockYSize = std::round (this->_height / 20.0f);
+	yJump = std::round (this->_height / 4.0f);
+	blockXSize = std::round (this->_width / 20.0f);
+	xJump = std::round (this->_width / 4.0f);
+
+	for (j = 1; j <= 3; j++)
 	{
-		beginY = blockYCount * (this->_height / 4) - (this->_height / 20);
-		endY = blockYCount * (this->_height / 4) + (this->_height / 20);
-		for (y = beginY + 1; y <= endY; y++)
+		yBegin = (j * yJump) - blockYSize;
+		yEnd = (j * yJump) + blockYSize;
+		for (y = yBegin; y < yEnd; y++)
 		{
-			for (blockXCount = 1; blockXCount < 4; blockXCount++)
+			for (i = 1; i <= 3; i++)
 			{
-				beginX = blockXCount * (this->_width / 4) - (this->_width / 20);
-				endX = blockXCount * (this->_width / 4) + (this->_width / 20);
-				for (x = beginX + 1; x <= endX; x++)
+				xBegin = (i * xJump) - blockXSize;
+				xEnd = (i * xJump) + blockXSize;
+				for (x = xBegin; x < xEnd; x++)
 				{
 					this->_boardCells->at (y).at (x) = -1;
 
@@ -734,6 +744,7 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2)
 			}
 			break;
 		case eBoardMaps::Blocks:
+		case eBoardMaps::BlocksBorderless:
 			p1InitPosX = floor (this->_width / 10.0f) > 4 ?
 						 floor (this->_width / 10.0f) : 4;
 			p1InitPosY = floor (this->_height / 10.0f) > 4 ?

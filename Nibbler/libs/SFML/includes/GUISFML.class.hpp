@@ -62,7 +62,8 @@ private:
 	bool					_started;
 	bounds					_menuLeftButton;
 	bounds					_menuRightButton;
-	bounds					_menuQuitButton;
+	bounds					_menuMiddleButton;
+	bounds					_menuBottomButton;
 
 	GUISFML (void);
 	GUISFML (GUISFML const &src);

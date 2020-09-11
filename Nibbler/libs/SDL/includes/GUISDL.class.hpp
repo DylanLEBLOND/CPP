@@ -49,14 +49,14 @@ private:
 	SDL_Texture*		_endMenuTexture;
 		/* Text */
 	unsigned int		_textHeight;
-	TTF_Font*			_mainPolice;
-	SDL_Surface*		_mainImage;
-	SDL_Texture*		_mainTexture;
-	TTF_Font*			_scorePolice;
-	SDL_Surface*		_scoreP1Image;
-	SDL_Texture*		_scoreP1Texture;
-	SDL_Surface*		_scoreP2Image;
-	SDL_Texture*		_scoreP2Texture;
+	TTF_Font*			_mainTextPolice;
+	SDL_Surface*		_mainTextImage;
+	SDL_Texture*		_mainTextTexture;
+	TTF_Font*			_scoreTextPolice;
+	SDL_Surface*		_scoreP1TextImage;
+	SDL_Texture*		_scoreP1TextTexture;
+	SDL_Surface*		_scoreP2TextImage;
+	SDL_Texture*		_scoreP2TextTexture;
 		/* Music */
 	Mix_Music*			_mainMenuMusic;
 	Mix_Music*			_boardMusic;
@@ -67,7 +67,8 @@ private:
 	bool				_started;
 	bounds				_menuLeftButton;
 	bounds				_menuRightButton;
-	bounds				_menuQuitButton;
+	bounds				_menuMiddleButton;
+	bounds				_menuBottomButton;
 
 	GUISDL (void);
 	GUISDL (GUISDL const &src);
