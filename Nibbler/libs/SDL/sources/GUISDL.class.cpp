@@ -1093,7 +1093,9 @@ void						GUISDL::loadBoard (unsigned int soundTrack)
 
 void						GUISDL::updateGameGUI (void)
 {
+	int boardCompletedScore;
 	unsigned int currentGlobalScore;
+	unsigned int speed;
 
 	this->drawBoard();
 	this->drawSnakes();
@@ -1103,12 +1105,20 @@ void						GUISDL::updateGameGUI (void)
 
 	currentGlobalScore = this->_snakeP1->getScore();
 	if (this->_snakeP2)
-		currentGlobalScore = currentGlobalScore > this->_snakeP2->getScore() ? currentGlobalScore : this->_snakeP2->getScore();
+		currentGlobalScore = currentGlobalScore > this->_snakeP2->getScore() ?
+							 currentGlobalScore :
+							 this->_snakeP2->getScore();
 
 	if (currentGlobalScore > 95)
 		currentGlobalScore = 95;
 
-	SDL_Delay (100 - currentGlobalScore);
+	boardCompletedScore = this->_board->getBoardCompletedScore();
+	if (boardCompletedScore <= 1)
+		speed = 100 - currentGlobalScore;
+	else
+		speed = 100 - (currentGlobalScore * 50 / (boardCompletedScore - 1));
+
+	SDL_Delay (speed);
 }
 
 eGUIGameEvent				GUISDL::getGameEvent (void)

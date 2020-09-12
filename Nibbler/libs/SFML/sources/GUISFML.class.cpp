@@ -773,7 +773,9 @@ void						GUISFML::loadBoard (unsigned int soundTrack)
 
 void						GUISFML::updateGameGUI (void)
 {
+	int boardCompletedScore;
 	unsigned int currentGlobalScore;
+	unsigned int speed;
 
 	this->_window.clear (sf::Color::White);
 
@@ -790,7 +792,13 @@ void						GUISFML::updateGameGUI (void)
 	if (currentGlobalScore > 95)
 		currentGlobalScore = 95;
 
-	sf::sleep (sf::milliseconds (100 - currentGlobalScore));
+	boardCompletedScore = this->_board->getBoardCompletedScore();
+	if (boardCompletedScore <= 1)
+		speed = 100 - currentGlobalScore;
+	else
+		speed = 100 - (currentGlobalScore * 50 / (boardCompletedScore - 1));
+
+	sf::sleep (sf::milliseconds (speed));
 }
 
 eGUIGameEvent				GUISFML::getGameEvent (void)
