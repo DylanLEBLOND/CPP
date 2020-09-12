@@ -14,9 +14,6 @@ GUIException::GUIException (eGUI affectedGUI, std::string const &GUIFunc)
 		case eGUI::SFML:
 			this->_message += "SFML";
 			break;
-		case eGUI::openGL:
-			this->_message += "openGLL";
-			break;
 		case eGUI::Allegro:
 			this->_message += "Allegro";
 			break;
@@ -39,9 +36,6 @@ GUIException::GUIException (eGUI affectedGUI, std::string const &GUIFunc, std::s
 			break;
 		case eGUI::SFML:
 			this->_message += "SFML";
-			break;
-		case eGUI::openGL:
-			this->_message += "openGLL";
 			break;
 		case eGUI::Allegro:
 			this->_message += "Allegro";
@@ -68,9 +62,6 @@ GUIException::GUIException (eGUI affectedGUI, const char *GUIFunc)
 		case eGUI::SFML:
 			this->_message += "SFML";
 			break;
-		case eGUI::openGL:
-			this->_message += "openGLL";
-			break;
 		case eGUI::Allegro:
 			this->_message += "Allegro";
 			break;
@@ -93,9 +84,6 @@ GUIException::GUIException (eGUI affectedGUI, const char *GUIFunc, const char *G
 			break;
 		case eGUI::SFML:
 			this->_message += "SFML";
-			break;
-		case eGUI::openGL:
-			this->_message += "openGLL";
 			break;
 		case eGUI::Allegro:
 			this->_message += "Allegro";

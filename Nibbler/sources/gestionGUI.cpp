@@ -30,57 +30,30 @@ static void		openSDL (guiFuncStruct *guiFunc)
 	}
 }
 
-static void		openOpenGL (guiFuncStruct *guiFunc)
-{
-	guiFunc->libHandle = dlopen ("./libguiopengl.so", RTLD_LAZY);
-	if (guiFunc->libHandle == NULL)
-	{
-		throw DynamicLoadGUIException (eGUI::openGL, "dlopen", dlerror());
-	}
-
-	guiFunc->createGUI = (IGUI *(*)(Board *)) dlsym (guiFunc->libHandle, "createGUI");
-	if (guiFunc->createGUI == NULL)
-	{
-		throw DynamicLoadGUIException (eGUI::openGL, "dlsym createGUI", dlerror());
-	}
-
-	guiFunc->setPlayers = (void (*)(IGUI *, Snake *, Snake *)) dlsym (guiFunc->libHandle, "setPlayers");
-	if (guiFunc->setPlayers == NULL)
-	{
-		throw DynamicLoadGUIException (eGUI::openGL, "dlsym setPlayers", dlerror());
-	}
-
-	guiFunc->destroyGUI = (void (*)(IGUI *)) dlsym (guiFunc->libHandle, "destroyGUI");
-	if (guiFunc->destroyGUI == NULL)
-	{
-		throw DynamicLoadGUIException (eGUI::openGL, "dlsym destroyGUI", dlerror());
-	}
-}
-
 static void		openSFML (guiFuncStruct *guiFunc)
 {
 	guiFunc->libHandle = dlopen ("./libguisfml.so", RTLD_LAZY);
 	if (guiFunc->libHandle == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::openGL, "dlopen", dlerror());
+		throw DynamicLoadGUIException (eGUI::SFML, "dlopen", dlerror());
 	}
 
 	guiFunc->createGUI = (IGUI *(*)(Board *)) dlsym (guiFunc->libHandle, "createGUI");
 	if (guiFunc->createGUI == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::openGL, "dlsym createGUI", dlerror());
+		throw DynamicLoadGUIException (eGUI::SFML, "dlsym createGUI", dlerror());
 	}
 
 	guiFunc->setPlayers = (void (*)(IGUI *, Snake *, Snake *)) dlsym (guiFunc->libHandle, "setPlayers");
 	if (guiFunc->setPlayers == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::openGL, "dlsym setPlayers", dlerror());
+		throw DynamicLoadGUIException (eGUI::SFML, "dlsym setPlayers", dlerror());
 	}
 
 	guiFunc->destroyGUI = (void (*)(IGUI *)) dlsym (guiFunc->libHandle, "destroyGUI");
 	if (guiFunc->destroyGUI == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::openGL, "dlsym destroyGUI", dlerror());
+		throw DynamicLoadGUIException (eGUI::SFML, "dlsym destroyGUI", dlerror());
 	}
 }
 
@@ -119,10 +92,6 @@ void			openGUILibrary (eGUI wantedGUI, guiFuncStruct *guiFunc)
 			std::cout << "Open GUI: SDL" << std::endl;
 			openSDL (guiFunc);
 			break;
-		case eGUI::openGL:
-			std::cout << "Open GUI: OpenGL" << std::endl;
-			openOpenGL (guiFunc);
-			break;
 		case eGUI::SFML:
 			std::cout << "Open GUI: SFML" << std::endl;
 			openSFML (guiFunc);
@@ -145,14 +114,6 @@ static void		closeSDL (guiFuncStruct *guiFunc)
 	if (dlclose (guiFunc->libHandle))
 	{
 		throw DynamicLoadGUIException (eGUI::SDL, "dlclose", dlerror());
-	}
-}
-
-static void		closeOpenGL (guiFuncStruct *guiFunc)
-{
-	if (dlclose (guiFunc->libHandle))
-	{
-		throw DynamicLoadGUIException (eGUI::openGL, "dlclose", dlerror());
 	}
 }
 
@@ -179,10 +140,6 @@ void			closeGUILibrary (eGUI currentGUI, guiFuncStruct *guiFunc)
 		case eGUI::SDL:
 			std::cout << "Close GUI: SDL" << std::endl;
 			closeSDL (guiFunc);
-			break;
-		case eGUI::openGL:
-			std::cout << "Close GUI: OpenGL" << std::endl;
-			closeOpenGL (guiFunc);
 			break;
 		case eGUI::SFML:
 			std::cout << "Close GUI: SFML" << std::endl;

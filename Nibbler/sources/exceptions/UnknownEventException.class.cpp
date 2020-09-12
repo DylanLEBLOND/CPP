@@ -14,9 +14,6 @@ UnknownEventException::UnknownEventException (eGUI affectedGUI, eGUIMainMenuEven
 		case eGUI::SFML:
 			this->_message += "SFML";
 			break;
-		case eGUI::openGL:
-			this->_message += "openGLL";
-			break;
 		default:
 			this->_message += "unknownGUI";
 			break;
@@ -53,9 +50,6 @@ UnknownEventException::UnknownEventException (eGUI affectedGUI, eGUIMapSelection
 			break;
 		case eGUI::SFML:
 			this->_message += "SFML";
-			break;
-		case eGUI::openGL:
-			this->_message += "openGLL";
 			break;
 		default:
 			this->_message += "unknownGUI";
@@ -115,9 +109,6 @@ UnknownEventException::UnknownEventException (eGUI affectedGUI, eGUIGameEvent re
 		case eGUI::SFML:
 			this->_message += "SFML";
 			break;
-		case eGUI::openGL:
-			this->_message += "openGLL";
-			break;
 		default:
 			this->_message += "unknownGUI";
 			break;
@@ -175,9 +166,6 @@ UnknownEventException::UnknownEventException (eGUI affectedGUI, eGUIEndMenuEvent
 			break;
 		case eGUI::SFML:
 			this->_message += "SFML";
-			break;
-		case eGUI::openGL:
-			this->_message += "openGLL";
 			break;
 		default:
 			this->_message += "unknownGUI";

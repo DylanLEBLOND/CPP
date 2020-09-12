@@ -14,9 +14,6 @@ DynamicLoadGUIException::DynamicLoadGUIException (eGUI affectedGUI, std::string 
 		case eGUI::SFML:
 			this->_message += "SFML";
 			break;
-		case eGUI::openGL:
-			this->_message += "openGLL";
-			break;
 		default:
 			this->_message += "Unknown";
 			break;
@@ -38,9 +35,6 @@ DynamicLoadGUIException::DynamicLoadGUIException (eGUI affectedGUI, const char *
 			break;
 		case eGUI::SFML:
 			this->_message += "SFML";
-			break;
-		case eGUI::openGL:
-			this->_message += "openGLL";
 			break;
 		default:
 			this->_message += "Unknown";
