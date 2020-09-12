@@ -501,7 +501,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 
 int main (int ac, char **av)
 {
-	std::string validParameters ("friendlyfire:on|friendlyfire:off|endless:on|endless:off");
+	std::string validParameters ("--help|-e|--endless|--nff|--nofriendlyfire|--no-friendly-fire");
 	nibblerParametersStruct nibblerParams;
 	unsigned int param, i;
 
@@ -512,44 +512,46 @@ int main (int ac, char **av)
 
 	switch (ac)
 	{
-		case 3:
-			try
-			{
-				nibblerParams.width = std::stoi (av[1]);
-				if (nibblerParams.width < 30 || 100 < nibblerParams.width)
-				{
-					std::cerr << "Invalid boardWdith. boardWdith < 30 || boardWdith > 100 (" << nibblerParams.width << ")." << std::endl;
-					exit (0);
-				}
-
-				nibblerParams.height = std::stoi (av[2]);
-				if (nibblerParams.height < 30 || 100 < nibblerParams.height)
-				{
-					std::cerr << "Invalid boardWdith. boardWdith < 30 || boardWdith > 100 (" << nibblerParams.height << ")." << std::endl;
-					exit (0);
-				}
-
-				startNibbler (&nibblerParams);
-			}
-			catch (std::exception &e)
-			{
-				std::cerr << "Error : " << e.what() << std::endl;
-			}
+		case 1:
+			std::cerr << "nibbler: too few parameters" << std::endl;
+			std::cerr << "Try './nibbler --help' for more information." << std::endl;
+			exit (0);
 			break;
-		case 4 ... 5:
+		case 2 ... 10:
 			try
 			{
+				if (validParameters.find (av[1]) == 0)
+				{
+					std::cout << std::ifstream ("README").rdbuf();
+					return 0;
+				}
+
 				nibblerParams.width = std::stoi (av[1]);
 				if (nibblerParams.width < 30 || 100 < nibblerParams.width)
 				{
-					std::cerr << "Invalid boardWdith. boardWdith < 30 || boardWdith > 100 (" << nibblerParams.width << ")." << std::endl;
+ 					std::cerr << "nibbler: invalid width value '" << nibblerParams.width << "'" << std::endl;
+ 					std::cerr << "Try './nibbler --help' for more information." << std::endl;
 					exit (0);
+				}
+
+				if (ac == 2)
+				{
+ 					std::cerr << "nibbler: too few parameters" << std::endl;
+ 					std::cerr << "Try './nibbler --help' for more information." << std::endl;
+					exit (0);
+				}
+
+				if (validParameters.find (av[2]) == 0)
+				{
+					std::cout << std::ifstream ("README").rdbuf();
+					return 0;
 				}
 
 				nibblerParams.height = std::stoi (av[2]);
 				if (nibblerParams.height < 30 || 100 < nibblerParams.height)
 				{
-					std::cerr << "Invalid boardWdith. boardWdith < 30 || boardWdith > 100 (" << nibblerParams.height << ")." << std::endl;
+ 					std::cerr << "nibbler: invalid height value '" << nibblerParams.height << "'" << std::endl;
+ 					std::cerr << "Try './nibbler --help' for more information." << std::endl;
 					exit (0);
 				}
 
@@ -559,23 +561,22 @@ int main (int ac, char **av)
 					switch (param)
 					{
 						case 0:
-							nibblerParams.boardMode = static_cast<eboadMode>
-													  (nibblerParams.boardMode & ~eboadMode::NoFriendlyFire);
-							break;
-						case 16:
-							nibblerParams.boardMode = static_cast<eboadMode>
-													  (nibblerParams.boardMode | eboadMode::NoFriendlyFire);
-							break;
-						case 33:
+							std::cout << std::ifstream ("README").rdbuf();
+							return 0;
+						case 7:
+						case 10:
 							nibblerParams.boardMode = static_cast<eboadMode>
 													  (nibblerParams.boardMode | eboadMode::Endless);
 							break;
-						case 44:
+						case 20:
+						case 26:
+						case 43:
 							nibblerParams.boardMode = static_cast<eboadMode>
-													  (nibblerParams.boardMode & ~eboadMode::Endless);
+													  (nibblerParams.boardMode | eboadMode::NoFriendlyFire);
 							break;
 						default:
-							std::cerr << "Invalid parameter "<< i << " (" << av[i] << ")." << std::endl;
+		 					std::cerr << "nibbler: invalid option '" << av[i] << "'" << std::endl;
+		 					std::cerr << "Try './nibbler --help' for more information." << std::endl;
 							exit (0);
 					}
 				}
@@ -588,7 +589,8 @@ int main (int ac, char **av)
 			}
 			break;
 		default:
-			std::cerr << "Invalid parameters. See README" << std::endl;
+			std::cerr << "nibbler: too much parameters" << std::endl;
+			std::cerr << "Try './nibbler --help' for more information." << std::endl;
 			exit (0);
 			break;
 	}

@@ -1,9 +1,38 @@
-make
-./nibbler boardWidth boardHeight [friendlyfire:on/off]
+NAME
+    nibbler - snake game
 
-with
-30 <= boardWidth <= 100
-30 <= boardHeight <= 100
+SYNOPSIS
+    ./nibbler width height [OPTIONS]...
 
+DESCRIPTION
+    Snake game made in C++.
 
-Enjoy !
+    --help display this help and exit
+
+    width
+        The width of the Snake board. Must be between 30 (inclusive) and 100 (inclusive)
+
+    height
+        The height of the Snake board. Must be between 30 (inclusive) and 100 (inclusive)
+
+    -e, --endless
+        Each map doesn't have a finish score and will end only when one of the players are dead
+
+    --nff, --nofriendlyfire, --no-friendly-fire
+        The players cannot die while trying to eat themself or another player
+
+EXAMPLES
+    Start a Snake with a board of 50x50:
+        ./nibbler 50 50
+
+    Start a Snake with a board of 75x75 and endless maps:
+        ./nibbler 75 75 -e
+        ./nibbler 75 75 --endless
+
+    Start a Snake with a board of 60x60 and without friendly fire:
+        ./nibbler 60 60 --nff
+        ./nibbler 60 60 --nofriendlyfire
+        ./nibbler 60 60 --no-friendly-fire
+
+AUTHORS
+    dleblond and mnguyen
