@@ -17,6 +17,9 @@ GUIException::GUIException (eGUI affectedGUI, std::string const &GUIFunc)
 		case eGUI::openGL:
 			this->_message += "openGLL";
 			break;
+		case eGUI::Allegro:
+			this->_message += "Allegro";
+			break;
 		default:
 			this->_message += "Unknown";
 			break;
@@ -39,6 +42,9 @@ GUIException::GUIException (eGUI affectedGUI, std::string const &GUIFunc, std::s
 			break;
 		case eGUI::openGL:
 			this->_message += "openGLL";
+			break;
+		case eGUI::Allegro:
+			this->_message += "Allegro";
 			break;
 		default:
 			this->_message += "Unknown";
@@ -65,6 +71,9 @@ GUIException::GUIException (eGUI affectedGUI, const char *GUIFunc)
 		case eGUI::openGL:
 			this->_message += "openGLL";
 			break;
+		case eGUI::Allegro:
+			this->_message += "Allegro";
+			break;
 		default:
 			this->_message += "Unknown";
 			break;
@@ -87,6 +96,9 @@ GUIException::GUIException (eGUI affectedGUI, const char *GUIFunc, const char *G
 			break;
 		case eGUI::openGL:
 			this->_message += "openGLL";
+			break;
+		case eGUI::Allegro:
+			this->_message += "Allegro";
 			break;
 		default:
 			this->_message += "Unknown";

@@ -48,13 +48,13 @@ BASIC =		\033[0m
 
 all : info createlibs $(NAME)
 
-createlibs: createlibSDL createlibOpenGL createlibSFML
+createlibs: createlibSDL createlibOpenGL createlibSFML createlibAllegro
 
 createlibSDL:
 	@if (! (test -e libguisdl.so));										\
 	then																\
 		make -C ./libs/SDL;												\
-		ln -fs ./libs/SDL/lib/libguisdl.so libguisdl.so;					\
+		ln -fs ./libs/SDL/lib/libguisdl.so libguisdl.so;				\
 	fi
 
 createlibOpenGL:
@@ -71,7 +71,15 @@ createlibSFML:
 		ln -fs ./libs/SFML/lib/libguisfml.so libguisfml.so;				\
 	fi
 
-destroylibs: destroylibSDL destroylibOpenGL destroylibSFML
+createlibAllegro:
+	@if (! (test -e libguiallegro.so));									\
+	then																\
+		make -C ./libs/Allegro;											\
+		ln -fs ./libs/Allegro/lib/libguiallegro.so libguiallegro.so;	\
+	fi
+
+destroylibs: destroylibSDL destroylibOpenGL destroylibSFML \
+			 destroylibAllegro
 
 destroylibSDL:
 	@make fclean -C ./libs/SDL
@@ -84,6 +92,10 @@ destroylibOpenGL:
 destroylibSFML:
 	@make fclean -C ./libs/SFML
 	@rm -f libguisfml.so
+
+destroylibAllegro:
+	@make fclean -C ./libs/Allegro
+	@rm -f libguiallegro.so
 
 info :
 	@if (! (test -e $(NAME) && test -e srcs/main.o));					\

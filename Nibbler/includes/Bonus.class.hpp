@@ -34,12 +34,13 @@ enum eBonusValue : unsigned int { CommonValue = 1,
 								  GodlikeValue = 10,
 								  UnknownValue = 99 };
 
-enum eBonusTime : unsigned int { CommonTime = 50,
-								 UncommonTime = 30,
-								 RareTime = 20,
-								 LegendaryTime = 10,
-								 GodlikeTime = 5,
-								 UnknownTime = 0 };
+enum eBonusTime : int { CommonTime = 50,
+						UncommonTime = 30,
+						RareTime = 20,
+						LegendaryTime = 10,
+						GodlikeTime = 5,
+						InfiniteTime = -1,
+						UnknownTime = 0 };
 
 enum class eBonusMapScale { Small, Medium, Large, UnknownMapScale };
 
@@ -50,7 +51,7 @@ private:
 	unsigned int		_x;
 	unsigned int		_y;
 	eBonusValue			_value;
-	unsigned int		_timeLeft;
+	int					_timeLeft;
 	bool				_isActif;
 
 public:
@@ -64,10 +65,10 @@ public:
 	unsigned int		getX (void) const;
 	unsigned int		getY (void) const;
 	eBonusValue			getValue (void) const;
-	unsigned int		getTimeLeft (void) const;
+	int					getTimeLeft (void) const;
 	bool				isActif (void) const;
 
-	void				generate (unsigned int x, unsigned int y, eBonusMapScale mapSize);
+	void				generate (unsigned int x, unsigned int y, eBonusMapScale mapSize, bool infinite);
 	void				update (void);
 	void				clear (void);
 };

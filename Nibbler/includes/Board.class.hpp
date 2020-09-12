@@ -38,10 +38,11 @@ enum class eBoardStatus { Playing, Player1Win, Player1Lose, Player2Win, Player2L
 
 enum eboadMode
 {
-	Default			= 0,		/* SiglePlayer / FriendlyFire / Finish Score (this flag and all others are mutually exclusive) */
-	Multiplayer		= 1 << 0,	/* Multiplayer */
-	NoFriendlyFire	= 1 << 1,	/* Cannot eat himself or an ally */
-	Endless			= 1 << 2	/* The map doesn't end before at least one player is dead */
+	Default			= 0,		/* SinglePlayer / BasicFood / FriendlyFire / Finish Score (this flag and all others are mutually exclusive) */
+	SpecialFood		= 1 << 0,	/* Food had differents values and disappear after a certain time */
+	Multiplayer		= 1 << 1,	/* Multiplayer */
+	NoFriendlyFire	= 1 << 2,	/* Cannot eat himself or an ally */
+	Endless			= 1 << 3	/* The map doesn't end before at least one player is dead */
 };
 
 class Board

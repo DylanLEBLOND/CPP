@@ -501,7 +501,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 
 int main (int ac, char **av)
 {
-	std::string validParameters ("--help|-e|--endless|--nff|--nofriendlyfire|--no-friendly-fire");
+	std::string validParameters ("--help|-e|--endless|--nff|--nofriendlyfire|--no-friendly-fire|-s|--specialfood|--special-food");
 	nibblerParametersStruct nibblerParams;
 	unsigned int param, i;
 
@@ -573,6 +573,12 @@ int main (int ac, char **av)
 						case 43:
 							nibblerParams.boardMode = static_cast<eboadMode>
 													  (nibblerParams.boardMode | eboadMode::NoFriendlyFire);
+							break;
+						case 62:
+						case 65:
+						case 79:
+							nibblerParams.boardMode = static_cast<eboadMode>
+													  (nibblerParams.boardMode | eboadMode::SpecialFood);
 							break;
 						default:
 		 					std::cerr << "nibbler: invalid option '" << av[i] << "'" << std::endl;

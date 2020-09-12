@@ -641,7 +641,7 @@ void								Board::updateBonus (void)
 		numEmptyCell = rand() % this->_boardEmptyCells.size();
 		emptyCell = this->_boardEmptyCells [numEmptyCell];
 
-		this->_bonus1.generate (emptyCell.positionX, emptyCell.positionY, this->_mapSize);
+		this->_bonus1.generate (emptyCell.positionX, emptyCell.positionY, this->_mapSize, ! (this->_boardMode & eboadMode::SpecialFood));
 
 		this->_boardCells->at (emptyCell.positionY).at (emptyCell.positionX) = (int)this->_bonus1.getValue();
 
@@ -668,7 +668,7 @@ void								Board::updateBonus (void)
 			numEmptyCell = rand() % this->_boardEmptyCells.size();
 			emptyCell = this->_boardEmptyCells [numEmptyCell];
 
-			this->_bonus2.generate (emptyCell.positionX, emptyCell.positionY, this->_mapSize);
+			this->_bonus2.generate (emptyCell.positionX, emptyCell.positionY, this->_mapSize, ! (this->_boardMode & eboadMode::SpecialFood));
 
 			this->_boardCells->at (emptyCell.positionY).at (emptyCell.positionX) = (int)this->_bonus2.getValue();
 

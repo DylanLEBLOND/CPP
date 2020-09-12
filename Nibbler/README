@@ -15,6 +15,9 @@ DESCRIPTION
     height
         The height of the Snake board. Must be between 30 (inclusive) and 100 (inclusive)
 
+    -s, --specialfood, --special-food
+        Food had different values and disappear after a certain time
+
     -e, --endless
         Each map doesn't have a finish score and will end only when one of the players are dead
 

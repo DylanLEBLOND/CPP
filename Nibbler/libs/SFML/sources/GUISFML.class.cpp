@@ -140,6 +140,9 @@ void						GUISFML::drawMainMenu (void)
 	{
 		switch (boardCurrentMode)
 		{
+			case eboadMode::SpecialFood:
+				mainString += "SpecialFood";
+				break;
 			case eboadMode::NoFriendlyFire:
 				mainString += "NoFriendlyFire";
 				break;
@@ -148,6 +151,15 @@ void						GUISFML::drawMainMenu (void)
 				break;
 			case eboadMode::Multiplayer:
 				mainString += "Multiplayer";
+				break;
+			case eboadMode::SpecialFood | eboadMode::NoFriendlyFire:
+				mainString += "SpecialFood | NoFriendlyFire";
+				break;
+			case eboadMode::SpecialFood | eboadMode::Endless:
+				mainString += "SpecialFood | Endless";
+				break;
+			case eboadMode::SpecialFood | eboadMode::Multiplayer:
+				mainString += "SpecialFood | Multiplayer";
 				break;
 			case eboadMode::NoFriendlyFire | eboadMode::Endless:
 				mainString += "NoFriendlyFire | Endless";
@@ -158,8 +170,20 @@ void						GUISFML::drawMainMenu (void)
 			case eboadMode::Endless | eboadMode::Multiplayer:
 				mainString += "Endless | Multiplayer";
 				break;
+			case eboadMode::SpecialFood | eboadMode::NoFriendlyFire | eboadMode::Endless:
+				mainString += "SpecialFood | NoFriendlyFire | Endless";
+				break;
+			case eboadMode::SpecialFood | eboadMode::NoFriendlyFire | eboadMode::Multiplayer:
+				mainString += "SpecialFood | NoFriendlyFire | Multiplayer";
+				break;
+			case eboadMode::SpecialFood | eboadMode::Endless | eboadMode::Multiplayer:
+				mainString += "SpecialFood | Endless | Multiplayer";
+				break;
 			case eboadMode::NoFriendlyFire | eboadMode::Endless | eboadMode::Multiplayer:
 				mainString += "NoFriendlyFire | Endless | Multiplayer";
+				break;
+			case eboadMode::SpecialFood | eboadMode::NoFriendlyFire | eboadMode::Endless | eboadMode::Multiplayer:
+				mainString += "SpecialFood | NoFriendlyFire | Endless | Multiplayer";
 				break;
 			default:
 				mainString += "????";
@@ -167,9 +191,6 @@ void						GUISFML::drawMainMenu (void)
 		}
 	}
 	this->_mainText.setString (mainString);
-
-	/* Printing Score Text */
-
 	this->_mainText.setPosition (10, 3);
 	this->_window.draw (this->_mainText);
 }
@@ -481,6 +502,11 @@ void						GUISFML::stop()
 	std::cout << "GUISFML::stop" << std::endl;
 #endif
 
+	if (! this->_started)
+	{
+		throw GUIException (this->_GUIName, "GUISFML::stop => GUISFML wasn't started");
+	}
+
 	this->_window.close();
 
 	this->_started = false;
@@ -533,7 +559,7 @@ eGUIMainMenuEvent			GUISFML::getMainMenuEvent (void)
 					case sf::Keyboard::Num3:
 					case sf::Keyboard::F3:
 					case sf::Keyboard::Numpad3:
-						this-> _wantedGUI = eGUI::openGL;
+						this-> _wantedGUI = eGUI::Allegro;
 						return eGUIMainMenuEvent::changeGUI;
 
 					/* Audio */
@@ -637,7 +663,7 @@ eGUIMapSelectionEvent		GUISFML::getMapSelectionEvent (void)
 					case sf::Keyboard::Num3:
 					case sf::Keyboard::F3:
 					case sf::Keyboard::Numpad3:
-						this-> _wantedGUI = eGUI::openGL;
+						this-> _wantedGUI = eGUI::Allegro;
 						return eGUIMapSelectionEvent::changeGUI;
 
 					/* Audio */
@@ -728,38 +754,32 @@ void						GUISFML::setPlayers (Snake *snakeP1, Snake *snakeP2)
 
 void						GUISFML::loadBoard (unsigned int soundTrack)
 {
+	std::string boardMusicName;
+
 	switch (soundTrack)
 	{
 		case 0:
-			if (! this->_boardMusic.openFromFile ("ressources/sounds/Twin Musicom - NES Theme.wav"))
-			{
-				throw GUIException (this->_GUIName, "openFromFile 3 (*** MUSIC FILE ***)");
-			}
+			boardMusicName = "ressources/sounds/Twin Musicom - NES Theme.wav";
 			break;
 
 		case 1:
-			if (! this->_boardMusic.openFromFile ("ressources/sounds/Twin Musicom - NES Boss.wav"))
-			{
-				throw GUIException (this->_GUIName, "openFromFile 3 (*** MUSIC FILE ***)");
-			}
+			boardMusicName = "ressources/sounds/Twin Musicom - NES Boss.wav";
 			break;
 
 		case 2:
-			if (! this->_boardMusic.openFromFile ("ressources/sounds/Twin Musicom - 8-bit March.wav"))
-			{
-				throw GUIException (this->_GUIName, "openFromFile 3 (*** MUSIC FILE ***)");
-			}
+			boardMusicName = "ressources/sounds/Twin Musicom - 8-bit March.wav";
 			break;
 
 		case 3:
 		default:
-			if (! this->_boardMusic.openFromFile ("ressources/sounds/Twin Musicom - NES Theme.wav"))
-			{
-				throw GUIException (this->_GUIName, "openFromFile 3 (*** MUSIC FILE ***)");
-			}
+			boardMusicName = "ressources/sounds/Twin Musicom - NES Theme.wav";
 			break;
 	}
 
+	if (! this->_boardMusic.openFromFile (boardMusicName.c_str()))
+	{
+		throw GUIException (this->_GUIName, "openFromFile 3 (*** MUSIC FILE ***)");
+	}
 
 	this->_mainMenuMusic.stop();
 	this->_mapSelectionMusic.stop();
@@ -891,7 +911,7 @@ eGUIGameEvent				GUISFML::getGameEvent (void)
 					case sf::Keyboard::Num3:
 					case sf::Keyboard::F3:
 					case sf::Keyboard::Numpad3:
-						this-> _wantedGUI = eGUI::openGL;
+						this-> _wantedGUI = eGUI::Allegro;
 						return eGUIGameEvent::changeGUI;
 
 					/* Audio */
@@ -1010,7 +1030,7 @@ eGUIEndMenuEvent			GUISFML::getEndMenuEvent (void)
 					case sf::Keyboard::Num3:
 					case sf::Keyboard::F3:
 					case sf::Keyboard::Numpad3:
-						this-> _wantedGUI = eGUI::openGL;
+						this-> _wantedGUI = eGUI::Allegro;
 						return eGUIEndMenuEvent::changeGUI;
 
 					/* Audio */

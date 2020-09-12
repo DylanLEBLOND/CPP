@@ -228,6 +228,9 @@ void						GUISDL::drawMainMenu (void)
 	{
 		switch (boardCurrentMode)
 		{
+			case eboadMode::SpecialFood:
+				mainString += "SpecialFood";
+				break;
 			case eboadMode::NoFriendlyFire:
 				mainString += "NoFriendlyFire";
 				break;
@@ -236,6 +239,15 @@ void						GUISDL::drawMainMenu (void)
 				break;
 			case eboadMode::Multiplayer:
 				mainString += "Multiplayer";
+				break;
+			case eboadMode::SpecialFood | eboadMode::NoFriendlyFire:
+				mainString += "SpecialFood | NoFriendlyFire";
+				break;
+			case eboadMode::SpecialFood | eboadMode::Endless:
+				mainString += "SpecialFood | Endless";
+				break;
+			case eboadMode::SpecialFood | eboadMode::Multiplayer:
+				mainString += "SpecialFood | Multiplayer";
 				break;
 			case eboadMode::NoFriendlyFire | eboadMode::Endless:
 				mainString += "NoFriendlyFire | Endless";
@@ -246,8 +258,20 @@ void						GUISDL::drawMainMenu (void)
 			case eboadMode::Endless | eboadMode::Multiplayer:
 				mainString += "Endless | Multiplayer";
 				break;
+			case eboadMode::SpecialFood | eboadMode::NoFriendlyFire | eboadMode::Endless:
+				mainString += "SpecialFood | NoFriendlyFire | Endless";
+				break;
+			case eboadMode::SpecialFood | eboadMode::NoFriendlyFire | eboadMode::Multiplayer:
+				mainString += "SpecialFood | NoFriendlyFire | Multiplayer";
+				break;
+			case eboadMode::SpecialFood | eboadMode::Endless | eboadMode::Multiplayer:
+				mainString += "SpecialFood | Endless | Multiplayer";
+				break;
 			case eboadMode::NoFriendlyFire | eboadMode::Endless | eboadMode::Multiplayer:
 				mainString += "NoFriendlyFire | Endless | Multiplayer";
+				break;
+			case eboadMode::SpecialFood | eboadMode::NoFriendlyFire | eboadMode::Endless | eboadMode::Multiplayer:
+				mainString += "SpecialFood | NoFriendlyFire | Endless | Multiplayer";
 				break;
 			default:
 				mainString += "????";
@@ -273,8 +297,6 @@ void						GUISDL::drawMainMenu (void)
 	{
 		throw GUIException (this->_GUIName, "TTF_RenderUTF8_Shaded 0", TTF_GetError());
 	}
-
-	/* Printing Score Text */
 
 	if (this->_mainTextTexture != NULL)
 		SDL_DestroyTexture (this->_mainTextTexture);
@@ -746,7 +768,7 @@ void						GUISDL::stop()
 	std::cout << "GUISDL::stop" << std::endl;
 #endif
 
-	if (this->_window == NULL)
+	if (! this->_started)
 	{
 		throw GUIException (this->_GUIName, "GUISDL::stop => GUISDL wasn't started");
 	}
@@ -787,7 +809,11 @@ void						GUISDL::stop()
 		this->_scoreTextPolice = NULL;
 	}
 
-	SDL_DestroyWindow (this->_window);
+	if (this->_window != NULL)
+	{
+		SDL_DestroyWindow (this->_window);
+		this->_window = NULL;
+	}
 
 	this->_started = false;
 }
@@ -841,7 +867,7 @@ eGUIMainMenuEvent			GUISDL::getMainMenuEvent (void)
 					case SDLK_3:
 					case SDLK_F3:
 					case SDLK_KP_3:
-						this-> _wantedGUI = eGUI::openGL;
+						this-> _wantedGUI = eGUI::Allegro;
 						return eGUIMainMenuEvent::changeGUI;
 
 					/* Audio */
@@ -877,7 +903,6 @@ eGUIMainMenuEvent			GUISDL::getMainMenuEvent (void)
 				if (SDL_BUTTON (SDL_BUTTON_LEFT))
 				{
 					SDL_GetMouseState (&x, &y);
-					std::cout << "Current Mouse Click: x = " << x << " | y = " << y << std::endl;
 
 					if (this->_menuLeftButton.in (x, y))
 						return eGUIMainMenuEvent::startSinglePlayerGame;
@@ -947,7 +972,7 @@ eGUIMapSelectionEvent		GUISDL::getMapSelectionEvent (void)
 					case SDLK_3:
 					case SDLK_F3:
 					case SDLK_KP_3:
-						this-> _wantedGUI = eGUI::openGL;
+						this-> _wantedGUI = eGUI::Allegro;
 						return eGUIMapSelectionEvent::changeGUI;
 
 					/* Audio */
@@ -1036,46 +1061,38 @@ void						GUISDL::setPlayers (Snake *snakeP1, Snake *snakeP2)
 
 void						GUISDL::loadBoard (unsigned int soundTrack)
 {
+	std::string boardMusicName;
+
+	switch (soundTrack)
+	{
+		case 0:
+			boardMusicName = "ressources/sounds/Twin Musicom - NES Theme.wav";
+			break;
+
+		case 1:
+			boardMusicName = "ressources/sounds/Twin Musicom - NES Boss.wav";
+			break;
+
+		case 2:
+			boardMusicName = "ressources/sounds/Twin Musicom - 8-bit March.wav";
+			break;
+
+		case 3:
+		default:
+			boardMusicName = "ressources/sounds/Twin Musicom - NES Theme.wav";
+			break;
+	}
+
 	if (this->_boardMusic != NULL)
 	{
 		Mix_FreeMusic (this->_boardMusic);
 		this->_boardMusic = NULL;
 	}
 
-	switch (soundTrack)
+	this->_boardMusic = Mix_LoadMUS (boardMusicName.c_str());
+	if (! this->_boardMusic)
 	{
-		case 0:
-			this->_boardMusic = Mix_LoadMUS ("ressources/sounds/Twin Musicom - NES Theme.wav");
-			if (! this->_boardMusic)
-			{
-				throw GUIException (this->_GUIName, "Mix_LoadMUS 3", Mix_GetError());
-			}
-			break;
-
-		case 1:
-			this->_boardMusic = Mix_LoadMUS ("ressources/sounds/Twin Musicom - NES Boss.wav");
-			if (! this->_boardMusic)
-			{
-				throw GUIException (this->_GUIName, "Mix_LoadMUS 3", Mix_GetError());
-			}
-			break;
-
-		case 2:
-			this->_boardMusic = Mix_LoadMUS ("ressources/sounds/Twin Musicom - 8-bit March.wav");
-			if (! this->_boardMusic)
-			{
-				throw GUIException (this->_GUIName, "Mix_LoadMUS 3", Mix_GetError());
-			}
-			break;
-
-		case 3:
-		default:
-			this->_boardMusic = Mix_LoadMUS ("ressources/sounds/Twin Musicom - NES Theme.wav");
-			if (! this->_boardMusic)
-			{
-				throw GUIException (this->_GUIName, "Mix_LoadMUS 3", Mix_GetError());
-			}
-			break;
+		throw GUIException (this->_GUIName, "Mix_LoadMUS", Mix_GetError());
 	}
 
 	if (Mix_PausedMusic() == 1)
@@ -1212,7 +1229,7 @@ eGUIGameEvent				GUISDL::getGameEvent (void)
 					case SDLK_3:
 					case SDLK_F3:
 					case SDLK_KP_3:
-						this-> _wantedGUI = eGUI::openGL;
+						this-> _wantedGUI = eGUI::Allegro;
 						return eGUIGameEvent::changeGUI;
 
 					/* Audio */
@@ -1337,7 +1354,7 @@ eGUIEndMenuEvent			GUISDL::getEndMenuEvent (void)
 					case SDLK_3:
 					case SDLK_F3:
 					case SDLK_KP_3:
-						this-> _wantedGUI = eGUI::openGL;
+						this-> _wantedGUI = eGUI::Allegro;
 						return eGUIEndMenuEvent::changeGUI;
 
 					/* Audio */

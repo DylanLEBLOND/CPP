@@ -48,8 +48,11 @@ eBonusValue			Bonus::getValue (void) const
 	return this->_value;
 }
 
-unsigned int		Bonus::getTimeLeft (void) const
+int					Bonus::getTimeLeft (void) const
 {
+	if (this->_timeLeft == eBonusTime::InfiniteTime)
+		return 1;
+
 	return this->_timeLeft;
 }
 
@@ -65,57 +68,65 @@ bool				Bonus::isActif (void) const
 /*
  * Public
  */
-void				Bonus::generate (unsigned int x, unsigned int y, eBonusMapScale mapSize)
+void				Bonus::generate (unsigned int x, unsigned int y, eBonusMapScale mapSize, bool infinite)
 {
 	unsigned int bonusChosen;
 	unsigned int multiplier;
 
-	srand (time (NULL));
-	bonusChosen = rand() % 100 + 1;
-
-	switch (mapSize)
+	if (infinite)
 	{
-		case eBonusMapScale::Small:
-			multiplier = 1;
-			break;
-		case eBonusMapScale::Medium:
-			multiplier = 2;
-			break;
-		case eBonusMapScale::Large:
-			multiplier = 4;
-			break;
-		default:
-			multiplier = 1;
-			break;
+		this->_value = eBonusValue::CommonValue;
+		this->_timeLeft = eBonusTime::InfiniteTime;
 	}
-
-	switch (bonusChosen)
+	else
 	{
-		case 1:
-			/*  1 % */
-			this->_value = eBonusValue::GodlikeValue;
-			this->_timeLeft = eBonusTime::GodlikeTime * multiplier;
-			break;
-		case 2 ... 5:
-			/*  4 % */
-			this->_value = eBonusValue::LegendaryValue;
-			this->_timeLeft = eBonusTime::LegendaryTime * multiplier;
-			break;
-		case 6 ... 20:
-			/* 15 % */
-			this->_value = eBonusValue::RareValue;
-			this->_timeLeft = eBonusTime::RareTime * multiplier;
-			break;
-		case 21 ... 50:
-			/* 30 % */
-			this->_value = eBonusValue::UncommonValue;
-			this->_timeLeft = eBonusTime::UncommonTime * multiplier;
-			break;
-		default:
-			/* 50 % */
-			this->_value = eBonusValue::CommonValue;
-			this->_timeLeft = eBonusTime::CommonTime * multiplier;
-			break;
+		srand (time (NULL));
+		bonusChosen = rand() % 100 + 1;
+
+		switch (mapSize)
+		{
+			case eBonusMapScale::Small:
+				multiplier = 1;
+				break;
+			case eBonusMapScale::Medium:
+				multiplier = 2;
+				break;
+			case eBonusMapScale::Large:
+				multiplier = 4;
+				break;
+			default:
+				multiplier = 1;
+				break;
+		}
+
+		switch (bonusChosen)
+		{
+			case 1:
+				/*  1 % */
+				this->_value = eBonusValue::GodlikeValue;
+				this->_timeLeft = eBonusTime::GodlikeTime * multiplier;
+				break;
+			case 2 ... 5:
+				/*  4 % */
+				this->_value = eBonusValue::LegendaryValue;
+				this->_timeLeft = eBonusTime::LegendaryTime * multiplier;
+				break;
+			case 6 ... 20:
+				/* 15 % */
+				this->_value = eBonusValue::RareValue;
+				this->_timeLeft = eBonusTime::RareTime * multiplier;
+				break;
+			case 21 ... 50:
+				/* 30 % */
+				this->_value = eBonusValue::UncommonValue;
+				this->_timeLeft = eBonusTime::UncommonTime * multiplier;
+				break;
+			default:
+				/* 50 % */
+				this->_value = eBonusValue::CommonValue;
+				this->_timeLeft = eBonusTime::CommonTime * multiplier;
+				break;
+		}
 	}
 
 	this->_x = x;
@@ -123,7 +134,11 @@ void				Bonus::generate (unsigned int x, unsigned int y, eBonusMapScale mapSize)
 
 	this->_isActif = true;
 
-	std::cout << "Bonus::generate: Bonus +" << this->_value << " (Time:" << this->_timeLeft;
+	std::cout << "Bonus::generate: Bonus +" << this->_value << " (Time:";
+	if (this->_timeLeft == eBonusTime::InfiniteTime)
+		std::cout << "INFITITE";
+	else
+		std::cout << this->_timeLeft;
 	std::cout << ") generated at (x = " << this->_x << " | y = " << this->_y << ")" << std::endl;
 }
 
