@@ -240,7 +240,8 @@ void								Board::loadMapBlocks (void)
 					emptyCell.positionX = x;
 					emptyCell.positionY = y;
 					it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
-					this->_boardEmptyCells.erase (it);
+					if (it != this->_boardEmptyCells.end())
+						this->_boardEmptyCells.erase (it);
 				}
 			}
 		}
@@ -404,7 +405,209 @@ void								Board::loadMapBlocksBorderless (void)
 					emptyCell.positionX = x;
 					emptyCell.positionY = y;
 					it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
-					this->_boardEmptyCells.erase (it);
+					if (it != this->_boardEmptyCells.end())
+						this->_boardEmptyCells.erase (it);
+				}
+			}
+		}
+	}
+
+	this->_boardCompletedScore = 20;
+}
+
+void								Board::loadMapTribal (void)
+{
+	unsigned int columnLength, lineLength, y, x;
+	std::vector<t_cell>::iterator it;
+	t_cell emptyCell;
+
+	this->loadMapBorderless();
+
+	columnLength = std::round (this->_height / 6.0f);
+	lineLength = std::round (this->_width / 7.0f);
+
+	for (x = 0; x < this->_width; x += lineLength)
+	{
+		for (y = 0; y < columnLength; y++)
+		{
+			this->_boardCells->at (y).at (x) = -1;
+
+			emptyCell.positionX = x;
+			emptyCell.positionY = y;
+			it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
+			if (it != this->_boardEmptyCells.end())
+				this->_boardEmptyCells.erase (it);
+		}
+
+		for (y = this->_height - columnLength; y < this->_height; y++)
+		{
+			this->_boardCells->at (y).at (x) = -1;
+
+			emptyCell.positionX = x;
+			emptyCell.positionY = y;
+			it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
+			if (it != this->_boardEmptyCells.end())
+				this->_boardEmptyCells.erase (it);
+		}
+	}
+
+	y = columnLength - 1;
+	for (x = 0; x < this->_width; x++)
+	{
+		if (! (x % lineLength))
+			y = (y == columnLength - 1) ?
+				this->_height - columnLength :
+				columnLength - 1;
+
+		this->_boardCells->at (y).at (x) = -1;
+
+		emptyCell.positionX = x;
+		emptyCell.positionY = y;
+		it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
+		if (it != this->_boardEmptyCells.end())
+			this->_boardEmptyCells.erase (it);
+	}
+
+	this->_boardCompletedScore = 20;
+}
+
+void								Board::loadMapLinesTribal (void)
+{
+	unsigned int y,  y_begin, y_end, x, x_begin, x_end;
+	std::vector<t_cell>::iterator it;
+	t_cell emptyCell;
+
+	this->loadMapTribal();
+
+	/* X */
+
+	y_begin = ceil (2.0f * this->_height / 8.0f);
+	y_end = floor (6.0f * this->_height / 8.0f) - 1;
+
+	x_begin = ceil (2.0f * this->_width / 8.0f);
+	x_end = ceil (3.0f * this->_width / 8.0f);
+	for (x = x_begin; x < x_end; x++)
+	{
+		this->_boardCells->at (y_begin).at (x) = -1;
+
+		emptyCell.positionX = x;
+		emptyCell.positionY = y_begin;
+		it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
+		if (it != this->_boardEmptyCells.end())
+			this->_boardEmptyCells.erase (it);
+
+		this->_boardCells->at (y_end).at (x) = -1;
+
+		emptyCell.positionX = x;
+		emptyCell.positionY = y_end;
+		it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
+		if (it != this->_boardEmptyCells.end())
+			this->_boardEmptyCells.erase (it);
+	}
+
+	x_begin = floor (5.0f * this->_width / 8.0f);
+	x_end = floor (6.0f * this->_width / 8.0f);
+	for (x = x_begin; x < x_end; x++)
+	{
+		this->_boardCells->at (y_begin).at (x) = -1;
+
+		emptyCell.positionX = x;
+		emptyCell.positionY = y_begin;
+		it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
+		if (it != this->_boardEmptyCells.end())
+			this->_boardEmptyCells.erase (it);
+
+		this->_boardCells->at (y_end).at (x) = -1;
+
+		emptyCell.positionX = x;
+		emptyCell.positionY = y_end;
+		it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
+		if (it != this->_boardEmptyCells.end())
+			this->_boardEmptyCells.erase (it);
+	}
+
+	/* Y */
+
+	x_begin = ceil (2.0f * this->_width / 8.0f);
+	x_end = floor (6.0f * this->_width / 8.0f) - 1;
+
+	y_begin = ceil (2.0f * this->_height / 8.0f);
+	y_end = ceil (3.0f * this->_height / 8.0f);
+	for (y = y_begin; y < y_end; y++)
+	{
+		this->_boardCells->at (y).at (x_begin) = -1;
+
+		emptyCell.positionX = x_begin;
+		emptyCell.positionY = y;
+		it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
+		if (it != this->_boardEmptyCells.end())
+			this->_boardEmptyCells.erase (it);
+
+		this->_boardCells->at (y).at (x_end) = -1;
+
+		emptyCell.positionX = x_end;
+		emptyCell.positionY = y;
+		it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
+		if (it != this->_boardEmptyCells.end())
+			this->_boardEmptyCells.erase (it);
+	}
+
+	y_begin = floor (5.0f * this->_height / 8.0f);
+	y_end = floor (6.0f * this->_height / 8.0f);
+	for (y = y_begin; y < y_end; y++)
+	{
+		this->_boardCells->at (y).at (x_begin) = -1;
+
+		emptyCell.positionX = x_begin;
+		emptyCell.positionY = y;
+		it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
+		if (it != this->_boardEmptyCells.end())
+			this->_boardEmptyCells.erase (it);
+
+		this->_boardCells->at (y).at (x_end) = -1;
+
+		emptyCell.positionX = x_end;
+		emptyCell.positionY = y;
+		it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
+		if (it != this->_boardEmptyCells.end())
+			this->_boardEmptyCells.erase (it);
+	}
+
+	this->_boardCompletedScore = 20;
+}
+
+void								Board::loadMapBlocksTribal (void)
+{
+	unsigned int blockYSize, yJump, blockXSize, xJump, j, y, yBegin, yEnd, i, x, xBegin, xEnd;
+	std::vector<t_cell>::iterator it;
+	t_cell emptyCell;
+
+	this->loadMapTribal();
+
+	blockYSize = std::round (this->_height / 25.0f);
+	yJump = std::round (this->_height / 4.0f);
+	blockXSize = std::round (this->_width / 25.0f);
+	xJump = std::round (this->_width / 4.0f);
+
+	for (j = 1; j <= 3; j++)
+	{
+		yBegin = (j * yJump) - blockYSize;
+		yEnd = (j * yJump) + blockYSize;
+		for (y = yBegin; y < yEnd; y++)
+		{
+			for (i = 1; i <= 3; i++)
+			{
+				xBegin = (i * xJump) - blockXSize;
+				xEnd = (i * xJump) + blockXSize;
+				for (x = xBegin; x < xEnd; x++)
+				{
+					this->_boardCells->at (y).at (x) = -1;
+
+					emptyCell.positionX = x;
+					emptyCell.positionY = y;
+					it = std::find (this->_boardEmptyCells.begin(), this->_boardEmptyCells.end(), emptyCell);
+					if (it != this->_boardEmptyCells.end())
+						this->_boardEmptyCells.erase (it);
 				}
 			}
 		}
@@ -660,10 +863,6 @@ void								Board::loadMap (eBoardMaps map)
 			this->loadMapBlocks();
 			break;
 
-//		case eBoardMaps::Tribal:
-//			this->loadMapTribal();
-//			break;
-
 		case eBoardMaps::Borderless:
 			this->loadMapBorderless();
 			break;
@@ -674,6 +873,18 @@ void								Board::loadMap (eBoardMaps map)
 
 		case eBoardMaps::BlocksBorderless:
 			this->loadMapBlocksBorderless();
+			break;
+
+		case eBoardMaps::Tribal:
+			this->loadMapTribal();
+			break;
+
+		case eBoardMaps::LinesTribal:
+			this->loadMapLinesTribal();
+			break;
+
+		case eBoardMaps::BlocksTribal:
+			this->loadMapBlocksTribal();
 			break;
 
 		default:
@@ -751,6 +962,7 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2)
 						 floor (this->_height / 10.0f) : 4;
 			break;
 		case eBoardMaps::Tribal:
+		case eBoardMaps::LinesTribal:
 			if (! (this->_boardMode & eboadMode::Multiplayer))
 			{
 				p1InitPosX = floor (this->_width / 2.0f);
@@ -758,9 +970,16 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2)
 			}
 			else
 			{
-				p1InitPosX = 10u;
-				p1InitPosY = 10u;
+				p1InitPosX = floor (this->_width / 5.0f) > 4 ?
+							 floor (this->_width / 5.0f) : 6;
+				p1InitPosY = floor (this->_height / 5.0f) > 4 ?
+							 floor (this->_height / 5.0) : 6;
 			}
+			break;
+		case eBoardMaps::BlocksTribal:
+			p1InitPosX = floor (this->_width / 10.0f) > 4 ?
+						 floor (this->_width / 10.0f) : 4;
+			p1InitPosY = round (this->_height / 2.0f - this->_height / 10.0f);
 			break;
 		default:
 			throw ShouldNeverOccurException (__FILE__, __LINE__);
@@ -792,6 +1011,7 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2)
 				p2InitPosY = ceil (2.0f * this->_height / 3.0f) - 1;
 				break;
 			case eBoardMaps::Blocks:
+			case eBoardMaps::BlocksBorderless:
 				p2InitPosX = ceil (9.0f * this->_width / 10.0f) < this->_width - 4 ?
 							 ceil (9.0f * this->_width / 10.0f) - 1 :
 							 this->_width - 5;
@@ -800,12 +1020,19 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2)
 							 this->_height - 5;
 				break;
 			case eBoardMaps::Tribal:
-				p2InitPosX = ceil (7.0f * this->_width / 8.0f) < this->_width - 4 ?
-							 ceil (7.0f * this->_width / 8.0f) - 1:
+			case eBoardMaps::LinesTribal:
+				p2InitPosX = ceil (4.0f * this->_width / 5.0f) < this->_width - 4 ?
+							 ceil (4.0f * this->_width / 5.0f) - 1 :
 							 this->_width - 7;
-				p2InitPosY = ceil (7.0f * this->_height / 8.0f) < this->_height - 4 ?
-							 ceil (7.0f * this->_height / 8.0f) - 1:
+				p2InitPosY = ceil (4.0f * this->_height / 5.0f) < this->_height - 4 ?
+							 ceil (4.0f * this->_height / 5.0f) - 1 :
 							 this->_height - 7;
+				break;
+			case eBoardMaps::BlocksTribal:
+				p2InitPosX = ceil (9.0f * this->_width / 10.0f) < this->_width - 4 ?
+							 ceil (9.0f * this->_width / 10.0f) - 1 :
+							 this->_width - 5;
+				p2InitPosY = round (this->_height / 2.0f + this->_height / 10.0f);
 				break;
 			default:
 				throw ShouldNeverOccurException (__FILE__, __LINE__);

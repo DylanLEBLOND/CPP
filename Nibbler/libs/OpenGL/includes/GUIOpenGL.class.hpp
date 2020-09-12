@@ -50,47 +50,52 @@ private:
 	GUIOpenGL (void);
 	GUIOpenGL (GUIOpenGL const &src);
 
-	GUIOpenGL				&operator=(GUIOpenGL const &src);
+	GUIOpenGL					&operator=(GUIOpenGL const &src);
 
-	void					ajustBounds (void);
+	void						ajustBounds (void);
 
-	void					drawMainMenu (void);
+	void						drawMainMenu (void);
 
-	void					drawBoard (void);
-	void					drawSnakes (void);
+	void						drawMapSelection (void);
 
-	void					drawEndMenu (void);
+	void						drawBoard (void);
+	void						drawSnakes (void);
 
-	void					resizeWindows (int width, int height);
+	void						drawEndMenu (void);
+
+	void						resizeWindows (int width, int height);
 
 public:
 
 	GUIOpenGL (Board *board);
 	~GUIOpenGL (void);
 
-	eGUI					getGUIName (void) const;
+	eGUI						getGUIName (void) const;
 
-	void					start (void);
-	bool					alreadyStarted (void) const;
-	eGUI					wantedGUI (void) const;
-	void					stop (void);
+	void						start (void);
+	bool						alreadyStarted (void) const;
+	eGUI						wantedGUI (void) const;
+	void						stop (void);
 	/* Main Menu */
-	void					loadMainMenu (void);
-	eGUIMainMenuEvent		getMainMenuEvent (void);
+	void						loadMainMenu (void);
+	eGUIMainMenuEvent			getMainMenuEvent (void);
+	/* Map Selection */
+	void						loadMapSelection (void);
+	eGUIMapSelectionEvent		getMapSelectionEvent (void);
 	/* Game */
-	void					setPlayers (Snake *snakeP1, Snake *snakeP2);
-	void					loadBoard (unsigned int soundTrack);
-	void					updateGameGUI (void);
-	eGUIGameEvent			getGameEvent (void);
+	void						setPlayers (Snake *snakeP1, Snake *snakeP2);
+	void						loadBoard (unsigned int soundTrack);
+	void						updateGameGUI (void);
+	eGUIGameEvent				getGameEvent (void);
 	/* End Menu */
-	void					loadEndMenu (void);
-	eGUIEndMenuEvent		getEndMenuEvent (void);
+	void						loadEndMenu (void);
+	eGUIEndMenuEvent			getEndMenuEvent (void);
 };
 
 extern "C" {
 
-	GUIOpenGL			*createGUI (Board *board);
-	void				destroyGUI (GUIOpenGL* GUI);
+	GUIOpenGL					*createGUI (Board *board);
+	void						destroyGUI (GUIOpenGL* GUI);
 }
 
 #endif /* GUIOPENGL_CLASS_HPP */

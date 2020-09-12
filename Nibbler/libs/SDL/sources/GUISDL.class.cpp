@@ -9,11 +9,12 @@ static unsigned int _mapHeight;
 GUISDL::GUISDL (Board *board)
 	: _board (board), _snakeP1 (NULL), _snakeP2 (NULL), _wantedGUI (eGUI::SDL),
 	  _window (NULL), _boardRenderer (NULL), _mainMenuImage (NULL), _mainMenuTexture (NULL),
-	  _endMenuImage (NULL), _endMenuTexture (NULL),
+	  _mapSelectionImage (NULL), _mapSelectionTexture (NULL), _endMenuImage (NULL), _endMenuTexture (NULL),
 	  _textHeight (26), _mainTextPolice (NULL), _mainTextImage (NULL), _mainTextTexture (NULL),
 	  _scoreTextPolice (NULL), _scoreP1TextImage (NULL), _scoreP1TextTexture (NULL),
 	  _scoreP2TextImage (NULL), _scoreP2TextTexture (NULL),
-	  _mainMenuMusic (NULL), _boardMusic (NULL), _endMenuMusic (NULL), _musicVolume (MIX_MAX_VOLUME / 2),
+	  _mainMenuMusic (NULL), _mapSelectionMusic (NULL), _boardMusic (NULL), _endMenuMusic (NULL),
+	  _musicVolume (MIX_MAX_VOLUME / 2),
 	  _started (false)
 {
 	if (! board)
@@ -60,6 +61,53 @@ GUISDL::GUISDL (Board *board)
 	this->_menuBottomButton.y = 850;
 	this->_menuBottomButton.width = 400;
 	this->_menuBottomButton.height = 100;
+
+		/* Map Selection */
+
+	this->_mapLTButton.x = 100;
+	this->_mapLTButton.y = 200;
+	this->_mapLTButton.width = 200;
+	this->_mapLTButton.height = 200;
+
+	this->_mapLMButton.x = 100;
+	this->_mapLMButton.y = 450;
+	this->_mapLMButton.width = 200;
+	this->_mapLMButton.height = 200;
+
+	this->_mapLBButton.x = 100;
+	this->_mapLBButton.y = 700;
+	this->_mapLBButton.width = 200;
+	this->_mapLBButton.height = 200;
+
+	this->_mapCTButton.x = 400;
+	this->_mapCTButton.y = 200;
+	this->_mapCTButton.width = 200;
+	this->_mapCTButton.height = 200;
+
+	this->_mapCMButton.x = 400;
+	this->_mapCMButton.y = 450;
+	this->_mapCMButton.width = 200;
+	this->_mapCMButton.height = 200;
+
+	this->_mapCBButton.x = 400;
+	this->_mapCBButton.y = 700;
+	this->_mapCBButton.width = 200;
+	this->_mapCBButton.height = 200;
+
+	this->_mapRTButton.x = 700;
+	this->_mapRTButton.y = 200;
+	this->_mapRTButton.width = 200;
+	this->_mapRTButton.height = 200;
+
+	this->_mapRMButton.x = 700;
+	this->_mapRMButton.y = 450;
+	this->_mapRMButton.width = 200;
+	this->_mapRMButton.height = 200;
+
+	this->_mapRBButton.x = 700;
+	this->_mapRBButton.y = 700;
+	this->_mapRBButton.width = 200;
+	this->_mapRBButton.height = 200;
 }
 
 /*
@@ -91,6 +139,12 @@ GUISDL::~GUISDL (void)
 	if (this->_endMenuImage != NULL)
 		SDL_FreeSurface (this->_endMenuImage);
 
+	if (this->_mapSelectionTexture != NULL)
+		SDL_DestroyTexture (this->_mapSelectionTexture);
+
+	if (this->_mapSelectionImage != NULL)
+		SDL_FreeSurface (this->_mapSelectionImage);
+
 	if (this->_mainMenuTexture != NULL)
 		SDL_DestroyTexture (this->_mainMenuTexture);
 
@@ -115,30 +169,25 @@ GUISDL::~GUISDL (void)
 /*
  * Private
  */
-void					GUISDL::ajustBounds (void)
+void						GUISDL::ajustBounds (void)
 {
-	this->_menuLeftButton.x = this->_menuLeftButton.x * _mapWidth / 1000;
-	this->_menuLeftButton.y = this->_menuLeftButton.y * _mapHeight / 1000;
-	this->_menuLeftButton.width = this->_menuLeftButton.width * _mapWidth / 1000;
-	this->_menuLeftButton.height = this->_menuLeftButton.height * _mapHeight / 1000;
+	this->_menuLeftButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_menuRightButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_menuMiddleButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_menuBottomButton.scale (_mapWidth , _mapHeight, 1000);
 
-	this->_menuRightButton.x = this->_menuRightButton.x * _mapWidth / 1000;
-	this->_menuRightButton.y = this->_menuRightButton.y * _mapHeight / 1000;
-	this->_menuRightButton.width = this->_menuRightButton.width * _mapWidth / 1000;
-	this->_menuRightButton.height = this->_menuRightButton.height * _mapHeight / 1000;
-
-	this->_menuMiddleButton.x = this->_menuMiddleButton.x * _mapWidth / 1000;
-	this->_menuMiddleButton.y = this->_menuMiddleButton.y * _mapHeight / 1000;
-	this->_menuMiddleButton.width = this->_menuMiddleButton.width * _mapWidth / 1000;
-	this->_menuMiddleButton.height = this->_menuMiddleButton.height * _mapHeight / 1000;
-
-	this->_menuBottomButton.x = this->_menuBottomButton.x * _mapWidth / 1000;
-	this->_menuBottomButton.y = this->_menuBottomButton.y * _mapHeight / 1000;
-	this->_menuBottomButton.width = this->_menuBottomButton.width * _mapWidth / 1000;
-	this->_menuBottomButton.height = this->_menuBottomButton.height * _mapHeight / 1000;
+	this->_mapLTButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapLMButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapLBButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapCTButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapCMButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapCBButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapRTButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapRMButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapRBButton.scale (_mapWidth , _mapHeight, 1000);
 }
 
-void					GUISDL::drawMainMenu (void)
+void						GUISDL::drawMainMenu (void)
 {
 	eboadMode boardCurrentMode;
 	std::string mainString;
@@ -185,8 +234,20 @@ void					GUISDL::drawMainMenu (void)
 			case eboadMode::Endless:
 				mainString += "Endless";
 				break;
+			case eboadMode::Multiplayer:
+				mainString += "Multiplayer";
+				break;
 			case eboadMode::NoFriendlyFire | eboadMode::Endless:
 				mainString += "NoFriendlyFire | Endless";
+				break;
+			case eboadMode::NoFriendlyFire | eboadMode::Multiplayer:
+				mainString += "NoFriendlyFire | Multiplayer";
+				break;
+			case eboadMode::Endless | eboadMode::Multiplayer:
+				mainString += "Endless | Multiplayer";
+				break;
+			case eboadMode::NoFriendlyFire | eboadMode::Endless | eboadMode::Multiplayer:
+				mainString += "NoFriendlyFire | Endless | Multiplayer";
 				break;
 			default:
 				mainString += "????";
@@ -235,7 +296,33 @@ void					GUISDL::drawMainMenu (void)
 	}
 }
 
-void					GUISDL::drawBoard (void)
+void						GUISDL::drawMapSelection (void)
+{
+	if (this->_mapSelectionImage != NULL)
+		SDL_FreeSurface (this->_mapSelectionImage);
+
+	this->_mapSelectionImage = IMG_Load ("ressources/images/map_selection.png");
+	if (this->_mapSelectionImage == NULL)
+	{
+		throw GUIException (this->_GUIName, "IMG_Load GUISDL::drawMapSelection", IMG_GetError());
+	}
+
+	if (this->_mapSelectionTexture != NULL)
+		SDL_DestroyTexture (this->_mapSelectionTexture);
+
+	this->_mapSelectionTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_mapSelectionImage);
+	if (this->_mapSelectionTexture == NULL)
+	{
+		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface GUISDL::drawMapSelection", SDL_GetError());
+	}
+
+	if (SDL_RenderCopy (this->_boardRenderer, this->_mapSelectionTexture, NULL, NULL))
+	{
+		throw GUIException (this->_GUIName, "SDL_RenderCopy GUISDL::drawMapSelection", SDL_GetError());
+	}
+}
+
+void						GUISDL::drawBoard (void)
 {
 	unsigned int height, width, y, x;
 	std::vector< std::vector<int> > *boardCells;
@@ -316,7 +403,7 @@ void					GUISDL::drawBoard (void)
 	}
 }
 
-void					GUISDL::drawSnakes (void)
+void						GUISDL::drawSnakes (void)
 {
 	std::list<t_cell> snakeCells;
 	std::list<t_cell>::iterator itSnakeCell;
@@ -403,7 +490,7 @@ void					GUISDL::drawSnakes (void)
 	}
 }
 
-void					GUISDL::drawScore (void)
+void						GUISDL::drawScore (void)
 {
 	SDL_Color textColor, textBGColor;
 	std::string scoreString;
@@ -520,7 +607,7 @@ void					GUISDL::drawScore (void)
 	}
 }
 
-void					GUISDL::drawEndMenu (void)
+void						GUISDL::drawEndMenu (void)
 {
 	eBoardStatus boardStatus;
 
@@ -578,12 +665,12 @@ void					GUISDL::drawEndMenu (void)
 /*
  * Public
  */
-eGUI					GUISDL::getGUIName (void) const
+eGUI						GUISDL::getGUIName (void) const
 {
 	return this->_GUIName;
 }
 
-void					GUISDL::start (void)
+void						GUISDL::start (void)
 {
 	unsigned int scalingFactor, mainFontSize;
 
@@ -614,7 +701,6 @@ void					GUISDL::start (void)
 	std::cout << "Scaling Factor = " << scalingFactor;
 	std::cout << " | mainFontSize = " << mainFontSize << std::endl;
 
-//	this->_mainTextPolice = TTF_OpenFont ("ressources/fonts/FreeMono.ttf", 35);
 	this->_mainTextPolice = TTF_OpenFont ("ressources/fonts/FreeMono.ttf", mainFontSize);
 	if (! this->_mainTextPolice)
 	{
@@ -633,22 +719,28 @@ void					GUISDL::start (void)
 		throw GUIException (this->_GUIName, "Mix_LoadMUS 1", Mix_GetError());
 	}
 
+	this->_mapSelectionMusic = Mix_LoadMUS ("ressources/sounds/ff_main_theme.wav");
+	if (! this->_mapSelectionMusic)
+	{
+		throw GUIException (this->_GUIName, "Mix_LoadMUS _mapSelectionMusic", Mix_GetError());
+	}
+
 	Mix_VolumeMusic (this->_musicVolume);
 
 	this->_started = true;
 }
 
-bool					GUISDL::alreadyStarted (void) const
+bool						GUISDL::alreadyStarted (void) const
 {
 	return this->_started;
 }
 
-eGUI					GUISDL::wantedGUI (void) const
+eGUI						GUISDL::wantedGUI (void) const
 {
 	return this->_wantedGUI;
 }
 
-void					GUISDL::stop()
+void						GUISDL::stop()
 {
 #ifdef PROJ_DEBUG
 	std::cout << "GUISDL::stop" << std::endl;
@@ -663,6 +755,12 @@ void					GUISDL::stop()
 	{
 		Mix_FreeMusic (this->_mainMenuMusic);
 		this->_mainMenuMusic = NULL;
+	}
+
+	if (this->_mapSelectionMusic != NULL)
+	{
+		Mix_FreeMusic (this->_mapSelectionMusic);
+		this->_mapSelectionMusic = NULL;
 	}
 
 	if (this->_boardMusic != NULL)
@@ -696,7 +794,7 @@ void					GUISDL::stop()
 
 /* Main Menu */
 
-void					GUISDL::loadMainMenu (void)
+void						GUISDL::loadMainMenu (void)
 {
 	if (Mix_PausedMusic() == 1)
 	{
@@ -715,7 +813,7 @@ void					GUISDL::loadMainMenu (void)
 	SDL_RenderPresent (this->_boardRenderer);
 }
 
-eGUIMainMenuEvent		GUISDL::getMainMenuEvent (void)
+eGUIMainMenuEvent			GUISDL::getMainMenuEvent (void)
 {
 	SDL_Event events;
 	int x, y;
@@ -779,11 +877,15 @@ eGUIMainMenuEvent		GUISDL::getMainMenuEvent (void)
 				if (SDL_BUTTON (SDL_BUTTON_LEFT))
 				{
 					SDL_GetMouseState (&x, &y);
+					std::cout << "Current Mouse Click: x = " << x << " | y = " << y << std::endl;
+
 					if (this->_menuLeftButton.in (x, y))
 						return eGUIMainMenuEvent::startSinglePlayerGame;
-					else if (this->_menuRightButton.in (x, y))
+
+					if (this->_menuRightButton.in (x, y))
 						return eGUIMainMenuEvent::startMultiPlayerGame;
-					else if (this->_menuMiddleButton.in (x, y))
+
+					if (this->_menuMiddleButton.in (x, y))
 						return eGUIMainMenuEvent::quitGame;
 				}
 				break;
@@ -796,9 +898,132 @@ eGUIMainMenuEvent		GUISDL::getMainMenuEvent (void)
 	return eGUIMainMenuEvent::nothingTODO;
 }
 
+/* Map Selection */
+
+void						GUISDL::loadMapSelection (void)
+{
+	if (Mix_PausedMusic() == 1)
+	{
+		Mix_HaltMusic();
+		Mix_PlayMusic (this->_mapSelectionMusic, -1);
+		Mix_PauseMusic();
+	}
+	else
+	{
+		Mix_HaltMusic();
+		Mix_PlayMusic (this->_mapSelectionMusic, -1);
+	}
+
+	this->drawMapSelection();
+
+	SDL_RenderPresent (this->_boardRenderer);
+}
+
+eGUIMapSelectionEvent		GUISDL::getMapSelectionEvent (void)
+{
+	SDL_Event events;
+	int x, y;
+
+	while (SDL_PollEvent (&events))
+	{
+		switch (events.type)
+		{
+			case SDL_QUIT:
+				return eGUIMapSelectionEvent::quitGame;
+
+			case SDL_KEYDOWN:
+				switch (events.key.keysym.sym)
+				{
+					case SDLK_ESCAPE:
+						return eGUIMapSelectionEvent::quitGame;
+
+					/* GUI Switchs */
+					case SDLK_2:
+					case SDLK_F2:
+					case SDLK_KP_2:
+						this-> _wantedGUI = eGUI::SFML;
+						return eGUIMapSelectionEvent::changeGUI;
+
+					case SDLK_3:
+					case SDLK_F3:
+					case SDLK_KP_3:
+						this-> _wantedGUI = eGUI::openGL;
+						return eGUIMapSelectionEvent::changeGUI;
+
+					/* Audio */
+					case SDLK_p:
+						if (Mix_PausedMusic() == 1)
+							Mix_ResumeMusic();
+						else
+							Mix_PauseMusic();
+						break;
+
+					case SDLK_PLUS:
+					case SDLK_KP_PLUS:
+						this->_musicVolume = this->_musicVolume + 8 <= 128 ?
+											 this->_musicVolume + 8:
+											 128;
+						Mix_VolumeMusic (this->_musicVolume);
+						break;
+
+					case SDLK_MINUS:
+					case SDLK_KP_MINUS:
+						this->_musicVolume = this->_musicVolume >= 8 ?
+											 this->_musicVolume - 8:
+											 0;
+						Mix_VolumeMusic (this->_musicVolume);
+						break;
+
+					default:
+						break;
+				}
+				break;
+
+			case SDL_MOUSEBUTTONUP:
+				if (SDL_BUTTON (SDL_BUTTON_LEFT))
+				{
+					SDL_GetMouseState (&x, &y);
+
+					if (this->_mapLTButton.in (x, y))
+							return eGUIMapSelectionEvent::mapLT;
+
+					if (this->_mapLMButton.in (x, y))
+						return eGUIMapSelectionEvent::mapLM;
+
+					if (this->_mapLBButton.in (x, y))
+						return eGUIMapSelectionEvent::mapLB;
+
+					if (this->_mapCTButton.in (x, y))
+						return eGUIMapSelectionEvent::mapCT;
+
+					if (this->_mapCMButton.in (x, y))
+						return eGUIMapSelectionEvent::mapCM;
+
+					if (this->_mapCBButton.in (x, y))
+						return eGUIMapSelectionEvent::mapCB;
+
+					if (this->_mapRTButton.in (x, y))
+						return eGUIMapSelectionEvent::mapRT;
+
+					if (this->_mapRMButton.in (x, y))
+						return eGUIMapSelectionEvent::mapRM;
+
+					if (this->_mapRBButton.in (x, y))
+						return eGUIMapSelectionEvent::mapRB;
+				}
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	return eGUIMapSelectionEvent::nothingTODO;
+}
+
 /* Game */
 
-void					GUISDL::setPlayers (Snake *snakeP1, Snake *snakeP2)
+void						GUISDL::setPlayers (Snake *snakeP1, Snake *snakeP2)
 {
 	if (! snakeP1)
 	{
@@ -809,7 +1034,7 @@ void					GUISDL::setPlayers (Snake *snakeP1, Snake *snakeP2)
 	this->_snakeP2 = snakeP2;
 }
 
-void					GUISDL::loadBoard (unsigned int soundTrack)
+void						GUISDL::loadBoard (unsigned int soundTrack)
 {
 	if (this->_boardMusic != NULL)
 	{
@@ -820,7 +1045,7 @@ void					GUISDL::loadBoard (unsigned int soundTrack)
 	switch (soundTrack)
 	{
 		case 0:
-			this->_boardMusic = Mix_LoadMUS ("ressources/sounds/ff_main_theme.wav");
+			this->_boardMusic = Mix_LoadMUS ("ressources/sounds/Twin Musicom - NES Theme.wav");
 			if (! this->_boardMusic)
 			{
 				throw GUIException (this->_GUIName, "Mix_LoadMUS 3", Mix_GetError());
@@ -828,7 +1053,7 @@ void					GUISDL::loadBoard (unsigned int soundTrack)
 			break;
 
 		case 1:
-			this->_boardMusic = Mix_LoadMUS ("ressources/sounds/Twin Musicom - 8-bit March.wav");
+			this->_boardMusic = Mix_LoadMUS ("ressources/sounds/Twin Musicom - NES Boss.wav");
 			if (! this->_boardMusic)
 			{
 				throw GUIException (this->_GUIName, "Mix_LoadMUS 3", Mix_GetError());
@@ -836,7 +1061,7 @@ void					GUISDL::loadBoard (unsigned int soundTrack)
 			break;
 
 		case 2:
-			this->_boardMusic = Mix_LoadMUS ("ressources/sounds/Twin Musicom - NES Theme.wav");
+			this->_boardMusic = Mix_LoadMUS ("ressources/sounds/Twin Musicom - 8-bit March.wav");
 			if (! this->_boardMusic)
 			{
 				throw GUIException (this->_GUIName, "Mix_LoadMUS 3", Mix_GetError());
@@ -845,7 +1070,7 @@ void					GUISDL::loadBoard (unsigned int soundTrack)
 
 		case 3:
 		default:
-			this->_boardMusic = Mix_LoadMUS ("ressources/sounds/ff_main_theme.wav");
+			this->_boardMusic = Mix_LoadMUS ("ressources/sounds/Twin Musicom - NES Theme.wav");
 			if (! this->_boardMusic)
 			{
 				throw GUIException (this->_GUIName, "Mix_LoadMUS 3", Mix_GetError());
@@ -866,7 +1091,7 @@ void					GUISDL::loadBoard (unsigned int soundTrack)
 	}
 }
 
-void					GUISDL::updateGameGUI (void)
+void						GUISDL::updateGameGUI (void)
 {
 	unsigned int currentGlobalScore;
 
@@ -886,7 +1111,7 @@ void					GUISDL::updateGameGUI (void)
 	SDL_Delay (100 - currentGlobalScore);
 }
 
-eGUIGameEvent			GUISDL::getGameEvent (void)
+eGUIGameEvent				GUISDL::getGameEvent (void)
 {
 	SDL_Event events;
 	eSnakeDirection snakeP1CurrentDirection, snakeP2CurrentDirection;
@@ -1019,7 +1244,7 @@ eGUIGameEvent			GUISDL::getGameEvent (void)
 
 /* End Menu */
 
-void					GUISDL::loadEndMenu (void)
+void						GUISDL::loadEndMenu (void)
 {
 	eBoardStatus boardStatus;
 	std::string endMenuMusicName;
@@ -1074,7 +1299,7 @@ void					GUISDL::loadEndMenu (void)
 	SDL_RenderPresent (this->_boardRenderer);
 }
 
-eGUIEndMenuEvent		GUISDL::getEndMenuEvent (void)
+eGUIEndMenuEvent			GUISDL::getEndMenuEvent (void)
 {
 	SDL_Event events;
 	int x, y;
@@ -1138,13 +1363,17 @@ eGUIEndMenuEvent		GUISDL::getEndMenuEvent (void)
 				if (SDL_BUTTON (SDL_BUTTON_LEFT))
 				{
 					SDL_GetMouseState (&x, &y);
+
 					if (this->_menuLeftButton.in (x, y))
 						return eGUIEndMenuEvent::restartLevel;
-					else if (this->_menuRightButton.in (x, y))
+
+					if (this->_menuRightButton.in (x, y))
 						return eGUIEndMenuEvent::nextLevel;
-					else if (this->_menuMiddleButton.in (x, y))
+
+					if (this->_menuMiddleButton.in (x, y))
 						return eGUIEndMenuEvent::backToLobby;
-					else if (this->_menuBottomButton.in (x, y))
+
+					if (this->_menuBottomButton.in (x, y))
 						return eGUIEndMenuEvent::quitGame;
 				}
 				break;
@@ -1160,17 +1389,17 @@ eGUIEndMenuEvent		GUISDL::getEndMenuEvent (void)
 /*
  * Extern
  */
-GUISDL					*createGUI (Board *board)
+GUISDL						*createGUI (Board *board)
 {
 	return new GUISDL (board);
 }
 
-void					setPlayers (GUISDL *GUI, Snake *snakeP1, Snake *snakeP2)
+void						setPlayers (GUISDL *GUI, Snake *snakeP1, Snake *snakeP2)
 {
 	GUI->setPlayers (snakeP1, snakeP2);
 }
 
-void					destroyGUI (GUISDL *GUI)
+void						destroyGUI (GUISDL *GUI)
 {
 	delete GUI;
 }

@@ -3,7 +3,7 @@
 /*
 ** Constructors
 */
-UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIMainMenuEvent receivedEvent)
+UnknownEventException::UnknownEventException (eGUI affectedGUI, eGUIMainMenuEvent receivedEvent)
 {
 	this->_message = "Unknown Event Error: GUI = \"";
 	switch (affectedGUI)
@@ -43,7 +43,68 @@ UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIMainMenuEvent
 	this->_message += "\".";
 }
 
-UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIGameEvent receivedEvent)
+UnknownEventException::UnknownEventException (eGUI affectedGUI, eGUIMapSelectionEvent receivedEvent)
+{
+	this->_message = "Unknown Event Error: GUI = \"";
+	switch (affectedGUI)
+	{
+		case eGUI::SDL:
+			this->_message += "SDL";
+			break;
+		case eGUI::SFML:
+			this->_message += "SFML";
+			break;
+		case eGUI::openGL:
+			this->_message += "openGLL";
+			break;
+		default:
+			this->_message += "unknownGUI";
+			break;
+	}
+	this->_message += "\" | Received Main Menu Event = \"";
+	switch (receivedEvent)
+	{
+		case eGUIMapSelectionEvent::mapLT:
+			this->_message += "mapLeftTop";
+			break;
+		case eGUIMapSelectionEvent::mapLM:
+			this->_message += "mapLeftMiddle";
+			break;
+		case eGUIMapSelectionEvent::mapLB:
+			this->_message += "mapLeftBottom";
+			break;
+		case eGUIMapSelectionEvent::mapCT:
+			this->_message += "mapCenterTop";
+			break;
+		case eGUIMapSelectionEvent::mapCM:
+			this->_message += "mapCenterMiddle";
+			break;
+		case eGUIMapSelectionEvent::mapCB:
+			this->_message += "mapCenterBottom";
+			break;
+		case eGUIMapSelectionEvent::mapRT:
+			this->_message += "mapRightTop";
+			break;
+		case eGUIMapSelectionEvent::mapRM:
+			this->_message += "mapRightMiddle";
+			break;
+		case eGUIMapSelectionEvent::mapRB:
+			this->_message += "mapRightBottom";
+			break;
+		case eGUIMapSelectionEvent::changeGUI:
+			this->_message += "changeGUI";
+			break;
+		case eGUIMapSelectionEvent::quitGame:
+			this->_message += "quitGame";
+			break;
+		default:
+			this->_message += "unknownMapSelectionEvent";
+			break;
+	}
+	this->_message += "\".";
+}
+
+UnknownEventException::UnknownEventException (eGUI affectedGUI, eGUIGameEvent receivedEvent)
 {
 	this->_message = "Unknown Event Error: GUI = \"";
 	switch (affectedGUI)
@@ -104,7 +165,7 @@ UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIGameEvent rec
 	this->_message += "\".";
 }
 
-UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIEndMenuEvent receivedEvent)
+UnknownEventException::UnknownEventException (eGUI affectedGUI, eGUIEndMenuEvent receivedEvent)
 {
 	this->_message = "Unknown Event Error: GUI = \"";
 	switch (affectedGUI)
@@ -144,7 +205,7 @@ UnknownEventException::UnknownEventException(eGUI affectedGUI, eGUIEndMenuEvent 
 	this->_message += "\".";
 }
 
-UnknownEventException::UnknownEventException(UnknownEventException const &src)
+UnknownEventException::UnknownEventException (UnknownEventException const &src)
 {
 	*this = src;
 }
@@ -152,12 +213,12 @@ UnknownEventException::UnknownEventException(UnknownEventException const &src)
 /*
 ** Destructor
 */
-UnknownEventException::~UnknownEventException(void) {}
+UnknownEventException::~UnknownEventException (void) {}
 
 /*
 ** Operator "=" Overload
 */
-UnknownEventException		&UnknownEventException::operator=(UnknownEventException const &src)
+UnknownEventException		&UnknownEventException::operator= (UnknownEventException const &src)
 {
 	this->_message = src.getMessage();
 	return *this;
@@ -174,7 +235,7 @@ std::string					UnknownEventException::getMessage (void) const
 /*
 ** Public
 */
-const char					*UnknownEventException::what(void) const throw()
+const char					*UnknownEventException::what (void) const throw()
 {
 	return this->_message.c_str();
 }

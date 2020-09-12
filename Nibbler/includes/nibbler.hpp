@@ -24,7 +24,6 @@ typedef struct nibblerParametersStruct
 {
 	unsigned int	width;
 	unsigned int	height;
-	eBoardMaps		selectedMap;
 	eboadMode		boardMode;
 
 } nibblerParametersStruct, *nibblerParametersPointer;

@@ -64,6 +64,101 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 	return false;
 }
 
+static bool				selectMap (Board *board, guiFuncStruct *guiFunc, IGUI* &GUI,
+								   eBoardMaps *selectedMap)
+{
+	eGUIMapSelectionEvent currentEvent;
+	eGUI currentGUI, wantedGUI;
+
+	std::cout << "selectMap BEGIN" << std::endl;
+
+	currentGUI = GUI->getGUIName();
+
+	GUI->loadMapSelection();
+
+	while (true)
+	{
+		currentEvent = GUI->getMapSelectionEvent();
+		switch (currentEvent)
+		{
+			case eGUIMapSelectionEvent::mapLT:
+				*selectedMap = eBoardMaps::Classic;
+				std::cout << "selectMap END (mapLeftTop)" << std::endl;
+				return true;
+
+			case eGUIMapSelectionEvent::mapLM:
+				*selectedMap = eBoardMaps::Borderless;
+				std::cout << "selectMap END (mapLeftMiddle)" << std::endl;
+				return true;
+
+			case eGUIMapSelectionEvent::mapLB:
+				*selectedMap = eBoardMaps::Tribal;
+				std::cout << "selectMap END (mapLeftBottom)" << std::endl;
+				return true;
+
+			case eGUIMapSelectionEvent::mapCT:
+				*selectedMap = eBoardMaps::Lines;
+				std::cout << "selectMap END (mapCenterTop)" << std::endl;
+				return true;
+
+			case eGUIMapSelectionEvent::mapCM:
+				*selectedMap = eBoardMaps::LinesBorderless;
+				std::cout << "selectMap END (mapCenterMiddle)" << std::endl;
+				return true;
+
+			case eGUIMapSelectionEvent::mapCB:
+				*selectedMap = eBoardMaps::LinesTribal;
+				std::cout << "selectMap END (mapCenterBottom)" << std::endl;
+				return true;
+
+			case eGUIMapSelectionEvent::mapRT:
+				*selectedMap = eBoardMaps::Blocks;
+				std::cout << "selectMap END (mapRightTop)" << std::endl;
+				return true;
+
+			case eGUIMapSelectionEvent::mapRM:
+				*selectedMap = eBoardMaps::BlocksBorderless;
+				std::cout << "selectMap END (mapRightMiddle)" << std::endl;
+				return true;
+
+			case eGUIMapSelectionEvent::mapRB:
+				*selectedMap = eBoardMaps::BlocksTribal;
+				std::cout << "selectMap END (mapRightBottom)" << std::endl;
+				return true;
+
+			case eGUIMapSelectionEvent::changeGUI:
+				std::cout << "==> Switch GUI <==" << std::endl;
+				wantedGUI = GUI->wantedGUI();
+
+				GUI->stop();
+				guiFunc->destroyGUI (GUI);
+				closeGUILibrary (currentGUI, guiFunc);
+
+				openGUILibrary (wantedGUI, guiFunc);
+				GUI = guiFunc->createGUI (board);
+				GUI->start();
+				GUI->loadMapSelection();
+
+				currentGUI = wantedGUI;
+				break;
+
+			case eGUIMapSelectionEvent::quitGame:
+				std::cout << "launchNibbler END (quit)" << std::endl;
+				return false;
+
+			case eGUIMapSelectionEvent::nothingTODO:
+				break;
+
+			default:
+				throw UnknownEventException (GUI->getGUIName(), currentEvent);
+		}
+	}
+
+	std::cout << "selectMap END (SNO)" << std::endl;
+
+	return false;
+}
+
 static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 								   unsigned int soundTrack,
 								   nibblerParametersPointer nibblerParams,
@@ -240,9 +335,6 @@ static eBoardMaps		loadNextLevel (eBoardMaps currentLevel)
 			return eBoardMaps::Blocks;
 
 		case eBoardMaps::Blocks:
-//			return eBoardMaps::Tribal;
-//
-//		case eBoardMaps::Tribal:
 			return eBoardMaps::Borderless;
 
 		case eBoardMaps::Borderless:
@@ -252,6 +344,15 @@ static eBoardMaps		loadNextLevel (eBoardMaps currentLevel)
 			return eBoardMaps::BlocksBorderless;
 
 		case eBoardMaps::BlocksBorderless:
+			return eBoardMaps::Tribal;
+
+		case eBoardMaps::Tribal:
+			return eBoardMaps::LinesTribal;
+
+		case eBoardMaps::LinesTribal:
+			return eBoardMaps::BlocksTribal;
+
+		case eBoardMaps::BlocksTribal:
 			return eBoardMaps::Classic;
 
 		default:
@@ -264,24 +365,18 @@ static unsigned int		selectSoundTrack (eBoardMaps currentLevel)
 	switch (currentLevel)
 	{
 		case eBoardMaps::Classic:
+		case eBoardMaps::Borderless:
+		case eBoardMaps::Tribal:
 			return 0;
 
 		case eBoardMaps::Lines:
+		case eBoardMaps::LinesBorderless:
+		case eBoardMaps::LinesTribal:
 			return 1;
 
 		case eBoardMaps::Blocks:
-			return 2;
-
-//		case eBoardMaps::Tribal:
-//			return 3;
-
-		case eBoardMaps::Borderless:
-			return 0;
-
-		case eBoardMaps::LinesBorderless:
-			return 1;
-
 		case eBoardMaps::BlocksBorderless:
+		case eBoardMaps::BlocksTribal:
 			return 2;
 
 		default:
@@ -335,7 +430,9 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 		else
 			snakeP2 = NULL;
 
-		currentMap = nibblerParams->selectedMap;
+		if (! selectMap (board, &guiFunc, GUI, &currentMap))
+			break;
+
 		soundTrack = selectSoundTrack (currentMap);
 		guiFunc.setPlayers (GUI, snakeP1, snakeP2);
 
@@ -386,9 +483,6 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 
 			board->clearBoard();
 
-			nibblerParams->boardMode = static_cast<eboadMode>
-									   (nibblerParams->boardMode & ~eboadMode::Multiplayer);
-
 			board->initBoard (nibblerParams->width, nibblerParams->height, nibblerParams->boardMode);
 		}
 	}
@@ -415,7 +509,6 @@ int main (int ac, char **av)
 	nibblerParams.width = 40u;
 	nibblerParams.height = 40u;
 	nibblerParams.boardMode = eboadMode::Default;
-	nibblerParams.selectedMap = eBoardMaps::Classic;
 
 	switch (ac)
 	{

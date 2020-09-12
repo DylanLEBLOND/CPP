@@ -42,6 +42,8 @@ private:
 	sf::RenderWindow		_window;
 	sf::Texture				_mainMenuTexture;
 	sf::Sprite				_mainMenuSprite;
+	sf::Texture				_mapSelectionTexture;
+	sf::Sprite				_mapSelectionSprite;
 	sf::Texture				_endMenuTexture;
 	sf::Sprite				_endMenuSprite;
 		/* Text */
@@ -53,6 +55,7 @@ private:
 	sf::Text				_scoreP2Text;
 		/* Music */
 	sf::Music				_mainMenuMusic;
+	sf::Music				_mapSelectionMusic;
 	sf::Music				_boardMusic;
 	sf::Music				_endMenuMusic;
 	unsigned int			_musicVolume;
@@ -64,51 +67,66 @@ private:
 	bounds					_menuRightButton;
 	bounds					_menuMiddleButton;
 	bounds					_menuBottomButton;
+		/* Maps Bounds */
+	bounds					_mapLTButton;	/*  Left  -  Top   */
+	bounds					_mapLMButton;	/*  Left  - Middle */
+	bounds					_mapLBButton;	/*  Left  - Bottom */
+	bounds					_mapCTButton;	/* Center -  Top   */
+	bounds					_mapCMButton;	/* Center - Middle */
+	bounds					_mapCBButton;	/* Center - Bottom */
+	bounds					_mapRTButton;	/*  Right -  Top   */
+	bounds					_mapRMButton;	/*  Right - Middle */
+	bounds					_mapRBButton;	/*  Right - Bottom */
 
 	GUISFML (void);
 	GUISFML (GUISFML const &src);
 
-	GUISFML					&operator=(GUISFML const &src);
+	GUISFML						&operator=(GUISFML const &src);
 
-	void					ajustBounds (void);
+	void						ajustBounds (void);
 
-	void					drawMainMenu (void);
+	void						drawMainMenu (void);
 
-	void					drawBoard (void);
-	void					drawSnakes (void);
-	void					drawScore (void);
+	void						drawMapSelection (void);
 
-	void					drawEndMenu (void);
+	void						drawBoard (void);
+	void						drawSnakes (void);
+	void						drawScore (void);
+
+	void						drawEndMenu (void);
 
 public:
 
 	GUISFML (Board *board);
 	~GUISFML (void);
 
-	eGUI					getGUIName (void) const;
+	eGUI						getGUIName (void) const;
 
-	void					start (void);
-	bool					alreadyStarted (void) const;
-	eGUI					wantedGUI (void) const;
-	void					stop (void);
+	void						start (void);
+	bool						alreadyStarted (void) const;
+	eGUI						wantedGUI (void) const;
+	void						stop (void);
 	/* Main Menu */
-	void					loadMainMenu (void);
-	eGUIMainMenuEvent		getMainMenuEvent (void);
+	void						loadMainMenu (void);
+	eGUIMainMenuEvent			getMainMenuEvent (void);
+	/* Map Selection */
+	void						loadMapSelection (void);
+	eGUIMapSelectionEvent		getMapSelectionEvent (void);
 	/* Game */
-	void					setPlayers (Snake *snakeP1, Snake *snakeP2);
-	void					loadBoard (unsigned int soundTrack);
-	void					updateGameGUI (void);
-	eGUIGameEvent			getGameEvent (void);
+	void						setPlayers (Snake *snakeP1, Snake *snakeP2);
+	void						loadBoard (unsigned int soundTrack);
+	void						updateGameGUI (void);
+	eGUIGameEvent				getGameEvent (void);
 	/* End Menu */
-	void					loadEndMenu (void);
-	eGUIEndMenuEvent		getEndMenuEvent (void);
+	void						loadEndMenu (void);
+	eGUIEndMenuEvent			getEndMenuEvent (void);
 };
 
 extern "C" {
 
-	GUISFML					*createGUI (Board *board);
-	void					setPlayers (GUISFML *GUI, Snake *snakeP1, Snake *snakeP2);
-	void					destroyGUI (GUISFML* GUI);
+	GUISFML						*createGUI (Board *board);
+	void						setPlayers (GUISFML *GUI, Snake *snakeP1, Snake *snakeP2);
+	void						destroyGUI (GUISFML* GUI);
 }
 
 #endif /* GUISFML_CLASS_HPP */

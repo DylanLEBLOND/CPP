@@ -61,6 +61,14 @@ typedef struct s_bounds
 				(this->height == rhs.height));
 	}
 
+	void scale (unsigned int xScalingFactor, unsigned int yScalingFactor, unsigned int ratio)
+	{
+		this->x = this->x * xScalingFactor / ratio;
+		this->y = this->y * yScalingFactor / ratio;
+		this->width = this->width * xScalingFactor / ratio;
+		this->height = this->height * yScalingFactor / ratio;
+	}
+
 	bool in (int x, int y)
 	{
 		return ((this->x <= x && x <= (int)(this->x + this->width)) &&

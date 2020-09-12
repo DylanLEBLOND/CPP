@@ -18,19 +18,20 @@ private:
 
 	std::string		_message;
 
-	UnknownEventException(void);
+	UnknownEventException (void);
 
 public:
 
-	UnknownEventException(eGUI affectedGUI, eGUIMainMenuEvent receivedEvent);
-	UnknownEventException(eGUI affectedGUI, eGUIGameEvent receivedEvent);
-	UnknownEventException(eGUI affectedGUI, eGUIEndMenuEvent receivedEvent);
-	UnknownEventException(UnknownEventException const &src);
-	~UnknownEventException(void);
+	UnknownEventException (eGUI affectedGUI, eGUIMainMenuEvent receivedEvent);
+	UnknownEventException (eGUI affectedGUI, eGUIMapSelectionEvent receivedEvent);
+	UnknownEventException (eGUI affectedGUI, eGUIGameEvent receivedEvent);
+	UnknownEventException (eGUI affectedGUI, eGUIEndMenuEvent receivedEvent);
+	UnknownEventException (UnknownEventException const &src);
+	~UnknownEventException (void);
 
-	UnknownEventException		&operator=(UnknownEventException const &src);
+	UnknownEventException		&operator= (UnknownEventException const &src);
 
-	const char*					what(void) const throw();
+	const char*					what (void) const throw();
 
 	std::string					getMessage (void) const;
 };

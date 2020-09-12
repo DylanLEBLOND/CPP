@@ -62,7 +62,7 @@ GUIOpenGL::~GUIOpenGL(void)
 /*
  * Private
  */
-void					GUIOpenGL::ajustBounds (void)
+void						GUIOpenGL::ajustBounds (void)
 {
 	this->_mainMenuSinglePlayer.x *= this->_mainMenuSinglePlayer.x * _mapWidth / 1000;
 	this->_mainMenuSinglePlayer.y = this->_mainMenuSinglePlayer.y * _mapHeight / 1000;
@@ -80,12 +80,17 @@ void					GUIOpenGL::ajustBounds (void)
 	this->_mainMenuQuitGame.height = this->_mainMenuQuitGame.height * _mapHeight / 1000;
 }
 
-void					GUIOpenGL::drawMainMenu (void)
+void						GUIOpenGL::drawMainMenu (void)
 {
 
 }
 
-void					GUIOpenGL::drawBoard (void)
+void						GUIOpenGL::drawMapSelection (void)
+{
+
+}
+
+void						GUIOpenGL::drawBoard (void)
 {
 	glClearColor (1.0f, 1.0f, 1.0f, 1.0f);
 	glClear (GL_COLOR_BUFFER_BIT);
@@ -116,17 +121,17 @@ void					GUIOpenGL::drawBoard (void)
 	glFlush ();
 }
 
-void					GUIOpenGL::drawSnakes (void)
+void						GUIOpenGL::drawSnakes (void)
 {
 
 }
 
-void					GUIOpenGL::drawEndMenu (void)
+void						GUIOpenGL::drawEndMenu (void)
 {
 
 }
 
-void					GUIOpenGL::resizeWindows (int width, int height)
+void						GUIOpenGL::resizeWindows (int width, int height)
 {
 	_mapWidth = width;
 	_mapHeight = height;
@@ -146,12 +151,12 @@ void					GUIOpenGL::resizeWindows (int width, int height)
 /*
  * Public
  */
-eGUI					GUIOpenGL::getGUIName (void) const
+eGUI						GUIOpenGL::getGUIName (void) const
 {
 	return this->_GUIName;
 }
 
-void					GUIOpenGL::start (void)
+void						GUIOpenGL::start (void)
 {
 	_mapWidth = this->_board->getWidth() * 10;
 	_mapHeight = this->_board->getHeight() * 10;
@@ -172,36 +177,48 @@ void					GUIOpenGL::start (void)
 	this->_started = true;
 }
 
-bool					GUIOpenGL::alreadyStarted (void) const
+bool						GUIOpenGL::alreadyStarted (void) const
 {
 	return this->_started;
 }
 
-eGUI					GUIOpenGL::wantedGUI (void) const
+eGUI						GUIOpenGL::wantedGUI (void) const
 {
 	return this->_wantedGUI;
 }
 
-void					GUIOpenGL::stop (void)
+void						GUIOpenGL::stop (void)
 {
 	this->_started = false;
 }
 
 /* Main Menu */
 
-void					GUIOpenGL::loadMainMenu (void)
+void						GUIOpenGL::loadMainMenu (void)
 {
 
 }
 
-eGUIMainMenuEvent		GUIOpenGL::getMainMenuEvent (void)
+eGUIMainMenuEvent			GUIOpenGL::getMainMenuEvent (void)
 {
 	return eGUIMainMenuEvent::unknownMainMenuEvent;
 }
 
+/* Map Selection */
+
+void						GUIOpenGL::loadMapSelection (void)
+{
+
+}
+
+eGUIMapSelectionEvent		GUIOpenGL::getMapSelectionEvent (void)
+{
+	return eGUIMapSelectionEvent::unknownMapSelectionEvent;
+}
+
 /* Game */
 
-void					GUIOpenGL::setPlayers (Snake *snakeP1, Snake *snakeP2)
+void						GUIOpenGL::setPlayers (Snake *snakeP1, Snake *snakeP2)
 {
 	if (! snakeP1)
 	{
@@ -212,12 +229,12 @@ void					GUIOpenGL::setPlayers (Snake *snakeP1, Snake *snakeP2)
 	this->_snakeP2 = snakeP2;
 }
 
-void					GUIOpenGL::loadBoard (unsigned int soundTrack)
+void						GUIOpenGL::loadBoard (unsigned int soundTrack)
 {
 
 }
 
-void					GUIOpenGL::updateGameGUI (void)
+void						GUIOpenGL::updateGameGUI (void)
 {
 	this->drawBoard();
 	this->drawSnakes();
@@ -234,19 +251,19 @@ void					GUIOpenGL::updateGameGUI (void)
 //	SDL_Delay (100 - currentGlobalScore);
 }
 
-eGUIGameEvent			GUIOpenGL::getGameEvent (void)
+eGUIGameEvent				GUIOpenGL::getGameEvent (void)
 {
 	return eGUIGameEvent::unknownGameEvent;
 }
 
 /* End Menu */
 
-void					GUIOpenGL::loadEndMenu (void)
+void						GUIOpenGL::loadEndMenu (void)
 {
 
 }
 
-eGUIEndMenuEvent		GUIOpenGL::getEndMenuEvent (void)
+eGUIEndMenuEvent			GUIOpenGL::getEndMenuEvent (void)
 {
 	return eGUIEndMenuEvent::unknownEndMenuEvent;
 }
@@ -255,12 +272,17 @@ eGUIEndMenuEvent		GUIOpenGL::getEndMenuEvent (void)
 /*
  * Extern
  */
-GUIOpenGL				*createGUI (Board *board)
+GUIOpenGL					*createGUI (Board *board)
 {
 	return new GUIOpenGL (board);
 }
 
-void					destroyGUI (GUIOpenGL *GUI)
+void						setPlayers (GUIOpenGL *GUI, Snake *snakeP1, Snake *snakeP2)
+{
+	GUI->setPlayers (snakeP1, snakeP2);
+}
+
+void						destroyGUI (GUIOpenGL *GUI)
 {
 	delete GUI;
 }

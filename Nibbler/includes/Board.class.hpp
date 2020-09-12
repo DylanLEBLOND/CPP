@@ -32,7 +32,7 @@
 /*
  * Enumerations
  */
-enum class eBoardMaps { Classic, Lines, Blocks, Tribal, Borderless, LinesBorderless, BlocksBorderless, UnknownMap };
+enum class eBoardMaps { Classic, Lines, Blocks, Borderless, LinesBorderless, BlocksBorderless, Tribal, LinesTribal, BlocksTribal, UnknownMap };
 
 enum class eBoardStatus { Playing, Player1Win, Player1Lose, Player2Win, Player2Lose, Draw, UnknownStatus };
 
@@ -69,10 +69,12 @@ private:
 	void								loadMapClassic (void);
 	void								loadMapLines (void);
 	void								loadMapBlocks (void);
-	void								loadMapTribal (void);
 	void								loadMapBorderless (void);
 	void								loadMapLinesBorderless (void);
 	void								loadMapBlocksBorderless (void);
+	void								loadMapTribal (void);
+	void								loadMapLinesTribal (void);
+	void								loadMapBlocksTribal (void);
 
 	void								updateBonus (void);
 	void								checkSnakesCollision (void);

@@ -36,6 +36,53 @@ GUISFML::GUISFML (Board *board)
 	this->_menuBottomButton.y = 850;
 	this->_menuBottomButton.width = 400;
 	this->_menuBottomButton.height = 100;
+
+		/* Map Selection */
+
+	this->_mapLTButton.x = 100;
+	this->_mapLTButton.y = 200;
+	this->_mapLTButton.width = 200;
+	this->_mapLTButton.height = 200;
+
+	this->_mapLMButton.x = 100;
+	this->_mapLMButton.y = 450;
+	this->_mapLMButton.width = 200;
+	this->_mapLMButton.height = 200;
+
+	this->_mapLBButton.x = 100;
+	this->_mapLBButton.y = 700;
+	this->_mapLBButton.width = 200;
+	this->_mapLBButton.height = 200;
+
+	this->_mapCTButton.x = 400;
+	this->_mapCTButton.y = 200;
+	this->_mapCTButton.width = 200;
+	this->_mapCTButton.height = 200;
+
+	this->_mapCMButton.x = 400;
+	this->_mapCMButton.y = 450;
+	this->_mapCMButton.width = 200;
+	this->_mapCMButton.height = 200;
+
+	this->_mapCBButton.x = 400;
+	this->_mapCBButton.y = 700;
+	this->_mapCBButton.width = 200;
+	this->_mapCBButton.height = 200;
+
+	this->_mapRTButton.x = 700;
+	this->_mapRTButton.y = 200;
+	this->_mapRTButton.width = 200;
+	this->_mapRTButton.height = 200;
+
+	this->_mapRMButton.x = 700;
+	this->_mapRMButton.y = 450;
+	this->_mapRMButton.width = 200;
+	this->_mapRMButton.height = 200;
+
+	this->_mapRBButton.x = 700;
+	this->_mapRBButton.y = 700;
+	this->_mapRBButton.width = 200;
+	this->_mapRBButton.height = 200;
 }
 
 /*
@@ -46,30 +93,25 @@ GUISFML::~GUISFML (void) { }
 /*
  * Private
  */
-void					GUISFML::ajustBounds (void)
+void						GUISFML::ajustBounds (void)
 {
-	this->_menuLeftButton.x = this->_menuLeftButton.x * _mapWidth / 1000;
-	this->_menuLeftButton.y = this->_menuLeftButton.y * _mapHeight / 1000;
-	this->_menuLeftButton.width = this->_menuLeftButton.width * _mapWidth / 1000;
-	this->_menuLeftButton.height = this->_menuLeftButton.height * _mapHeight / 1000;
+	this->_menuLeftButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_menuRightButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_menuMiddleButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_menuBottomButton.scale (_mapWidth , _mapHeight, 1000);
 
-	this->_menuRightButton.x = this->_menuRightButton.x * _mapWidth / 1000;
-	this->_menuRightButton.y = this->_menuRightButton.y * _mapHeight / 1000;
-	this->_menuRightButton.width = this->_menuRightButton.width * _mapWidth / 1000;
-	this->_menuRightButton.height = this->_menuRightButton.height * _mapHeight / 1000;
-
-	this->_menuMiddleButton.x = this->_menuMiddleButton.x * _mapWidth / 1000;
-	this->_menuMiddleButton.y = this->_menuMiddleButton.y * _mapHeight / 1000;
-	this->_menuMiddleButton.width = this->_menuMiddleButton.width * _mapWidth / 1000;
-	this->_menuMiddleButton.height = this->_menuMiddleButton.height * _mapHeight / 1000;
-
-	this->_menuBottomButton.x = this->_menuBottomButton.x * _mapWidth / 1000;
-	this->_menuBottomButton.y = this->_menuBottomButton.y * _mapHeight / 1000;
-	this->_menuBottomButton.width = this->_menuBottomButton.width * _mapWidth / 1000;
-	this->_menuBottomButton.height = this->_menuBottomButton.height * _mapHeight / 1000;
+	this->_mapLTButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapLMButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapLBButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapCTButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapCMButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapCBButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapRTButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapRMButton.scale (_mapWidth , _mapHeight, 1000);
+	this->_mapRBButton.scale (_mapWidth , _mapHeight, 1000);
 }
 
-void					GUISFML::drawMainMenu (void)
+void						GUISFML::drawMainMenu (void)
 {
 	eboadMode boardCurrentMode;
 	std::string mainString;
@@ -104,8 +146,20 @@ void					GUISFML::drawMainMenu (void)
 			case eboadMode::Endless:
 				mainString += "Endless";
 				break;
+			case eboadMode::Multiplayer:
+				mainString += "Multiplayer";
+				break;
 			case eboadMode::NoFriendlyFire | eboadMode::Endless:
 				mainString += "NoFriendlyFire | Endless";
+				break;
+			case eboadMode::NoFriendlyFire | eboadMode::Multiplayer:
+				mainString += "NoFriendlyFire | Multiplayer";
+				break;
+			case eboadMode::Endless | eboadMode::Multiplayer:
+				mainString += "Endless | Multiplayer";
+				break;
+			case eboadMode::NoFriendlyFire | eboadMode::Endless | eboadMode::Multiplayer:
+				mainString += "NoFriendlyFire | Endless | Multiplayer";
 				break;
 			default:
 				mainString += "????";
@@ -120,7 +174,23 @@ void					GUISFML::drawMainMenu (void)
 	this->_window.draw (this->_mainText);
 }
 
-void					GUISFML::drawBoard (void)
+void						GUISFML::drawMapSelection (void)
+{
+	this->_window.clear (sf::Color::White);
+
+	if (! this->_mapSelectionTexture.loadFromFile ("ressources/images/map_selection.png"))
+	{
+		throw GUIException (this->_GUIName, "loadFromFile GUISFML::drawMapSelection");
+	}
+	this->_mapSelectionTexture.setSmooth (true);
+
+	this->_mapSelectionSprite.setTexture (this->_mapSelectionTexture);
+	this->_mapSelectionSprite.setScale (sf::Vector2f ((float)_mapWidth / 1000.0f, (float)_mapHeight / 1000.0f));
+
+	this->_window.draw (this->_mapSelectionSprite);
+}
+
+void						GUISFML::drawBoard (void)
 {
 	unsigned int height, width, y, x;
 	std::vector< std::vector<int> > *boardCells;
@@ -182,7 +252,7 @@ void					GUISFML::drawBoard (void)
 	}
 }
 
-void					GUISFML::drawSnakes (void)
+void						GUISFML::drawSnakes (void)
 {
 	std::list<t_cell> snakeCells;
 	std::list<t_cell>::iterator itSnakeCell;
@@ -237,7 +307,7 @@ void					GUISFML::drawSnakes (void)
 	}
 }
 
-void					GUISFML::drawScore (void)
+void						GUISFML::drawScore (void)
 {
 	sf::RectangleShape scoreZone;
 	std::wstring scoreString;
@@ -290,7 +360,7 @@ void					GUISFML::drawScore (void)
 	}
 }
 
-void					GUISFML::drawEndMenu (void)
+void						GUISFML::drawEndMenu (void)
 {
 	eBoardStatus boardStatus;
 	std::string endMenuFilename;
@@ -338,12 +408,12 @@ void					GUISFML::drawEndMenu (void)
 /*
  * Public
  */
-eGUI					GUISFML::getGUIName (void) const
+eGUI						GUISFML::getGUIName (void) const
 {
 	return this->_GUIName;
 }
 
-void					GUISFML::start (void)
+void						GUISFML::start (void)
 {
 	unsigned int scalingFactor;
 
@@ -384,23 +454,28 @@ void					GUISFML::start (void)
 
 	if (! this->_mainMenuMusic.openFromFile ("ressources/sounds/ff_main_menu.wav"))
 	{
-		throw GUIException (this->_GUIName, "openFromFile 1 (*** MUSIC FILE ***)");
+		throw GUIException (this->_GUIName, "openFromFile _mainMenuMusic (*** MUSIC FILE ***)");
+	}
+
+	if (! this->_mapSelectionMusic.openFromFile ("ressources/sounds/ff_main_theme.wav"))
+	{
+		throw GUIException (this->_GUIName, "openFromFile _mapSelectionMusic (*** MUSIC FILE ***)");
 	}
 
 	this->_started = true;
 }
 
-bool					GUISFML::alreadyStarted (void) const
+bool						GUISFML::alreadyStarted (void) const
 {
 	return this->_started;
 }
 
-eGUI					GUISFML::wantedGUI (void) const
+eGUI						GUISFML::wantedGUI (void) const
 {
 	return this->_wantedGUI;
 }
 
-void					GUISFML::stop()
+void						GUISFML::stop()
 {
 #ifdef PROJ_DEBUG
 	std::cout << "GUISFML::stop" << std::endl;
@@ -413,8 +488,10 @@ void					GUISFML::stop()
 
 /* Main Menu */
 
-void					GUISFML::loadMainMenu (void)
+void						GUISFML::loadMainMenu (void)
 {
+	this->_mapSelectionMusic.stop();
+	this->_boardMusic.stop();
 	this->_endMenuMusic.stop();
 	this->_mainMenuMusic.play();
 	if (this->_muted)
@@ -429,7 +506,7 @@ void					GUISFML::loadMainMenu (void)
 	this->_window.display();
 }
 
-eGUIMainMenuEvent		GUISFML::getMainMenuEvent (void)
+eGUIMainMenuEvent			GUISFML::getMainMenuEvent (void)
 {
 	sf::Event events;
 
@@ -497,9 +574,11 @@ eGUIMainMenuEvent		GUISFML::getMainMenuEvent (void)
 				{
 					if (this->_menuLeftButton.in (events.mouseButton.x, events.mouseButton.y))
 						return eGUIMainMenuEvent::startSinglePlayerGame;
-					else if (this->_menuRightButton.in (events.mouseButton.x, events.mouseButton.y))
+
+					if (this->_menuRightButton.in (events.mouseButton.x, events.mouseButton.y))
 						return eGUIMainMenuEvent::startMultiPlayerGame;
-					else if (this->_menuMiddleButton.in (events.mouseButton.x, events.mouseButton.y))
+
+					if (this->_menuMiddleButton.in (events.mouseButton.x, events.mouseButton.y))
 						return eGUIMainMenuEvent::quitGame;
 				}
 				break;
@@ -512,9 +591,131 @@ eGUIMainMenuEvent		GUISFML::getMainMenuEvent (void)
 	return eGUIMainMenuEvent::nothingTODO;
 }
 
+/* Map Selection */
+
+void						GUISFML::loadMapSelection (void)
+{
+	this->_mainMenuMusic.stop();
+	this->_boardMusic.stop();
+	this->_endMenuMusic.stop();
+	this->_mapSelectionMusic.play();
+	if (this->_muted)
+		this->_mapSelectionMusic.pause();
+	this->_mapSelectionMusic.setVolume (this->_musicVolume);
+
+	this->_window.clear (sf::Color::White);
+
+	this->drawMapSelection();
+
+	this->_window.display();
+}
+
+eGUIMapSelectionEvent		GUISFML::getMapSelectionEvent (void)
+{
+	sf::Event events;
+
+	while (this->_window.pollEvent (events))
+	{
+		switch (events.type)
+		{
+			case sf::Event::Closed:
+				return eGUIMapSelectionEvent::quitGame;
+
+			case sf::Event::KeyPressed:
+				switch (events.key.code)
+				{
+					case sf::Keyboard::Escape:
+						return eGUIMapSelectionEvent::quitGame;
+
+					/* GUI Switchs */
+					case sf::Keyboard::Num1:
+					case sf::Keyboard::F1:
+					case sf::Keyboard::Numpad1:
+						this-> _wantedGUI = eGUI::SDL;
+						return eGUIMapSelectionEvent::changeGUI;
+
+					case sf::Keyboard::Num3:
+					case sf::Keyboard::F3:
+					case sf::Keyboard::Numpad3:
+						this-> _wantedGUI = eGUI::openGL;
+						return eGUIMapSelectionEvent::changeGUI;
+
+					/* Audio */
+					case sf::Keyboard::P:
+						if (this->_mapSelectionMusic.getStatus() == sf::SoundSource::Status::Paused)
+						{
+							this->_mapSelectionMusic.play();
+							this->_muted = false;
+						}
+						else
+						{
+							this->_mapSelectionMusic.pause();
+							this->_muted = true;
+						}
+						break;
+
+					case sf::Keyboard::Add:
+						this->_musicVolume = this->_musicVolume + 5 <= 100 ?
+											 this->_musicVolume + 5:
+											 100;
+						this->_mapSelectionMusic.setVolume (this->_musicVolume);
+						break;
+
+					case sf::Keyboard::Subtract:
+						this->_musicVolume = this->_musicVolume >= 5 ?
+											 this->_musicVolume - 5:
+											 0;
+						this->_mapSelectionMusic.setVolume (this->_musicVolume);
+						break;
+
+					default:
+						break;
+				}
+				break;
+
+			case sf::Event::MouseButtonReleased:
+				if (events.mouseButton.button == sf::Mouse::Left)
+				{
+					if (this->_mapLTButton.in (events.mouseButton.x, events.mouseButton.y))
+						return eGUIMapSelectionEvent::mapLT;
+
+					if (this->_mapLMButton.in (events.mouseButton.x, events.mouseButton.y))
+						return eGUIMapSelectionEvent::mapLM;
+
+					if (this->_mapLBButton.in (events.mouseButton.x, events.mouseButton.y))
+						return eGUIMapSelectionEvent::mapLB;
+
+					if (this->_mapCTButton.in (events.mouseButton.x, events.mouseButton.y))
+						return eGUIMapSelectionEvent::mapCT;
+
+					if (this->_mapCMButton.in (events.mouseButton.x, events.mouseButton.y))
+						return eGUIMapSelectionEvent::mapCM;
+
+					if (this->_mapCBButton.in (events.mouseButton.x, events.mouseButton.y))
+						return eGUIMapSelectionEvent::mapCB;
+
+					if (this->_mapRTButton.in (events.mouseButton.x, events.mouseButton.y))
+						return eGUIMapSelectionEvent::mapRT;
+
+					if (this->_mapRMButton.in (events.mouseButton.x, events.mouseButton.y))
+						return eGUIMapSelectionEvent::mapRM;
+
+					if (this->_mapRBButton.in (events.mouseButton.x, events.mouseButton.y))
+						return eGUIMapSelectionEvent::mapRB;
+				}
+				break;
+
+			default:
+				break;
+		}
+	}
+
+	return eGUIMapSelectionEvent::nothingTODO;
+}
+
 /* Game */
 
-void					GUISFML::setPlayers (Snake *snakeP1, Snake *snakeP2)
+void						GUISFML::setPlayers (Snake *snakeP1, Snake *snakeP2)
 {
 	if (! snakeP1)
 	{
@@ -525,26 +726,26 @@ void					GUISFML::setPlayers (Snake *snakeP1, Snake *snakeP2)
 	this->_snakeP2 = snakeP2;
 }
 
-void					GUISFML::loadBoard (unsigned int soundTrack)
+void						GUISFML::loadBoard (unsigned int soundTrack)
 {
 	switch (soundTrack)
 	{
 		case 0:
-			if (! this->_boardMusic.openFromFile ("ressources/sounds/ff_main_theme.wav"))
+			if (! this->_boardMusic.openFromFile ("ressources/sounds/Twin Musicom - NES Theme.wav"))
 			{
 				throw GUIException (this->_GUIName, "openFromFile 3 (*** MUSIC FILE ***)");
 			}
 			break;
 
 		case 1:
-			if (! this->_boardMusic.openFromFile ("ressources/sounds/Twin Musicom - 8-bit March.wav"))
+			if (! this->_boardMusic.openFromFile ("ressources/sounds/Twin Musicom - NES Boss.wav"))
 			{
 				throw GUIException (this->_GUIName, "openFromFile 3 (*** MUSIC FILE ***)");
 			}
 			break;
 
 		case 2:
-			if (! this->_boardMusic.openFromFile ("ressources/sounds/Twin Musicom - NES Theme.wav"))
+			if (! this->_boardMusic.openFromFile ("ressources/sounds/Twin Musicom - 8-bit March.wav"))
 			{
 				throw GUIException (this->_GUIName, "openFromFile 3 (*** MUSIC FILE ***)");
 			}
@@ -552,7 +753,7 @@ void					GUISFML::loadBoard (unsigned int soundTrack)
 
 		case 3:
 		default:
-			if (! this->_boardMusic.openFromFile ("ressources/sounds/ff_main_theme.wav"))
+			if (! this->_boardMusic.openFromFile ("ressources/sounds/Twin Musicom - NES Theme.wav"))
 			{
 				throw GUIException (this->_GUIName, "openFromFile 3 (*** MUSIC FILE ***)");
 			}
@@ -561,6 +762,7 @@ void					GUISFML::loadBoard (unsigned int soundTrack)
 
 
 	this->_mainMenuMusic.stop();
+	this->_mapSelectionMusic.stop();
 	this->_endMenuMusic.stop();
 	this->_boardMusic.play();
 	if (this->_muted)
@@ -569,7 +771,7 @@ void					GUISFML::loadBoard (unsigned int soundTrack)
 	this->_boardMusic.setVolume (this->_musicVolume);
 }
 
-void					GUISFML::updateGameGUI (void)
+void						GUISFML::updateGameGUI (void)
 {
 	unsigned int currentGlobalScore;
 
@@ -591,7 +793,7 @@ void					GUISFML::updateGameGUI (void)
 	sf::sleep (sf::milliseconds (100 - currentGlobalScore));
 }
 
-eGUIGameEvent			GUISFML::getGameEvent (void)
+eGUIGameEvent				GUISFML::getGameEvent (void)
 {
 	sf::Event events;
 	eSnakeDirection snakeP1CurrentDirection, snakeP2CurrentDirection;
@@ -727,7 +929,7 @@ eGUIGameEvent			GUISFML::getGameEvent (void)
 
 /* End Menu */
 
-void					GUISFML::loadEndMenu (void)
+void						GUISFML::loadEndMenu (void)
 {
 	eBoardStatus boardStatus;
 	std::string endMenuMusicName;
@@ -759,6 +961,7 @@ void					GUISFML::loadEndMenu (void)
 	}
 
 	this->_mainMenuMusic.stop();
+	this->_mapSelectionMusic.stop();
 	this->_boardMusic.stop();
 	this->_endMenuMusic.play();
 	if (this->_muted)
@@ -772,7 +975,7 @@ void					GUISFML::loadEndMenu (void)
 	this->_window.display();
 }
 
-eGUIEndMenuEvent		GUISFML::getEndMenuEvent (void)
+eGUIEndMenuEvent			GUISFML::getEndMenuEvent (void)
 {
 	sf::Event events;
 
@@ -840,11 +1043,14 @@ eGUIEndMenuEvent		GUISFML::getEndMenuEvent (void)
 				{
 					if (this->_menuLeftButton.in (events.mouseButton.x, events.mouseButton.y))
 						return eGUIEndMenuEvent::restartLevel;
-					else if (this->_menuRightButton.in (events.mouseButton.x, events.mouseButton.y))
+
+					if (this->_menuRightButton.in (events.mouseButton.x, events.mouseButton.y))
 						return eGUIEndMenuEvent::nextLevel;
-					else if (this->_menuMiddleButton.in (events.mouseButton.x, events.mouseButton.y))
+
+					if (this->_menuMiddleButton.in (events.mouseButton.x, events.mouseButton.y))
 						return eGUIEndMenuEvent::backToLobby;
-					else if (this->_menuBottomButton.in (events.mouseButton.x, events.mouseButton.y))
+
+					if (this->_menuBottomButton.in (events.mouseButton.x, events.mouseButton.y))
 						return eGUIEndMenuEvent::quitGame;
 				}
 				break;
@@ -860,17 +1066,17 @@ eGUIEndMenuEvent		GUISFML::getEndMenuEvent (void)
 /*
  * Extern
  */
-GUISFML					*createGUI (Board *board)
+GUISFML						*createGUI (Board *board)
 {
 	return new GUISFML (board);
 }
 
-void					setPlayers (GUISFML *GUI, Snake *snakeP1, Snake *snakeP2)
+void						setPlayers (GUISFML *GUI, Snake *snakeP1, Snake *snakeP2)
 {
 	GUI->setPlayers (snakeP1, snakeP2);
 }
 
-void					destroyGUI (GUISFML *GUI)
+void						destroyGUI (GUISFML *GUI)
 {
 	delete GUI;
 }
