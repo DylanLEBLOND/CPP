@@ -7,7 +7,10 @@ SYNOPSIS
 DESCRIPTION
     Snake game made in C++.
 
-    --help display this help and exit
+    --help Display this help and exit
+
+    -c, --commands
+        Display the commands of the Snake game and exit
 
     width
         The width of the Snake board. Must be between 30 (inclusive) and 100 (inclusive)

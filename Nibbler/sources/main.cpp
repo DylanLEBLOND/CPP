@@ -504,7 +504,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 
 int main (int ac, char **av)
 {
-	std::string validParameters ("--help|-e|--endless|--nff|--nofriendlyfire|--no-friendly-fire|-s|--specialfood|--special-food");
+	std::string validParameters ("--help|-c|--commands|-e|--endless|--nff|--nofriendlyfire|--no-friendly-fire|-s|--specialfood|--special-food");
 	nibblerParametersStruct nibblerParams;
 	unsigned int param, i;
 
@@ -529,6 +529,13 @@ int main (int ac, char **av)
 					return 0;
 				}
 
+				if ((validParameters.find (av[1]) == 7) ||
+					(validParameters.find (av[1]) == 10))
+				{
+					std::cout << std::ifstream ("COMMANDS").rdbuf();
+					return 0;
+				}
+
 				nibblerParams.width = std::stoi (av[1]);
 				if (nibblerParams.width < 30 || 100 < nibblerParams.width)
 				{
@@ -550,6 +557,13 @@ int main (int ac, char **av)
 					return 0;
 				}
 
+				if ((validParameters.find (av[2]) == 7) ||
+					(validParameters.find (av[2]) == 10))
+				{
+					std::cout << std::ifstream ("COMMANDS").rdbuf();
+					return 0;
+				}
+
 				nibblerParams.height = std::stoi (av[2]);
 				if (nibblerParams.height < 30 || 100 < nibblerParams.height)
 				{
@@ -568,18 +582,22 @@ int main (int ac, char **av)
 							return 0;
 						case 7:
 						case 10:
+							std::cout << std::ifstream ("COMMANDS").rdbuf();
+							return 0;
+						case 21:
+						case 24:
 							nibblerParams.boardMode = static_cast<eboadMode>
 													  (nibblerParams.boardMode | eboadMode::Endless);
 							break;
-						case 20:
-						case 26:
-						case 43:
+						case 34:
+						case 40:
+						case 57:
 							nibblerParams.boardMode = static_cast<eboadMode>
 													  (nibblerParams.boardMode | eboadMode::NoFriendlyFire);
 							break;
-						case 62:
-						case 65:
+						case 76:
 						case 79:
+						case 93:
 							nibblerParams.boardMode = static_cast<eboadMode>
 													  (nibblerParams.boardMode | eboadMode::SpecialFood);
 							break;
