@@ -279,6 +279,7 @@ void						GUISFML::drawSnakes (void)
 	std::list<t_cell>::iterator itSnakeCell;
 	sf::CircleShape snakeHeadDraw;
 	sf::RectangleShape snakeCellDraw;
+	t_cell headCell;
 	bool head;
 
 	snakeCells = this->_snakeP1->getSnakeCells();
@@ -287,44 +288,50 @@ void						GUISFML::drawSnakes (void)
 	snakeCellDraw.setSize (sf::Vector2f (10.f, 10.f));
 
 	head = true;
-	snakeHeadDraw.setFillColor (sf::Color (0, 128, 0));
 	snakeCellDraw.setFillColor (sf::Color (0, 255, 0));
 	for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
 	{
 		if (head)
 		{
-			snakeHeadDraw.setPosition (itSnakeCell->positionX * 10, this->_textHeight + itSnakeCell->positionY * 10);
-			this->_window.draw (snakeHeadDraw);
+			headCell = *itSnakeCell;
 			head = false;
+			continue;
 		}
-		else
-		{
-			snakeCellDraw.setPosition (itSnakeCell->positionX * 10, this->_textHeight + itSnakeCell->positionY * 10);
-			this->_window.draw (snakeCellDraw);
-		}
+
+		snakeCellDraw.setPosition (itSnakeCell->positionX * 10,
+								   this->_textHeight + itSnakeCell->positionY * 10);
+		this->_window.draw (snakeCellDraw);
 	}
+
+	snakeHeadDraw.setFillColor (sf::Color (0, 128, 0));
+	snakeHeadDraw.setPosition (headCell.positionX * 10,
+							   this->_textHeight + headCell.positionY * 10);
+	this->_window.draw (snakeHeadDraw);
 
 	if (this->_snakeP2)
 	{
 		snakeCells = this->_snakeP2->getSnakeCells();
 
 		head = true;
-		snakeHeadDraw.setFillColor (sf::Color (0, 128, 128));
 		snakeCellDraw.setFillColor (sf::Color (0, 255, 255));
 		for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
 		{
 			if (head)
 			{
-				snakeHeadDraw.setPosition (itSnakeCell->positionX * 10, this->_textHeight + itSnakeCell->positionY * 10);
-				this->_window.draw (snakeHeadDraw);
+				headCell = *itSnakeCell;
 				head = false;
+				continue;
 			}
-			else
-			{
-				snakeCellDraw.setPosition (itSnakeCell->positionX * 10, this->_textHeight + itSnakeCell->positionY * 10);
-				this->_window.draw (snakeCellDraw);
-			}
+
+			snakeCellDraw.setPosition (itSnakeCell->positionX * 10,
+									   this->_textHeight + itSnakeCell->positionY * 10);
+			this->_window.draw (snakeCellDraw);
 		}
+
+		snakeHeadDraw.setFillColor (sf::Color (0, 128, 128));
+		snakeHeadDraw.setPosition (headCell.positionX * 10,
+								   this->_textHeight + headCell.positionY * 10);
+		this->_window.draw (snakeHeadDraw);
 	}
 }
 
@@ -842,6 +849,11 @@ eGUIGameEvent				GUISFML::getGameEvent (void)
 				{
 					case sf::Keyboard::E:
 						this->_snakeP1->eat (1);
+						break;
+
+					case sf::Keyboard::R:
+						if (this->_snakeP2)
+							this->_snakeP2->eat (1);
 						break;
 
 					case sf::Keyboard::Escape:

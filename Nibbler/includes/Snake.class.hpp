@@ -38,6 +38,13 @@ typedef struct s_cell
 	int positionX;
 	int positionY;
 
+	s_cell &operator= (const s_cell &rhs)
+	{
+		this->positionX = rhs.positionX;
+		this->positionY = rhs.positionY;
+		return *this;
+	}
+
 	bool operator== (const s_cell &rhs)
 	{
 		return this->positionX == rhs.positionX && this->positionY == rhs.positionY;

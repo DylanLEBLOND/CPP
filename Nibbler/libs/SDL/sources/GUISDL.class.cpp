@@ -429,10 +429,15 @@ void						GUISDL::drawSnakes (void)
 {
 	std::list<t_cell> snakeCells;
 	std::list<t_cell>::iterator itSnakeCell;
-	SDL_Rect snakeCellDraw;
+	SDL_Rect headCellDraw, snakeCellDraw;
 	bool head;
 
 	snakeCells = this->_snakeP1->getSnakeCells();
+
+	if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 255, 0, 255))
+	{
+		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P1", SDL_GetError());
+	}
 
 	head = true;
 	for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
@@ -444,35 +449,35 @@ void						GUISDL::drawSnakes (void)
 
 		if (head)
 		{
-			if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 128, 0, 255))
-			{
-				throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P1", SDL_GetError());
-			}
-
-			if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
-			{
-				throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawSnake P1", SDL_GetError());
-			}
-
-			if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 255, 0, 255))
-			{
-				throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P1", SDL_GetError());
-			}
-
+			headCellDraw = snakeCellDraw;
 			head = false;
+			continue;
 		}
-		else
+
+		if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
 		{
-			if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
-			{
-				throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawSnake P1", SDL_GetError());
-			}
+			throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawSnake P1", SDL_GetError());
 		}
+	}
+
+	if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 128, 0, 255))
+	{
+		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P1", SDL_GetError());
+	}
+
+	if (SDL_RenderFillRect (this->_boardRenderer, &headCellDraw))
+	{
+		throw GUIException (this->_GUIName, "SDL_RenderFillRect HEAD GUISDL::drawSnake P1", SDL_GetError());
 	}
 
 	if (this->_snakeP2)
 	{
 		snakeCells = this->_snakeP2->getSnakeCells();
+
+		if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 255, 255, 255))
+		{
+			throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P2", SDL_GetError());
+		}
 
 		head = true;
 		for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
@@ -484,30 +489,25 @@ void						GUISDL::drawSnakes (void)
 
 			if (head)
 			{
-				if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 128, 128, 255))
-				{
-					throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P2", SDL_GetError());
-				}
-
-				if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
-				{
-					throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawSnake P2", SDL_GetError());
-				}
-
-				if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 255, 255, 255))
-				{
-					throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P2", SDL_GetError());
-				}
-
+				headCellDraw = snakeCellDraw;
 				head = false;
+				continue;
 			}
-			else
+
+			if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
 			{
-				if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
-				{
-					throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawSnake P2", SDL_GetError());
-				}
+				throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawSnake P2", SDL_GetError());
 			}
+		}
+
+		if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 128, 128, 255))
+		{
+			throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P2", SDL_GetError());
+		}
+
+		if (SDL_RenderFillRect (this->_boardRenderer, &headCellDraw))
+		{
+			throw GUIException (this->_GUIName, "SDL_RenderFillRect HEAD GUISDL::drawSnake P1", SDL_GetError());
 		}
 	}
 }
@@ -1160,6 +1160,11 @@ eGUIGameEvent				GUISDL::getGameEvent (void)
 				{
 					case SDLK_e:
 						this->_snakeP1->eat (1);
+						break;
+
+					case SDLK_r:
+						if (this->_snakeP2)
+							this->_snakeP2->eat (1);
 						break;
 
 					case SDLK_ESCAPE:

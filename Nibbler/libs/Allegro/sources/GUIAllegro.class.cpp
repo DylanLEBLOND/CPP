@@ -365,64 +365,19 @@ void						GUIAllegro::drawSnakes (void)
 	std::list<t_cell>::iterator itSnakeCell;
 	ALLEGRO_COLOR snakeCellColor;
 	eSnakeDirection snakeCurrentDirection;
+	t_cell headCell;
 	bool head;
 
 	snakeCells = this->_snakeP1->getSnakeCells();
 	snakeCurrentDirection = this->_snakeP1->getCurrentDirection();
 
 	head = true;
-	snakeCellColor = al_map_rgb (0x00, 0x7f, 0x00);
+	snakeCellColor = al_map_rgb (0x00, 0xff, 0x00);
 	for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
 	{
 		if (head)
 		{
-			switch (snakeCurrentDirection)
-			{
-				case eSnakeDirection::East:
-					al_draw_filled_triangle (itSnakeCell->positionX * 10,
-											 itSnakeCell->positionY * 10,
-											 itSnakeCell->positionX * 10,
-											 itSnakeCell->positionY * 10 + 10,
-											 itSnakeCell->positionX * 10 + 10,
-											 itSnakeCell->positionY * 10 + 5,
-											 snakeCellColor);
-					break;
-				case eSnakeDirection::West:
-					al_draw_filled_triangle (itSnakeCell->positionX * 10 + 10,
-											 itSnakeCell->positionY * 10,
-											 itSnakeCell->positionX * 10 + 10,
-											 itSnakeCell->positionY * 10 + 10,
-											 itSnakeCell->positionX * 10,
-											 itSnakeCell->positionY * 10 + 5,
-											 snakeCellColor);
-					break;
-				case eSnakeDirection::North:
-					al_draw_filled_triangle (itSnakeCell->positionX * 10 + 5,
-											 itSnakeCell->positionY * 10,
-											 itSnakeCell->positionX * 10,
-											 itSnakeCell->positionY * 10 + 10,
-											 itSnakeCell->positionX * 10 + 10,
-											 itSnakeCell->positionY * 10 + 10,
-											 snakeCellColor);
-					break;
-				case eSnakeDirection::South:
-					al_draw_filled_triangle (itSnakeCell->positionX * 10,
-											 itSnakeCell->positionY * 10,
-											 itSnakeCell->positionX * 10 + 10,
-											 itSnakeCell->positionY * 10,
-											 itSnakeCell->positionX * 10 + 5,
-											 itSnakeCell->positionY * 10 + 10,
-											 snakeCellColor);
-					break;
-				default:
-					/* Safety: Should never occur */
-					al_draw_filled_circle (itSnakeCell->positionX * 10 + 5,
-										   itSnakeCell->positionY * 10 + 5,
-										   5, snakeCellColor);
-					break;
-			}
-
-			snakeCellColor = al_map_rgb (0x00, 0xff, 0x00);
+			headCell = *itSnakeCell;
 			head = false;
 			continue;
 		}
@@ -434,64 +389,65 @@ void						GUIAllegro::drawSnakes (void)
 								  snakeCellColor);
 	}
 
+	snakeCellColor = al_map_rgb (0x00, 0x7f, 0x00);
+	switch (snakeCurrentDirection)
+	{
+		case eSnakeDirection::East:
+			al_draw_filled_triangle (headCell.positionX * 10,
+									 headCell.positionY * 10,
+									 headCell.positionX * 10,
+									 headCell.positionY * 10 + 10,
+									 headCell.positionX * 10 + 10,
+									 headCell.positionY * 10 + 5,
+									 snakeCellColor);
+			break;
+		case eSnakeDirection::West:
+			al_draw_filled_triangle (headCell.positionX * 10 + 10,
+									 headCell.positionY * 10,
+									 headCell.positionX * 10 + 10,
+									 headCell.positionY * 10 + 10,
+									 headCell.positionX * 10,
+									 headCell.positionY * 10 + 5,
+									 snakeCellColor);
+			break;
+		case eSnakeDirection::North:
+			al_draw_filled_triangle (headCell.positionX * 10 + 5,
+									 headCell.positionY * 10,
+									 headCell.positionX * 10,
+									 headCell.positionY * 10 + 10,
+									 headCell.positionX * 10 + 10,
+									 headCell.positionY * 10 + 10,
+									 snakeCellColor);
+			break;
+		case eSnakeDirection::South:
+			al_draw_filled_triangle (headCell.positionX * 10,
+									 headCell.positionY * 10,
+									 headCell.positionX * 10 + 10,
+									 headCell.positionY * 10,
+									 headCell.positionX * 10 + 5,
+									 headCell.positionY * 10 + 10,
+									 snakeCellColor);
+			break;
+		default:
+			/* Safety: Should never occur */
+			al_draw_filled_circle (headCell.positionX * 10 + 5,
+								   headCell.positionY * 10 + 5,
+								   5, snakeCellColor);
+			break;
+	}
+
 	if (this->_snakeP2)
 	{
 		snakeCells = this->_snakeP2->getSnakeCells();
 		snakeCurrentDirection = this->_snakeP2->getCurrentDirection();
 
 		head = true;
-		snakeCellColor = al_map_rgb (0x00, 0x7f, 0x7f);
+		snakeCellColor = al_map_rgb (0x00, 0xff, 0xff);
 		for (itSnakeCell = snakeCells.begin(); itSnakeCell != snakeCells.end(); ++itSnakeCell)
 		{
 			if (head)
 			{
-				switch (snakeCurrentDirection)
-				{
-					case eSnakeDirection::East:
-						al_draw_filled_triangle (itSnakeCell->positionX * 10,
-												 itSnakeCell->positionY * 10,
-												 itSnakeCell->positionX * 10,
-												 itSnakeCell->positionY * 10 + 10,
-												 itSnakeCell->positionX * 10 + 10,
-												 itSnakeCell->positionY * 10 + 5,
-												 snakeCellColor);
-						break;
-					case eSnakeDirection::West:
-						al_draw_filled_triangle (itSnakeCell->positionX * 10 + 10,
-												 itSnakeCell->positionY * 10,
-												 itSnakeCell->positionX * 10 + 10,
-												 itSnakeCell->positionY * 10 + 10,
-												 itSnakeCell->positionX * 10,
-												 itSnakeCell->positionY * 10 + 5,
-												 snakeCellColor);
-						break;
-					case eSnakeDirection::North:
-						al_draw_filled_triangle (itSnakeCell->positionX * 10 + 5,
-												 itSnakeCell->positionY * 10,
-												 itSnakeCell->positionX * 10,
-												 itSnakeCell->positionY * 10 + 10,
-												 itSnakeCell->positionX * 10 + 10,
-												 itSnakeCell->positionY * 10 + 10,
-												 snakeCellColor);
-						break;
-					case eSnakeDirection::South:
-						al_draw_filled_triangle (itSnakeCell->positionX * 10,
-												 itSnakeCell->positionY * 10,
-												 itSnakeCell->positionX * 10 + 10,
-												 itSnakeCell->positionY * 10,
-												 itSnakeCell->positionX * 10 + 5,
-												 itSnakeCell->positionY * 10 + 10,
-												 snakeCellColor);
-						break;
-					default:
-						/* Safety: Should never occur */
-						al_draw_filled_circle (itSnakeCell->positionX * 10 + 5,
-											   itSnakeCell->positionY * 10 + 5,
-											   5, snakeCellColor);
-						break;
-				}
-
-				snakeCellColor = al_map_rgb (0x00, 0xff, 0xff);
+				headCell = *itSnakeCell;
 				head = false;
 				continue;
 			}
@@ -501,6 +457,53 @@ void						GUIAllegro::drawSnakes (void)
 									  itSnakeCell->positionX * 10 + 10,
 									  itSnakeCell->positionY * 10 + 10,
 									  snakeCellColor);
+		}
+
+		snakeCellColor = al_map_rgb (0x00, 0x7f, 0x7f);
+		switch (snakeCurrentDirection)
+		{
+			case eSnakeDirection::East:
+				al_draw_filled_triangle (headCell.positionX * 10,
+										 headCell.positionY * 10,
+										 headCell.positionX * 10,
+										 headCell.positionY * 10 + 10,
+										 headCell.positionX * 10 + 10,
+										 headCell.positionY * 10 + 5,
+										 snakeCellColor);
+				break;
+			case eSnakeDirection::West:
+				al_draw_filled_triangle (headCell.positionX * 10 + 10,
+										 headCell.positionY * 10,
+										 headCell.positionX * 10 + 10,
+										 headCell.positionY * 10 + 10,
+										 headCell.positionX * 10,
+										 headCell.positionY * 10 + 5,
+										 snakeCellColor);
+				break;
+			case eSnakeDirection::North:
+				al_draw_filled_triangle (headCell.positionX * 10 + 5,
+										 headCell.positionY * 10,
+										 headCell.positionX * 10,
+										 headCell.positionY * 10 + 10,
+										 headCell.positionX * 10 + 10,
+										 headCell.positionY * 10 + 10,
+										 snakeCellColor);
+				break;
+			case eSnakeDirection::South:
+				al_draw_filled_triangle (headCell.positionX * 10,
+										 headCell.positionY * 10,
+										 headCell.positionX * 10 + 10,
+										 headCell.positionY * 10,
+										 headCell.positionX * 10 + 5,
+										 headCell.positionY * 10 + 10,
+										 snakeCellColor);
+				break;
+			default:
+				/* Safety: Should never occur */
+				al_draw_filled_circle (headCell.positionX * 10 + 5,
+									   headCell.positionY * 10 + 5,
+									   5, snakeCellColor);
+				break;
 		}
 	}
 }
@@ -1156,6 +1159,11 @@ eGUIGameEvent				GUIAllegro::getGameEvent (void)
 				{
 					case ALLEGRO_KEY_E:
 						this->_snakeP1->eat (1);
+						break;
+
+					case ALLEGRO_KEY_R:
+						if (this->_snakeP2)
+							this->_snakeP2->eat (1);
 						break;
 
 					case ALLEGRO_KEY_ESCAPE:
