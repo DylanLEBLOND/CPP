@@ -610,9 +610,16 @@ int main (int ac, char **av)
 
 				startNibbler (&nibblerParams);
 			}
+			catch (std::invalid_argument &e)
+			{
+				std::cerr << "nibbler: invalid width or height value" << std::endl;
+				std::cerr << "Try './nibbler --help' for more information." << std::endl;
+				exit (0);
+			}
 			catch (std::exception &e)
 			{
 				std::cerr << "Error : " << e.what() << std::endl;
+				exit (0);
 			}
 			break;
 		default:
