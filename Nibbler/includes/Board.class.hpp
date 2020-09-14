@@ -32,9 +32,25 @@
 /*
  * Enumerations
  */
-enum class eBoardMaps { Classic, Lines, Blocks, Borderless, LinesBorderless, BlocksBorderless, Tribal, LinesTribal, BlocksTribal, UnknownMap };
+enum class eBoardMaps { Classic,
+						Lines,
+						Blocks,
+						Borderless,
+						LinesBorderless,
+						BlocksBorderless,
+						Tribal,
+						LinesTribal,
+						BlocksTribal,
+						UnknownMap };
 
-enum class eBoardStatus { Playing, Player1Win, Player1Lose, Player2Win, Player2Lose, Draw, UnknownStatus };
+enum class eBoardStatus { Playing,
+						  Player1Win,
+						  Player1Lose,
+						  Player2Win,
+						  Player2Lose,
+						  Draw,
+						  Forfeit,
+						  UnknownStatus };
 
 enum eboadMode
 {
@@ -101,6 +117,7 @@ public:
 	void								loadMap (eBoardMaps map);
 	void								initPlayers (Snake *snakeP1, Snake *snakeP2);
 	void								runTurn (void);
+	void								forfeitBoard (void);
 	bool								snakesAreAlive (void);
 	bool								boardIsCompleted (void);
 	void								clearBoard (void);

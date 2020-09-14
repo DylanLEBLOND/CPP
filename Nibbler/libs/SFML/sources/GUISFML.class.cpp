@@ -417,6 +417,9 @@ void						GUISFML::drawEndMenu (void)
 		case eBoardStatus::Draw:
 			endMenuFilename = "ressources/images/multiplayer_draw.png";
 			break;
+		case eBoardStatus::Forfeit:
+			endMenuFilename = "ressources/images/end_menu_forfeit.png";
+			break;
 		default:
 			throw ShouldNeverOccurException (__FILE__, __LINE__);
 	}
@@ -856,6 +859,9 @@ eGUIGameEvent				GUISFML::getGameEvent (void)
 							this->_snakeP2->eat (1);
 						break;
 
+					case sf::Keyboard::F:
+						return eGUIGameEvent::forfeitGame;
+
 					case sf::Keyboard::Escape:
 						return eGUIGameEvent::quitGame;
 
@@ -990,6 +996,9 @@ void						GUISFML::loadEndMenu (void)
 			break;
 		case eBoardStatus::Draw:
 			endMenuMusicName = "ressources/sounds/end_menu_draw.wav";
+			break;
+		case eBoardStatus::Forfeit:
+			endMenuMusicName = "ressources/sounds/end_menu_forfeit.wav";
 			break;
 		default:
 			throw ShouldNeverOccurException (__FILE__, __LINE__);

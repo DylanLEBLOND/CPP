@@ -1063,6 +1063,11 @@ void								Board::runTurn (void)
 	this->updateBonus();
 }
 
+void								Board::forfeitBoard (void)
+{
+	this->_boardStatus = eBoardStatus::Forfeit;
+}
+
 bool								Board::snakesAreAlive (void)
 {
 	if (! this->_playersInitialized)

@@ -632,6 +632,7 @@ void						GUISDL::drawScore (void)
 void						GUISDL::drawEndMenu (void)
 {
 	eBoardStatus boardStatus;
+	std::string endMenuFilename;
 
 	if (this->_endMenuImage != NULL)
 		SDL_FreeSurface (this->_endMenuImage);
@@ -641,29 +642,33 @@ void						GUISDL::drawEndMenu (void)
 	{
 		case eBoardStatus::Player1Win:
 			if (! this->_snakeP2)
-				this->_endMenuImage = IMG_Load ("ressources/images/singleplayer_win.png");
+				endMenuFilename = "ressources/images/singleplayer_win.png";
 			else
-				this->_endMenuImage = IMG_Load ("ressources/images/multiplayer_player1_win.png");
+				endMenuFilename = "ressources/images/multiplayer_player1_win.png";
 			break;
 		case eBoardStatus::Player1Lose:
 			if (! this->_snakeP2)
-				this->_endMenuImage = IMG_Load ("ressources/images/singleplayer_lose.png");
+				endMenuFilename = "ressources/images/singleplayer_lose.png";
 			else
-				this->_endMenuImage = IMG_Load ("ressources/images/multiplayer_player2_win.png");
+				endMenuFilename = "ressources/images/multiplayer_player2_win.png";
 			break;
 		case eBoardStatus::Player2Win:
-			this->_endMenuImage = IMG_Load ("ressources/images/multiplayer_player2_win.png");
+			endMenuFilename = "ressources/images/multiplayer_player2_win.png";
 			break;
 		case eBoardStatus::Player2Lose:
-			this->_endMenuImage = IMG_Load ("ressources/images/multiplayer_player1_win.png");
+			endMenuFilename = "ressources/images/multiplayer_player1_win.png";
 			break;
 		case eBoardStatus::Draw:
-			this->_endMenuImage = IMG_Load ("ressources/images/multiplayer_draw.png");
+			endMenuFilename = "ressources/images/multiplayer_draw.png";
+			break;
+		case eBoardStatus::Forfeit:
+			endMenuFilename = "ressources/images/end_menu_forfeit.png";
 			break;
 		default:
 			throw ShouldNeverOccurException (__FILE__, __LINE__);
 	}
 
+	this->_endMenuImage = IMG_Load (endMenuFilename.c_str());
 	if (this->_endMenuImage == NULL)
 	{
 		throw GUIException (this->_GUIName, "IMG_Load GUISDL::drawEndMenu", IMG_GetError());
@@ -1167,6 +1172,9 @@ eGUIGameEvent				GUISDL::getGameEvent (void)
 							this->_snakeP2->eat (1);
 						break;
 
+					case SDLK_f:
+						return eGUIGameEvent::forfeitGame;
+
 					case SDLK_ESCAPE:
 						return eGUIGameEvent::quitGame;
 
@@ -1303,6 +1311,9 @@ void						GUISDL::loadEndMenu (void)
 			break;
 		case eBoardStatus::Draw:
 			endMenuMusicName = "ressources/sounds/end_menu_draw.wav";
+			break;
+		case eBoardStatus::Forfeit:
+			endMenuMusicName = "ressources/sounds/end_menu_forfeit.wav";
 			break;
 		default:
 			throw ShouldNeverOccurException (__FILE__, __LINE__);

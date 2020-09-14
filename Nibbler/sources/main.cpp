@@ -232,6 +232,9 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 
 				currentGUI = wantedGUI;
 				break;
+			case eGUIGameEvent::forfeitGame:
+				board->forfeitBoard();
+				return eGameStatus::finish;
 			case eGUIGameEvent::nothingTODO:
 				break;
 			case eGUIGameEvent::quitGame:

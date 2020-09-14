@@ -550,6 +550,7 @@ void						GUIAllegro::drawScore (void)
 void						GUIAllegro::drawEndMenu (void)
 {
 	eBoardStatus boardStatus;
+	std::string endMenuFilename;
 
 	if (this->_endMenuImage != NULL)
 		al_destroy_bitmap (this->_endMenuImage);
@@ -559,29 +560,33 @@ void						GUIAllegro::drawEndMenu (void)
 	{
 		case eBoardStatus::Player1Win:
 			if (! this->_snakeP2)
-				this->_endMenuImage = al_load_bitmap ("ressources/images/singleplayer_win.png");
+				endMenuFilename = "ressources/images/singleplayer_win.png";
 			else
-				this->_endMenuImage = al_load_bitmap ("ressources/images/multiplayer_player1_win.png");
+				endMenuFilename = "ressources/images/multiplayer_player1_win.png";
 			break;
 		case eBoardStatus::Player1Lose:
 			if (! this->_snakeP2)
-				this->_endMenuImage = al_load_bitmap ("ressources/images/singleplayer_lose.png");
+				endMenuFilename = "ressources/images/singleplayer_lose.png";
 			else
-				this->_endMenuImage = al_load_bitmap ("ressources/images/multiplayer_player2_win.png");
+				endMenuFilename = "ressources/images/multiplayer_player2_win.png";
 			break;
 		case eBoardStatus::Player2Win:
-			this->_endMenuImage = al_load_bitmap ("ressources/images/multiplayer_player2_win.png");
+			endMenuFilename = "ressources/images/multiplayer_player2_win.png";
 			break;
 		case eBoardStatus::Player2Lose:
-			this->_endMenuImage = al_load_bitmap ("ressources/images/multiplayer_player1_win.png");
+			endMenuFilename = "ressources/images/multiplayer_player1_win.png";
 			break;
 		case eBoardStatus::Draw:
-			this->_endMenuImage = al_load_bitmap ("ressources/images/multiplayer_draw.png");
+			endMenuFilename = "ressources/images/multiplayer_draw.png";
+			break;
+		case eBoardStatus::Forfeit:
+			endMenuFilename = "ressources/images/end_menu_forfeit.png";
 			break;
 		default:
 			throw ShouldNeverOccurException (__FILE__, __LINE__);
 	}
 
+	this->_endMenuImage = al_load_bitmap (endMenuFilename.c_str());
 	if (this->_endMenuImage == NULL)
 	{
 		throw GUIException (this->_GUIName, "al_load_bitmap GUIAllegro::drawEndMenu");
@@ -1166,6 +1171,9 @@ eGUIGameEvent				GUIAllegro::getGameEvent (void)
 							this->_snakeP2->eat (1);
 						break;
 
+					case ALLEGRO_KEY_F:
+						return eGUIGameEvent::forfeitGame;
+
 					case ALLEGRO_KEY_ESCAPE:
 						return eGUIGameEvent::quitGame;
 
@@ -1303,6 +1311,9 @@ void						GUIAllegro::loadEndMenu (void)
 			break;
 		case eBoardStatus::Draw:
 			endMenuMusicName = "ressources/sounds/end_menu_draw.wav";
+			break;
+		case eBoardStatus::Forfeit:
+			endMenuMusicName = "ressources/sounds/end_menu_forfeit.wav";
 			break;
 		default:
 			throw ShouldNeverOccurException (__FILE__, __LINE__);

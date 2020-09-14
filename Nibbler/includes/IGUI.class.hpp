@@ -18,7 +18,12 @@
  */
 enum class eGUI { SDL, SFML, Allegro, unknownGUI };
 
-enum class eGUIMainMenuEvent { startSinglePlayerGame, startMultiPlayerGame, changeGUI, quitGame, nothingTODO, unknownMainMenuEvent };
+enum class eGUIMainMenuEvent { startSinglePlayerGame,
+							   startMultiPlayerGame,
+							   changeGUI,
+							   quitGame,
+							   nothingTODO,
+							   unknownMainMenuEvent };
 
 enum class eGUIMapSelectionEvent
 {
@@ -37,9 +42,27 @@ enum class eGUIMapSelectionEvent
 	unknownMapSelectionEvent
 };
 
-enum class eGUIGameEvent { p1GoLeft, p1GoRight, p1GoUp, p1GoDown, p2GoLeft, p2GoRight, p2GoUp, p2GoDown, changeGUI, quitGame, nothingTODO, unknownGameEvent };
+enum class eGUIGameEvent { p1GoLeft,
+						   p1GoRight,
+						   p1GoUp,
+						   p1GoDown,
+						   p2GoLeft,
+						   p2GoRight,
+						   p2GoUp,
+						   p2GoDown,
+						   changeGUI,
+						   forfeitGame,
+						   quitGame,
+						   nothingTODO,
+						   unknownGameEvent };
 
-enum class eGUIEndMenuEvent { restartLevel, nextLevel, backToLobby, changeGUI, quitGame, nothingTODO, unknownEndMenuEvent };
+enum class eGUIEndMenuEvent { restartLevel,
+							  nextLevel,
+							  backToLobby,
+							  changeGUI,
+							  quitGame,
+							  nothingTODO,
+							  unknownEndMenuEvent };
 
 class IGUI
 {
