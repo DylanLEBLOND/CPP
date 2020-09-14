@@ -605,6 +605,8 @@ eGUI						GUIAllegro::getGUIName (void) const
 
 void						GUIAllegro::start (void)
 {
+	ALLEGRO_MONITOR_INFO monitorInfo;
+	int desktop_width, desktop_height;
 	unsigned int scalingFactor, mainFontSize;
 
 	_mapWidth = this->_board->getWidth() * 10;
@@ -613,6 +615,15 @@ void						GUIAllegro::start (void)
 #ifdef PROJ_DEBUG
 	std::cout << "GUIAllegro::start" << std::endl;
 #endif
+
+	if (! al_get_monitor_info (0 , &monitorInfo))
+	{
+		throw GUIException (this->_GUIName, "al_get_monitor_info");
+	}
+	desktop_width = monitorInfo.x2 - monitorInfo.x1 + 1;
+	desktop_height = monitorInfo.y2 - monitorInfo.y1 + 1;
+	al_set_new_window_position (desktop_width / 2 - _mapWidth / 2,
+								desktop_height / 2 - _mapHeight / 2);
 
 	this->_window = al_create_display (_mapWidth, _mapHeight);
 	if (this->_window == NULL)

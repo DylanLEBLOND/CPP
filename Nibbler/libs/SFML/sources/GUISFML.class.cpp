@@ -447,6 +447,7 @@ eGUI						GUISFML::getGUIName (void) const
 void						GUISFML::start (void)
 {
 	unsigned int scalingFactor;
+	sf::VideoMode desktop;
 
 	_mapWidth = this->_board->getWidth() * 10;
 	_mapHeight = this->_textHeight + this->_board->getHeight() * 10;
@@ -455,9 +456,10 @@ void						GUISFML::start (void)
 #ifdef PROJ_DEBUG
 	std::cout << "GUISFML::start" << std::endl;
 #endif
-
+	desktop = sf::VideoMode::getDesktopMode();
 	this->_window.create (sf::VideoMode (_mapWidth, _mapHeight), "Nibbler (SFML GUI)", sf::Style::Titlebar | sf::Style::Close);
-	this->_window.setPosition (sf::Vector2i (100, 100));
+	this->_window.setPosition (sf::Vector2i (desktop.width / 2 - this->_window.getSize().x / 2,
+											 desktop.height / 2 - this->_window.getSize().y / 2));
 	this->_window.setFramerateLimit (60);
 	this->_window.setVerticalSyncEnabled (true);
 

@@ -17,11 +17,14 @@ GUISDL::GUISDL (Board *board)
 	  _musicVolume (MIX_MAX_VOLUME / 2),
 	  _started (false)
 {
+	char SDLenv[] = "SDL_VIDEO_CENTERED=1";
+
 	if (! board)
 	{
 		throw InvalidArgumentException ("GUISDL::GUISDL (Board *board, Snake *snake): board == null");
 	}
 
+	putenv (SDLenv);
 	if (SDL_Init (SDL_INIT_VIDEO | SDL_INIT_AUDIO))
 	{
 		throw GUIException (this->_GUIName, "SDL_Init", SDL_GetError());
@@ -708,7 +711,10 @@ void						GUISDL::start (void)
 	std::cout << "GUISDL::start" << std::endl;
 #endif
 
-	this->_window = SDL_CreateWindow ("Nibbler (SDL GUI)", 100, 100, _mapWidth, _mapHeight, SDL_WINDOW_SHOWN);
+	this->_window = SDL_CreateWindow ("Nibbler (SDL GUI)",
+									  SDL_WINDOWPOS_CENTERED,
+									  SDL_WINDOWPOS_CENTERED,
+									  _mapWidth, _mapHeight, SDL_WINDOW_SHOWN);
 	if (this->_window == NULL)
 	{
 		throw GUIException (this->_GUIName, "SDL_CreateWindow"), SDL_GetError();
