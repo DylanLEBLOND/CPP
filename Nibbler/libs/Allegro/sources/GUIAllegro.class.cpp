@@ -8,11 +8,12 @@ static unsigned int _mapHeight;
  */
 GUIAllegro::GUIAllegro (Board *board)
 	: _board (board), _snakeP1 (NULL), _snakeP2 (NULL), _wantedGUI (eGUI::Allegro),
-	  _eventQueue (NULL), _window (NULL), _boardBitmap (NULL), _mainMenuImage (NULL),
+	  _window (NULL), _eventQueue (NULL), _boardBitmap (NULL), _mainMenuImage (NULL),
 	  _mapSelectionImage (NULL), _endMenuImage (NULL),
 	  _textHeight (26), _mainTextPolice (NULL), _scoreTextPolice (NULL),
-	  _mainMenuSample (NULL), _mapSelectionSample (NULL), _boardSample (NULL), _endMenuSample (NULL),
-	  _mainMenuMusic (NULL), _mapSelectionMusic (NULL), _boardMusic (NULL),
+	  _mainMenuSample (NULL), _mainMenuMusic (NULL),
+	  _mapSelectionSample (NULL), _mapSelectionMusic (NULL),
+	  _boardSample (NULL), _boardMusic (NULL), _endMenuSample (NULL),
 	  _musicVolume (1.0f), _muted (false),
 	  _started (false)
 {
@@ -238,7 +239,7 @@ void						GUIAllegro::drawMainMenu (void)
 		mainString += "Default";
 	else
 	{
-		switch (boardCurrentMode)
+		switch (static_cast <unsigned int> (boardCurrentMode))
 		{
 			case eboadMode::SpecialFood:
 				mainString += "SpecialFood";
@@ -609,12 +610,10 @@ void						GUIAllegro::start (void)
 	int desktop_width, desktop_height;
 	unsigned int scalingFactor, mainFontSize;
 
+	print_trace ("GUIAllegro::start", true);
+
 	_mapWidth = this->_board->getWidth() * 10;
 	_mapHeight = this->_textHeight + this->_board->getHeight() * 10;
-
-#ifdef PROJ_DEBUG
-	std::cout << "GUIAllegro::start" << std::endl;
-#endif
 
 	if (! al_get_monitor_info (0 , &monitorInfo))
 	{
@@ -719,9 +718,7 @@ eGUI						GUIAllegro::wantedGUI (void) const
 
 void						GUIAllegro::stop()
 {
-#ifdef PROJ_DEBUG
-	std::cout << "GUIAllegro::stop" << std::endl;
-#endif
+	print_trace ("GUIAllegro::stop", true);
 
 	if (! this->_started)
 	{

@@ -52,7 +52,7 @@ enum class eBoardStatus { Playing,
 						  Forfeit,
 						  UnknownStatus };
 
-enum eboadMode
+enum eboadMode : unsigned int
 {
 	Default			= 0,		/* SinglePlayer / BasicFood / FriendlyFire / Finish Score (this flag and all others are mutually exclusive) */
 	SpecialFood		= 1 << 0,	/* Food had differents values and disappear after a certain time */
@@ -60,6 +60,28 @@ enum eboadMode
 	NoFriendlyFire	= 1 << 2,	/* Cannot eat himself or an ally */
 	Endless			= 1 << 3	/* The map doesn't end before at least one player is dead */
 };
+
+/*
+ * Defines
+ */
+# ifdef DEBUG_MODE
+
+#  ifndef print_trace
+#   define print_trace(message, eol)				\
+{													\
+	std::cout << (message);							\
+	if (eol)										\
+		std::cout << std::endl;						\
+}
+#endif
+
+# else
+
+#  ifndef print_trace
+#   define print_trace(message, eol) {}
+#  endif
+
+# endif
 
 class Board
 {

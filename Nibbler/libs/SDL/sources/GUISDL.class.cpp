@@ -118,6 +118,8 @@ GUISDL::GUISDL (Board *board)
  */
 GUISDL::~GUISDL (void)
 {
+	char SDLenv[] = "SDL_VIDEO_CENTERED=1";
+
 	if (this->_scoreP2TextTexture != NULL)
 		SDL_DestroyTexture (this->_scoreP2TextTexture);
 
@@ -166,7 +168,12 @@ GUISDL::~GUISDL (void)
 
 	IMG_Quit();
 
+
+
+
 	SDL_Quit();
+
+	unsetenv (SDLenv);
 }
 
 /*
@@ -229,7 +236,7 @@ void						GUISDL::drawMainMenu (void)
 		mainString += "Default";
 	else
 	{
-		switch (boardCurrentMode)
+		switch (static_cast <unsigned int> (boardCurrentMode))
 		{
 			case eboadMode::SpecialFood:
 				mainString += "SpecialFood";
@@ -704,12 +711,11 @@ void						GUISDL::start (void)
 {
 	unsigned int scalingFactor, mainFontSize;
 
+	print_trace ("GUISDL::start", true);
+
 	_mapWidth = this->_board->getWidth() * 10;
 	_mapHeight = this->_textHeight + this->_board->getHeight() * 10;
 
-#ifdef PROJ_DEBUG
-	std::cout << "GUISDL::start" << std::endl;
-#endif
 
 	this->_window = SDL_CreateWindow ("Nibbler (SDL GUI)",
 									  SDL_WINDOWPOS_CENTERED,
@@ -731,8 +737,10 @@ void						GUISDL::start (void)
 	scalingFactor = (this->_board->getWidth() + this->_board->getHeight()) * 100 / (30 + 30 /* minimum possible board size*/);
 	mainFontSize = 10 * scalingFactor / 100;
 
-	std::cout << "Scaling Factor = " << scalingFactor;
-	std::cout << " | mainFontSize = " << mainFontSize << std::endl;
+	print_trace ("Scaling Factor = ", false);
+	print_trace (scalingFactor, false);
+	print_trace (" | mainFontSize = ", false);
+	print_trace (mainFontSize, true);
 
 	this->_mainTextPolice = TTF_OpenFont ("ressources/fonts/FreeMono.ttf", mainFontSize);
 	if (! this->_mainTextPolice)
@@ -775,9 +783,7 @@ eGUI						GUISDL::wantedGUI (void) const
 
 void						GUISDL::stop()
 {
-#ifdef PROJ_DEBUG
-	std::cout << "GUISDL::stop" << std::endl;
-#endif
+	print_trace ("GUISDL::stop", true);
 
 	if (! this->_started)
 	{

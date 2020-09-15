@@ -6,7 +6,7 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 	eGUIMainMenuEvent currentEvent;
 	eGUI currentGUI, wantedGUI;
 
-	std::cout << "launchNibbler BEGIN" << std::endl;
+	print_trace ("launchNibbler BEGIN", true);
 
 	currentGUI = GUI->getGUIName();
 
@@ -21,18 +21,18 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 				board->setMultiPlayerMode (false);
 				nibblerParams->boardMode = static_cast<eboadMode>
 										   (nibblerParams->boardMode & ~eboadMode::Multiplayer);
-				std::cout << "launchNibbler END (startSinglePlayerGame)" << std::endl;
+				print_trace ("launchNibbler END (startSinglePlayerGame)", true);
 				return true;
 
 			case eGUIMainMenuEvent::startMultiPlayerGame:
 				board->setMultiPlayerMode (true);
 				nibblerParams->boardMode = static_cast<eboadMode>
 										   (nibblerParams->boardMode | eboadMode::Multiplayer);
-				std::cout << "launchNibbler END (startMultiPlayerGame)" << std::endl;
+				print_trace ("launchNibbler END (startMultiPlayerGame)", true);
 				return true;
 
 			case eGUIMainMenuEvent::changeGUI:
-				std::cout << "==> Switch GUI <==" << std::endl;
+				print_trace ("==> Switch GUI <==", true);
 				wantedGUI = GUI->wantedGUI();
 
 				GUI->stop();
@@ -48,7 +48,7 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 				break;
 
 			case eGUIMainMenuEvent::quitGame:
-				std::cout << "launchNibbler END (quit)" << std::endl;
+				print_trace ("launchNibbler END (quit)", true);
 				return false;
 
 			case eGUIMainMenuEvent::nothingTODO:
@@ -59,7 +59,7 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 		}
 	}
 
-	std::cout << "launchNibbler END (SNO)" << std::endl;
+	print_trace ("launchNibbler END (SNO)", true);
 
 	return false;
 }
@@ -70,7 +70,7 @@ static bool				selectMap (Board *board, guiFuncStruct *guiFunc, IGUI* &GUI,
 	eGUIMapSelectionEvent currentEvent;
 	eGUI currentGUI, wantedGUI;
 
-	std::cout << "selectMap BEGIN" << std::endl;
+	print_trace ("selectMap BEGIN", true);
 
 	currentGUI = GUI->getGUIName();
 
@@ -83,51 +83,51 @@ static bool				selectMap (Board *board, guiFuncStruct *guiFunc, IGUI* &GUI,
 		{
 			case eGUIMapSelectionEvent::mapLT:
 				*selectedMap = eBoardMaps::Classic;
-				std::cout << "selectMap END (mapLeftTop)" << std::endl;
+				print_trace ("selectMap END (mapLeftTop)", true);
 				return true;
 
 			case eGUIMapSelectionEvent::mapLM:
 				*selectedMap = eBoardMaps::Borderless;
-				std::cout << "selectMap END (mapLeftMiddle)" << std::endl;
+				print_trace ("selectMap END (mapLeftMiddle)", true);
 				return true;
 
 			case eGUIMapSelectionEvent::mapLB:
 				*selectedMap = eBoardMaps::Tribal;
-				std::cout << "selectMap END (mapLeftBottom)" << std::endl;
+				print_trace ("selectMap END (mapLeftBottom)", true);
 				return true;
 
 			case eGUIMapSelectionEvent::mapCT:
 				*selectedMap = eBoardMaps::Lines;
-				std::cout << "selectMap END (mapCenterTop)" << std::endl;
+				print_trace ("selectMap END (mapCenterTop)", true);
 				return true;
 
 			case eGUIMapSelectionEvent::mapCM:
 				*selectedMap = eBoardMaps::LinesBorderless;
-				std::cout << "selectMap END (mapCenterMiddle)" << std::endl;
+				print_trace ("selectMap END (mapCenterMiddle)", true);
 				return true;
 
 			case eGUIMapSelectionEvent::mapCB:
 				*selectedMap = eBoardMaps::LinesTribal;
-				std::cout << "selectMap END (mapCenterBottom)" << std::endl;
+				print_trace ("selectMap END (mapCenterBottom)", true);
 				return true;
 
 			case eGUIMapSelectionEvent::mapRT:
 				*selectedMap = eBoardMaps::Blocks;
-				std::cout << "selectMap END (mapRightTop)" << std::endl;
+				print_trace ("selectMap END (mapRightTop)", true);
 				return true;
 
 			case eGUIMapSelectionEvent::mapRM:
 				*selectedMap = eBoardMaps::BlocksBorderless;
-				std::cout << "selectMap END (mapRightMiddle)" << std::endl;
+				print_trace ("selectMap END (mapRightMiddle)", true);
 				return true;
 
 			case eGUIMapSelectionEvent::mapRB:
 				*selectedMap = eBoardMaps::BlocksTribal;
-				std::cout << "selectMap END (mapRightBottom)" << std::endl;
+				print_trace ("selectMap END (mapRightBottom)", true);
 				return true;
 
 			case eGUIMapSelectionEvent::changeGUI:
-				std::cout << "==> Switch GUI <==" << std::endl;
+				print_trace ("==> Switch GUI <==", true);
 				wantedGUI = GUI->wantedGUI();
 
 				GUI->stop();
@@ -143,7 +143,7 @@ static bool				selectMap (Board *board, guiFuncStruct *guiFunc, IGUI* &GUI,
 				break;
 
 			case eGUIMapSelectionEvent::quitGame:
-				std::cout << "launchNibbler END (quit)" << std::endl;
+				print_trace ("launchNibbler END (quit)", true);
 				return false;
 
 			case eGUIMapSelectionEvent::nothingTODO:
@@ -154,7 +154,7 @@ static bool				selectMap (Board *board, guiFuncStruct *guiFunc, IGUI* &GUI,
 		}
 	}
 
-	std::cout << "selectMap END (SNO)" << std::endl;
+	print_trace ("selectMap END (SNO)", true);
 
 	return false;
 }
@@ -167,7 +167,7 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 	eGUIGameEvent currentEvent;
 	eGUI currentGUI, wantedGUI;
 
-	std::cout << "startGame BEGIN" << std::endl;
+	print_trace ("startGame BEGIN", true);
 
 	currentGUI = GUI->getGUIName();
 
@@ -217,7 +217,7 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 					throw UnknownEventException (currentGUI, currentEvent);
 				break;
 			case eGUIGameEvent::changeGUI:
-				std::cout << "==> Switch GUI <==" << std::endl;
+				print_trace ("==> Switch GUI <==", true);
 				wantedGUI = GUI->wantedGUI();
 
 				GUI->stop();
@@ -233,12 +233,13 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 				currentGUI = wantedGUI;
 				break;
 			case eGUIGameEvent::forfeitGame:
+				print_trace ("startGame END (Forfeit)", true);
 				board->forfeitBoard();
 				return eGameStatus::finish;
 			case eGUIGameEvent::nothingTODO:
 				break;
 			case eGUIGameEvent::quitGame:
-				std::cout << "startGame END (Quit)" << std::endl;
+				print_trace ("startGame END (Quit)", true);
 				return eGameStatus::quit;
 			default:
 				throw UnknownEventException (GUI->getGUIName(), currentEvent);
@@ -248,18 +249,18 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 
 		if (! board->snakesAreAlive())
 		{
-			std::cout << "startGame END (Finish Dead Snake)" << std::endl;
+			print_trace ("startGame END (Finish Dead Snake)", true);
 			return eGameStatus::finish;
 		}
 
 		if (board->boardIsCompleted())
 		{
-			std::cout << "startGame END (Finish Completed Board)" << std::endl;
+			print_trace ("startGame END (Finish Completed Board)", true);
 			return eGameStatus::finish;
 		}
 	}
 
-	std::cout << "startGame END (UnknownStatus)" << std::endl;
+	print_trace ("startGame END (UnknownStatus)", true);
 
 	return eGameStatus::UnknownStatus;
 }
@@ -270,7 +271,7 @@ static eGameStatus		endGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 	eGUIEndMenuEvent currentEvent;
 	eGUI currentGUI, wantedGUI;
 
-	std::cout << "endGame BEGIN" << std::endl;
+	print_trace ("endGame BEGIN", true);
 
 	currentGUI = GUI->getGUIName();
 
@@ -282,7 +283,7 @@ static eGameStatus		endGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 		switch (currentEvent)
 		{
 			case eGUIEndMenuEvent::changeGUI:
-				std::cout << "==> Switch GUI <=="  << std::endl;
+				print_trace ("==> Switch GUI <==", true);
 				wantedGUI = GUI->wantedGUI();
 
 				GUI->stop();
@@ -299,19 +300,19 @@ static eGameStatus		endGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 				break;
 
 			case eGUIEndMenuEvent::restartLevel:
-				std::cout << "endGame END (restart)" << std::endl;
+				print_trace ("endGame END (restart)", true);
 				return eGameStatus::restart;
 
 			case eGUIEndMenuEvent::nextLevel:
-				std::cout << "endGame END (changeLevel)" << std::endl;
+				print_trace ("endGame END (changeLevel)", true);
 				return eGameStatus::changeLevel;
 
 			case eGUIEndMenuEvent::backToLobby:
-				std::cout << "endGame END (backToLobby)" << std::endl;
+				print_trace ("endGame END (backToLobby)", true);
 				return eGameStatus::backMainMenu;
 
 			case eGUIEndMenuEvent::quitGame:
-				std::cout << "endGame END (quit)" << std::endl;
+				print_trace ("endGame END (quit)", true);
 				return eGameStatus::quit;
 
 			case eGUIEndMenuEvent::nothingTODO:
@@ -322,7 +323,7 @@ static eGameStatus		endGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 		}
 	}
 
-	std::cout << "endGame END (SNO)" << std::endl;
+	print_trace ("endGame END (SNO)", true);
 
 	return eGameStatus::quit;
 }
@@ -399,7 +400,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 	eGameStatus gameStatus;
 	bool running, playing;
 
-	std::cout << "startNibbler BEGIN" << std::endl;
+	print_trace ("startNibbler BEGIN", true);
 
 	board = new Board();
 	if (! board)
@@ -499,7 +500,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 	delete snakeP1;
 	delete board;
 
-	std::cout << "startNibbler END" << std::endl;
+	print_trace ("startNibbler END", true);
 }
 
 int main (int ac, char **av)

@@ -18,17 +18,15 @@ CC = g++
 
 VERSION = -std=c++11
 
-FLAGS = -shared -fPIC #-Wall -Wextra -Werror
-
-DEFINE = -D PROJ_DEBUG
+FLAGS = -shared -fPIC -Wall -Wextra -Werror
 
 INC = -I ./includes -I ../../includes
 
 LINK = -lallegro -lallegro_primitives -lallegro_image -lallegro_font \
 	   -lallegro_ttf -lallegro_audio -lallegro_acodec
 
-LIB_REQUIREMENT = liballegro5-dev liballegro-image5-dev liballegro-ttf5-dev \
-				  liballegro-audio5-dev liballegro-acodec5-dev
+LIB_REQUIREMENTS = liballegro5-dev liballegro-image5-dev liballegro-ttf5-dev \
+				   liballegro-audio5-dev liballegro-acodec5-dev
 
 SRC = GUIAllegro.class.cpp Board.class.cpp Bonus.class.cpp Snake.class.cpp \
 	  exceptions/GUIException.class.cpp \
@@ -63,13 +61,12 @@ info :
 		echo "$(WHITE) C++ Compiler: $(BASIC) $(CC)";					\
 		echo "$(WHITE) C++ Version: $(BASIC) $(VERSION)";				\
 		echo "$(WHITE) C++ Flags: $(BASIC) $(FLAGS)";					\
-		echo "$(WHITE) Defines: $(BASIC) $(DEFINE)";					\
 		echo "$(WHITE) Includes: $(BASIC) $(INC)";						\
 		echo "$(WHITE) Links: $(BASIC) $(LINK)";						\
 	fi
 
 packages:
-	@for package in $(LIB_REQUIREMENT); do																\
+	@for package in $(LIB_REQUIREMENTS); do																\
 		if ! (dpkg --get-selections | grep -q "^$$package" >/dev/null);									\
 		then																							\
 			echo "$(BLUE) package $$package$(RED) missing$(BASIC) ... starting installation$(BASIC)";	\
@@ -87,7 +84,7 @@ $(NAME) :
 	@if ! (test -e $(LIB));																			\
 	then																							\
 		mkdir -p ./lib;																				\
-		$(CC) $(VERSION) $(FLAGS) $(DEFINE) $(INC) -o $(LIB) $(SRCS) $(LINK);						\
+		$(CC) $(VERSION) $(FLAGS) $(INC) -o $(LIB) $(SRCS) $(LINK);						\
 		if (test -e $(LIB));																		\
 		then																						\
 			echo "$(BLUE) created $(WHITE)->$(RED) $@ $(GREEN) (emplacement: ./lib) $(BASIC)";		\
@@ -104,3 +101,11 @@ clean :
 fclean: clean
 
 re: fclean all;
+
+############################## DEBUG MODE ###############################
+
+printdebug :
+	@echo "$(RED)*************** DEBUG MODE ***************$(BASIC)"
+
+debug: FLAGS += -g -D DEBUG_MODE
+debug : printdebug info packages $(NAME)

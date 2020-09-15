@@ -18,8 +18,6 @@ VERSION = -std=c++11
 
 FLAGS = -Wall -Wextra -Werror
 
-DEFINE = # -D PROJ_DEBUG
-
 INC = -I ./includes
 
 LINK = -L./libs -ldl
@@ -51,25 +49,16 @@ all : info createlibs $(NAME)
 createlibs: createlibSDL createlibSFML createlibAllegro
 
 createlibSDL:
-	@if (! (test -e libguisdl.so));										\
-	then																\
-		make -C ./libs/SDL;												\
-		ln -fs ./libs/SDL/lib/libguisdl.so libguisdl.so;				\
-	fi
+	@make -C ./libs/SDL
+	@ln -fs ./libs/SDL/lib/libguisdl.so libguisdl.so
 
 createlibSFML:
-	@if (! (test -e libguisfml.so));									\
-	then																\
-		make -C ./libs/SFML;											\
-		ln -fs ./libs/SFML/lib/libguisfml.so libguisfml.so;				\
-	fi
+	@make -C ./libs/SFML
+	@ln -fs ./libs/SFML/lib/libguisfml.so libguisfml.so
 
 createlibAllegro:
-	@if (! (test -e libguiallegro.so));									\
-	then																\
-		make -C ./libs/Allegro;											\
-		ln -fs ./libs/Allegro/lib/libguiallegro.so libguiallegro.so;	\
-	fi
+	@make -C ./libs/Allegro
+	@ln -fs ./libs/Allegro/lib/libguiallegro.so libguiallegro.so
 
 destroylibs: destroylibSDL destroylibSFML destroylibAllegro
 
@@ -86,24 +75,22 @@ destroylibAllegro:
 	@rm -f libguiallegro.so
 
 info :
-	@if (! (test -e $(NAME) && test -e srcs/main.o));					\
+	@if (! (test -e $(NAME)));											\
 	then																\
 		echo "$(WHITE) Project: $(BASIC) $(NAME)";						\
 		echo "$(WHITE) C++ Compiler: $(BASIC) $(CC)";					\
 		echo "$(WHITE) C++ Version: $(BASIC) $(VERSION)";				\
 		echo "$(WHITE) C++ Flags: $(BASIC) $(FLAGS)";					\
-		echo "$(WHITE) Defines: $(BASIC) $(DEFINE)";					\
 		echo "$(WHITE) Includes: $(BASIC) $(INC)";						\
 		echo "$(WHITE) Links: $(BASIC) $(LINK)";						\
 	fi
 
 %.o : %.cpp
-	@$(CC) $(FLAGS) $(DEFINE) $(INC) -c -o $@ $<
+	@$(CC) $(FLAGS) $(INC) -c -o $@ $<
 	@echo "$(BLUE) $< $(WHITE)->$(RED) $@ $(BASIC)"
 
 $(NAME) : $(OBJS)
-	@$(CC) $(VERSION) $(FLAGS) $(DEFINE) $(OBJS) $(LINK) -o \
-	 $(NAME)
+	@$(CC) $(VERSION) $(FLAGS) $(OBJS) $(LINK) -o $(NAME)
 	@echo "$(BLUE) objs $(WHITE)->$(RED) $@ $(BASIC)"
 
 print :
@@ -118,3 +105,26 @@ fclean: clean destroylibs
 	@echo "$(BLUE) $(NAME) $(WHITE)->$(RED) DELETED $(BASIC)"
 
 re: fclean all;
+
+############################## DEBUG MODE ###############################
+
+createlibsdebug: createlibSDLdebug createlibSFMLdebug \
+				 createlibAllegrodebug
+
+createlibSDLdebug:
+	@make debug -C ./libs/SDL
+	@ln -fs ./libs/SDL/lib/libguisdl.so libguisdl.so
+
+createlibSFMLdebug:
+	@make debug -C ./libs/SFML
+	@ln -fs ./libs/SFML/lib/libguisfml.so libguisfml.so
+
+createlibAllegrodebug:
+	@make debug -C ./libs/Allegro
+	@ln -fs ./libs/Allegro/lib/libguiallegro.so libguiallegro.so
+
+printdebug :
+	@echo "$(RED)*************** DEBUG MODE ***************$(BASIC)"
+
+debug: FLAGS += -g -D DEBUG_MODE
+debug : printdebug info createlibsdebug $(NAME)

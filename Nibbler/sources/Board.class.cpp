@@ -698,15 +698,18 @@ void								Board::checkSnakesCollision (void)
 	if (this->_boardCells->at (snakeP1Head.positionY).at (snakeP1Head.positionX) < 0)
 	{
 		this->_snakeP1->dead();
-		std::cout << "Snake P1 Dead !! (hit wall at [" << snakeP1Head.positionX;
-		std::cout << ";" << snakeP1Head.positionY << "])" << std::endl;
+		print_trace ("Snake P1 Dead !! (hit wall at [", false);
+		print_trace (snakeP1Head.positionX, false);
+		print_trace (";", false);
+		print_trace (snakeP1Head.positionY, false);
+		print_trace ("])", true);
 		this->_boardStatus = eBoardStatus::Player1Lose;
 	}
 
 	/* check if snakeP1 eat something */
 	if (this->_boardCells->at (snakeP1Head.positionY).at (snakeP1Head.positionX) > 0)
 	{
-		std::cout << " *** SnakeP1 eat ***" << std::endl;
+		print_trace (" *** SnakeP1 eat ***", true);
 
 		this->_snakeP1->eat (this->_boardCells->at (snakeP1Head.positionY).at (snakeP1Head.positionX));
 		if (snakeP1Head == bonus1Position)
@@ -726,8 +729,12 @@ void								Board::checkSnakesCollision (void)
 		if (this->_boardCells->at (snakeP2Head.positionY).at (snakeP2Head.positionX) < 0)
 		{
 			this->_snakeP2->dead();
-			std::cout << "Snake P2 Dead !! (hit wall at [" << snakeP2Head.positionX;
-			std::cout << ";" << snakeP2Head.positionY << "])" << std::endl;
+			print_trace ("Snake P2 Dead !! (hit wall at [", false);
+			print_trace (snakeP2Head.positionX, false);
+			print_trace (";", false);
+			print_trace (snakeP2Head.positionY, false);
+			print_trace ("])", true);
+
 			if (this->_snakeP1->isAlive())
 				this->_boardStatus = eBoardStatus::Player1Win;
 			else
@@ -737,7 +744,7 @@ void								Board::checkSnakesCollision (void)
 		/* check if snakeP2 eat something */
 		if (this->_boardCells->at (snakeP2Head.positionY).at (snakeP2Head.positionX) > 0)
 		{
-			std::cout << " *** SnakeP2 eat ***" << std::endl;
+			print_trace (" *** SnakeP2 eat ***", true);
 
 			this->_snakeP2->eat (this->_boardCells->at (snakeP2Head.positionY).at (snakeP2Head.positionX));
 			if (snakeP2Head == bonus1Position)
@@ -756,8 +763,11 @@ void								Board::checkSnakesCollision (void)
 			if (it != snakeP2Cells.end())
 			{
 				this->_snakeP1->dead();
-				std::cout << "Snake P1 Dead !! (hit Snake P2 at [" << snakeP1Head.positionX;
-				std::cout << ";" << snakeP1Head.positionY << "])" << std::endl;
+				print_trace ("Snake P1 Dead !! (hit Snake P2 at [", false);
+				print_trace (snakeP1Head.positionX, false);
+				print_trace (";", false);
+				print_trace (snakeP1Head.positionY, false);
+				print_trace ("])", true);
 				this->_boardStatus = eBoardStatus::Player2Win;
 			}
 
@@ -766,8 +776,11 @@ void								Board::checkSnakesCollision (void)
 			if (it != snakeP1Cells.end())
 			{
 				this->_snakeP2->dead();
-				std::cout << "Snake P2 Dead !! (hit Snake P1 at [" << snakeP2Head.positionX;
-				std::cout << ";" << snakeP2Head.positionY << "])" << std::endl;
+				print_trace ("Snake P2 Dead !! (hit Snake P1 at [", false);
+				print_trace (snakeP2Head.positionX, false);
+				print_trace (";", false);
+				print_trace (snakeP2Head.positionY, false);
+				print_trace ("])", true);
 				if (this->_snakeP1->isAlive())
 					this->_boardStatus = eBoardStatus::Player1Win;
 				else

@@ -20,7 +20,24 @@
 /*
  * Defines
  */
-# define DEBUG true
+# ifdef DEBUG_MODE
+
+#  ifndef print_trace
+#   define print_trace(message, eol)				\
+{													\
+	std::cout << (message);							\
+	if (eol)										\
+		std::cout << std::endl;						\
+}
+#endif
+
+# else
+
+#  ifndef print_trace
+#   define print_trace(message, eol) {}
+#  endif
+
+# endif
 
 /*
  * Structures

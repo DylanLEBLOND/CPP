@@ -119,7 +119,8 @@ void					Snake::eat (int value)
 	this->_eatCounter += value;
 	this->_score += value;
 
-	std::cout << "Snake current score = " << this->_score << std::endl;
+	print_trace ("Snake current score = ", false);
+	print_trace (this->_score, true);
 }
 
 void					Snake::dead (void)

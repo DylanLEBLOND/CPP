@@ -134,12 +134,21 @@ void				Bonus::generate (unsigned int x, unsigned int y, eBonusMapScale mapSize,
 
 	this->_isActif = true;
 
-	std::cout << "Bonus::generate: Bonus +" << this->_value << " (Time:";
+	print_trace ("Bonus::generate: Bonus +", false);
+	print_trace (this->_value, true);
+	print_trace (" (Time:", false);
 	if (this->_timeLeft == eBonusTime::InfiniteTime)
-		std::cout << "INFITITE";
+	{
+		print_trace ("INFITITE", false);
+	}
 	else
-		std::cout << this->_timeLeft;
-	std::cout << ") generated at (x = " << this->_x << " | y = " << this->_y << ")" << std::endl;
+	{
+		print_trace (this->_timeLeft, false);
+	}
+	print_trace (") generated at (x = ", false);
+	print_trace (this->_x, false)
+	print_trace (" | y = ", false);
+	print_trace (this->_y, true);
 }
 
 void				Bonus::update (void)

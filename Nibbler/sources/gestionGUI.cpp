@@ -89,15 +89,15 @@ void			openGUILibrary (eGUI wantedGUI, guiFuncStruct *guiFunc)
 	switch (wantedGUI)
 	{
 		case eGUI::SDL:
-			std::cout << "Open GUI: SDL" << std::endl;
+			print_trace ("Open GUI: SDL", true);
 			openSDL (guiFunc);
 			break;
 		case eGUI::SFML:
-			std::cout << "Open GUI: SFML" << std::endl;
+			print_trace ("Open GUI: SFML", true);
 			openSFML (guiFunc);
 			break;
 		case eGUI::Allegro:
-			std::cout << "Open GUI: Allegro" << std::endl;
+			print_trace ("Open GUI: Allegro", true);
 			openAllegro (guiFunc);
 			break;
 		default:
@@ -138,15 +138,15 @@ void			closeGUILibrary (eGUI currentGUI, guiFuncStruct *guiFunc)
 	switch (currentGUI)
 	{
 		case eGUI::SDL:
-			std::cout << "Close GUI: SDL" << std::endl;
+			print_trace ("Close GUI: SDL", true);
 			closeSDL (guiFunc);
 			break;
 		case eGUI::SFML:
-			std::cout << "Close GUI: SFML" << std::endl;
+			print_trace ("Close GUI: SFML", true);
 			closeSFML (guiFunc);
 			break;
 		case eGUI::Allegro:
-			std::cout << "Close GUI: Allegro" << std::endl;
+			print_trace ("Close GUI: Allegro", true);
 			closeAllegro (guiFunc);
 			break;
 		default:
