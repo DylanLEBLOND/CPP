@@ -17,6 +17,8 @@ GUISFML::GUISFML (Board *board)
 		throw InvalidArgumentException ("GUISFML::GUISFML (Board *board, Snake *snake): board == null");
 	}
 
+	sf::err().rdbuf (NULL);
+
 	this->_menuLeftButton.x = 50;
 	this->_menuLeftButton.y = 550;
 	this->_menuLeftButton.width = 400;
@@ -470,7 +472,7 @@ void						GUISFML::start (void)
 	this->_window.create (sf::VideoMode (_mapWidth, _mapHeight), "Nibbler (SFML GUI)", sf::Style::Titlebar | sf::Style::Close);
 	this->_window.setPosition (sf::Vector2i (desktop.width / 2 - this->_window.getSize().x / 2,
 											 desktop.height / 2 - this->_window.getSize().y / 2));
-	this->_window.setFramerateLimit (60);
+	this->_window.setFramerateLimit (144);
 	this->_window.setVerticalSyncEnabled (true);
 
 	this->ajustBounds ();
