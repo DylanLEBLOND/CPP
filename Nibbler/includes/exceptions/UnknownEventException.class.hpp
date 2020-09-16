@@ -4,7 +4,6 @@
 /*
  * Personals Includes
  */
-# include <IGUI.class.hpp>
 
 /*
  * System Includes
@@ -22,10 +21,8 @@ private:
 
 public:
 
-	UnknownEventException (eGUI affectedGUI, eGUIMainMenuEvent receivedEvent);
-	UnknownEventException (eGUI affectedGUI, eGUIMapSelectionEvent receivedEvent);
-	UnknownEventException (eGUI affectedGUI, eGUIGameEvent receivedEvent);
-	UnknownEventException (eGUI affectedGUI, eGUIEndMenuEvent receivedEvent);
+	UnknownEventException (std::string const &affectedGUI, std::string const &receivedEvent);
+	UnknownEventException (const char *affectedGUI, const char *receivedEvent);
 	UnknownEventException (UnknownEventException const &src);
 	~UnknownEventException (void);
 

@@ -4,6 +4,11 @@
 /*
  * Personals Includes
  */
+# include <Bonus.class.hpp>
+# include <Snake.class.hpp>
+# include <Board.class.hpp>
+# include <IGUI.class.hpp>
+# include <Exceptions.hpp>
 # include <common.hpp>
 
 /*
@@ -11,6 +16,9 @@
  */
 # include <string>
 # include <dlfcn.h>
+# include <fstream>
+# include <cstdlib>
+# include <cstring>
 
 /*
  * Enumerations
@@ -32,14 +40,12 @@ typedef struct guiFuncStruct
 {
 	void *libHandle;
 	IGUI *(*createGUI)(Board *);
-	void (*setPlayers)(IGUI *, Snake *, Snake *);
 	void (*destroyGUI)(IGUI *);
 
 	guiFuncStruct (void)
 	{
 		this->libHandle = NULL;
 		this->createGUI = NULL;
-		this->setPlayers = NULL;
 		this->destroyGUI = NULL;
 	}
 
@@ -52,7 +58,6 @@ typedef struct guiFuncStruct
 	{
 		this->libHandle = src.libHandle;
 		this->createGUI = src.createGUI;
-		this->setPlayers = src.setPlayers;
 		this->destroyGUI = src.destroyGUI;
 
 		return *this;

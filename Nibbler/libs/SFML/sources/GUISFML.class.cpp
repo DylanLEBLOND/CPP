@@ -120,7 +120,7 @@ void						GUISFML::drawMainMenu (void)
 
 	if (! this->_mainMenuTexture.loadFromFile ("ressources/images/main_menu.png"))
 	{
-		throw GUIException (this->_GUIName, "loadFromFile GUISFML::drawMainMenu");
+		throw GUIException (eGUIString (this->_GUIName), "loadFromFile GUISFML::drawMainMenu");
 	}
 	this->_mainMenuTexture.setSmooth (true);
 
@@ -201,7 +201,7 @@ void						GUISFML::drawMapSelection (void)
 
 	if (! this->_mapSelectionTexture.loadFromFile ("ressources/images/map_selection.png"))
 	{
-		throw GUIException (this->_GUIName, "loadFromFile GUISFML::drawMapSelection");
+		throw GUIException (eGUIString (this->_GUIName), "loadFromFile GUISFML::drawMapSelection");
 	}
 	this->_mapSelectionTexture.setSmooth (true);
 
@@ -426,7 +426,7 @@ void						GUISFML::drawEndMenu (void)
 
 	if (! this->_endMenuTexture.loadFromFile (endMenuFilename))
 	{
-		throw GUIException (this->_GUIName, "loadFromFile GUISFML::drawEndMenu");
+		throw GUIException (eGUIString (this->_GUIName), "loadFromFile GUISFML::drawEndMenu");
 	}
 	this->_endMenuTexture.setSmooth (true);
 
@@ -466,7 +466,7 @@ void						GUISFML::start (void)
 
 	if (! this->_mainPolice.loadFromFile ("ressources/fonts/FreeMono.ttf"))
 	{
-		throw GUIException (this->_GUIName, "loadFromFile 1 (*** FONT FILE ***)");
+		throw GUIException (eGUIString (this->_GUIName), "loadFromFile 1 (*** FONT FILE ***)");
 	}
 	this->_mainText.setFont (this->_mainPolice);
 	this->_mainText.setCharacterSize (30 * scalingFactor / 100);
@@ -474,7 +474,7 @@ void						GUISFML::start (void)
 
 	if (! this->_scorePolice.loadFromFile ("ressources/fonts/Ubuntu-MI.ttf"))
 	{
-		throw GUIException (this->_GUIName, "loadFromFile 2 (*** FONT FILE ***)");
+		throw GUIException (eGUIString (this->_GUIName), "loadFromFile 2 (*** FONT FILE ***)");
 	}
 	this->_scoreP1Text.setFont (this->_scorePolice);
 	this->_scoreP1Text.setCharacterSize (this->_textHeight - 10);
@@ -486,12 +486,12 @@ void						GUISFML::start (void)
 
 	if (! this->_mainMenuMusic.openFromFile ("ressources/sounds/ff_main_menu.wav"))
 	{
-		throw GUIException (this->_GUIName, "openFromFile _mainMenuMusic (*** MUSIC FILE ***)");
+		throw GUIException (eGUIString (this->_GUIName), "openFromFile _mainMenuMusic (*** MUSIC FILE ***)");
 	}
 
 	if (! this->_mapSelectionMusic.openFromFile ("ressources/sounds/ff_main_theme.wav"))
 	{
-		throw GUIException (this->_GUIName, "openFromFile _mapSelectionMusic (*** MUSIC FILE ***)");
+		throw GUIException (eGUIString (this->_GUIName), "openFromFile _mapSelectionMusic (*** MUSIC FILE ***)");
 	}
 
 	this->_started = true;
@@ -513,7 +513,7 @@ void						GUISFML::stop()
 
 	if (! this->_started)
 	{
-		throw GUIException (this->_GUIName, "GUISFML::stop => GUISFML wasn't started");
+		throw GUIException (eGUIString (this->_GUIName), "GUISFML::stop => GUISFML wasn't started");
 	}
 
 	this->_window.close();
@@ -787,7 +787,7 @@ void						GUISFML::loadBoard (unsigned int soundTrack)
 
 	if (! this->_boardMusic.openFromFile (boardMusicName.c_str()))
 	{
-		throw GUIException (this->_GUIName, "openFromFile 3 (*** MUSIC FILE ***)");
+		throw GUIException (eGUIString (this->_GUIName), "openFromFile 3 (*** MUSIC FILE ***)");
 	}
 
 	this->_mainMenuMusic.stop();
@@ -1005,7 +1005,7 @@ void						GUISFML::loadEndMenu (void)
 
 	if (! this->_endMenuMusic.openFromFile (endMenuMusicName))
 	{
-		throw GUIException (this->_GUIName, "openFromFile endMenuMusicName (*** MUSIC FILE ***)");
+		throw GUIException (eGUIString (this->_GUIName), "openFromFile endMenuMusicName (*** MUSIC FILE ***)");
 	}
 
 	this->_mainMenuMusic.stop();
@@ -1117,11 +1117,6 @@ eGUIEndMenuEvent			GUISFML::getEndMenuEvent (void)
 GUISFML						*createGUI (Board *board)
 {
 	return new GUISFML (board);
-}
-
-void						setPlayers (GUISFML *GUI, Snake *snakeP1, Snake *snakeP2)
-{
-	GUI->setPlayers (snakeP1, snakeP2);
 }
 
 void						destroyGUI (GUISFML *GUI)

@@ -16,6 +16,13 @@
 /*
  * Personals Includes
  */
+# include <Board.class.hpp>
+# include <Snake.class.hpp>
+# include <IGUI.class.hpp>
+
+/*
+ * System Includes
+ */
 # include <allegro5/allegro.h>
 # include <allegro5/allegro_primitives.h>
 # include <allegro5/allegro_image.h>
@@ -23,11 +30,6 @@
 # include <allegro5/allegro_ttf.h>
 # include <allegro5/allegro_audio.h>
 # include <allegro5/allegro_acodec.h>
-# include <common.hpp>
-
-/*
- * System Includes
- */
 
 
 class GUIAllegro : public IGUI
@@ -129,7 +131,6 @@ public:
 extern "C" {
 
 	GUIAllegro					*createGUI (Board *board);
-	void						setPlayers (GUIAllegro *GUI, Snake *snakeP1, Snake *snakeP2);
 	void						destroyGUI (GUIAllegro* GUI);
 }
 

@@ -27,22 +27,22 @@ GUISDL::GUISDL (Board *board)
 	putenv (SDLenv);
 	if (SDL_Init (SDL_INIT_VIDEO | SDL_INIT_AUDIO))
 	{
-		throw GUIException (this->_GUIName, "SDL_Init", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_Init", SDL_GetError());
 	}
 
 	if (! IMG_Init (IMG_INIT_PNG))
 	{
-		throw GUIException (this->_GUIName, "IMG_Init", IMG_GetError());
+		throw GUIException (eGUIString (this->_GUI), "IMG_Init", IMG_GetError());
 	}
 
 	if (TTF_Init () == -1)
 	{
-		throw GUIException (this->_GUIName, "TTF_Init", TTF_GetError());
+		throw GUIException (eGUIString (this->_GUI), "TTF_Init", TTF_GetError());
 	}
 
 	if (Mix_OpenAudio (44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
 	{
-		throw GUIException (this->_GUIName, "Mix_OpenAudio", Mix_GetError());
+		throw GUIException (eGUIString (this->_GUI), "Mix_OpenAudio", Mix_GetError());
 	}
 
 	this->_menuLeftButton.x = 50;
@@ -210,7 +210,7 @@ void						GUISDL::drawMainMenu (void)
 	this->_mainMenuImage = IMG_Load ("ressources/images/main_menu.png");
 	if (this->_mainMenuImage == NULL)
 	{
-		throw GUIException (this->_GUIName, "IMG_Load GUISDL::drawMainMenu", IMG_GetError());
+		throw GUIException (eGUIString (this->_GUI), "IMG_Load GUISDL::drawMainMenu", IMG_GetError());
 	}
 
 	if (this->_mainMenuTexture != NULL)
@@ -219,12 +219,12 @@ void						GUISDL::drawMainMenu (void)
 	this->_mainMenuTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_mainMenuImage);
 	if (this->_mainMenuTexture == NULL)
 	{
-		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface GUISDL::drawMainMenu", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_CreateTextureFromSurface GUISDL::drawMainMenu", SDL_GetError());
 	}
 
 	if (SDL_RenderCopy (this->_boardRenderer, this->_mainMenuTexture, NULL, NULL))
 	{
-		throw GUIException (this->_GUIName, "SDL_RenderCopy GUISDL::drawMainMenu", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_RenderCopy GUISDL::drawMainMenu", SDL_GetError());
 	}
 
 	/* Printing Nibbler Mode */
@@ -305,7 +305,7 @@ void						GUISDL::drawMainMenu (void)
 	this->_mainTextImage = TTF_RenderUTF8_Shaded (this->_mainTextPolice, mainString.c_str(), textColor, textBGColor);
 	if (this->_mainTextImage == NULL)
 	{
-		throw GUIException (this->_GUIName, "TTF_RenderUTF8_Shaded 0", TTF_GetError());
+		throw GUIException (eGUIString (this->_GUI), "TTF_RenderUTF8_Shaded 0", TTF_GetError());
 	}
 
 	if (this->_mainTextTexture != NULL)
@@ -314,7 +314,7 @@ void						GUISDL::drawMainMenu (void)
 	this->_mainTextTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_mainTextImage);
 	if (this->_mainTextTexture == NULL)
 	{
-		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface 0 GUISDL::drawScore", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_CreateTextureFromSurface 0 GUISDL::drawScore", SDL_GetError());
 	}
 
 	textDimension.x = 10;
@@ -324,7 +324,7 @@ void						GUISDL::drawMainMenu (void)
 
 	if (SDL_RenderCopy (this->_boardRenderer, this->_mainTextTexture, NULL, &textDimension))
 	{
-		throw GUIException (this->_GUIName, "SDL_RenderCopy 0 GUISDL::drawScore", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_RenderCopy 0 GUISDL::drawScore", SDL_GetError());
 	}
 }
 
@@ -336,7 +336,7 @@ void						GUISDL::drawMapSelection (void)
 	this->_mapSelectionImage = IMG_Load ("ressources/images/map_selection.png");
 	if (this->_mapSelectionImage == NULL)
 	{
-		throw GUIException (this->_GUIName, "IMG_Load GUISDL::drawMapSelection", IMG_GetError());
+		throw GUIException (eGUIString (this->_GUI), "IMG_Load GUISDL::drawMapSelection", IMG_GetError());
 	}
 
 	if (this->_mapSelectionTexture != NULL)
@@ -345,12 +345,12 @@ void						GUISDL::drawMapSelection (void)
 	this->_mapSelectionTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_mapSelectionImage);
 	if (this->_mapSelectionTexture == NULL)
 	{
-		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface GUISDL::drawMapSelection", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_CreateTextureFromSurface GUISDL::drawMapSelection", SDL_GetError());
 	}
 
 	if (SDL_RenderCopy (this->_boardRenderer, this->_mapSelectionTexture, NULL, NULL))
 	{
-		throw GUIException (this->_GUIName, "SDL_RenderCopy GUISDL::drawMapSelection", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_RenderCopy GUISDL::drawMapSelection", SDL_GetError());
 	}
 }
 
@@ -363,11 +363,11 @@ void						GUISDL::drawBoard (void)
 
 	if (SDL_SetRenderDrawColor (this->_boardRenderer, 255, 255, 255, 255))
 	{
-		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawBoard", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_SetRenderDrawColor GUISDL::drawBoard", SDL_GetError());
 	}
 	if (SDL_RenderClear (this->_boardRenderer))		/* use the RenderDrawColor to clear the Renderer */
 	{
-		throw GUIException (this->_GUIName, "SDL_RenderClear GUISDL::drawBoard", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_RenderClear GUISDL::drawBoard", SDL_GetError());
 	}
 
 	boardCells = this->_board->getBoardCells();
@@ -418,7 +418,7 @@ void						GUISDL::drawBoard (void)
 
 				if (SDL_SetRenderDrawColor (this->_boardRenderer, r, g, b, 255))
 				{
-					throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawBoard", SDL_GetError());
+					throw GUIException (eGUIString (this->_GUI), "SDL_SetRenderDrawColor GUISDL::drawBoard", SDL_GetError());
 				}
 
 				boardCellDraw.x = x * 10;
@@ -428,7 +428,7 @@ void						GUISDL::drawBoard (void)
 
 				if (SDL_RenderFillRect (this->_boardRenderer, &boardCellDraw))
 				{
-					throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawBoard", SDL_GetError());
+					throw GUIException (eGUIString (this->_GUI), "SDL_RenderFillRect GUISDL::drawBoard", SDL_GetError());
 				}
 			}
 		}
@@ -446,7 +446,7 @@ void						GUISDL::drawSnakes (void)
 
 	if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 255, 0, 255))
 	{
-		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P1", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_SetRenderDrawColor GUISDL::drawSnake P1", SDL_GetError());
 	}
 
 	head = true;
@@ -466,18 +466,18 @@ void						GUISDL::drawSnakes (void)
 
 		if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
 		{
-			throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawSnake P1", SDL_GetError());
+			throw GUIException (eGUIString (this->_GUI), "SDL_RenderFillRect GUISDL::drawSnake P1", SDL_GetError());
 		}
 	}
 
 	if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 128, 0, 255))
 	{
-		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P1", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_SetRenderDrawColor GUISDL::drawSnake P1", SDL_GetError());
 	}
 
 	if (SDL_RenderFillRect (this->_boardRenderer, &headCellDraw))
 	{
-		throw GUIException (this->_GUIName, "SDL_RenderFillRect HEAD GUISDL::drawSnake P1", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_RenderFillRect HEAD GUISDL::drawSnake P1", SDL_GetError());
 	}
 
 	if (this->_snakeP2)
@@ -486,7 +486,7 @@ void						GUISDL::drawSnakes (void)
 
 		if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 255, 255, 255))
 		{
-			throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P2", SDL_GetError());
+			throw GUIException (eGUIString (this->_GUI), "SDL_SetRenderDrawColor GUISDL::drawSnake P2", SDL_GetError());
 		}
 
 		head = true;
@@ -506,18 +506,18 @@ void						GUISDL::drawSnakes (void)
 
 			if (SDL_RenderFillRect (this->_boardRenderer, &snakeCellDraw))
 			{
-				throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawSnake P2", SDL_GetError());
+				throw GUIException (eGUIString (this->_GUI), "SDL_RenderFillRect GUISDL::drawSnake P2", SDL_GetError());
 			}
 		}
 
 		if (SDL_SetRenderDrawColor (this->_boardRenderer, 0, 128, 128, 255))
 		{
-			throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawSnake P2", SDL_GetError());
+			throw GUIException (eGUIString (this->_GUI), "SDL_SetRenderDrawColor GUISDL::drawSnake P2", SDL_GetError());
 		}
 
 		if (SDL_RenderFillRect (this->_boardRenderer, &headCellDraw))
 		{
-			throw GUIException (this->_GUIName, "SDL_RenderFillRect HEAD GUISDL::drawSnake P1", SDL_GetError());
+			throw GUIException (eGUIString (this->_GUI), "SDL_RenderFillRect HEAD GUISDL::drawSnake P1", SDL_GetError());
 		}
 	}
 }
@@ -543,7 +543,7 @@ void						GUISDL::drawScore (void)
 
 	if (SDL_SetRenderDrawColor (this->_boardRenderer, textBGColor.r, textBGColor.g, textBGColor.b, textBGColor.a))
 	{
-		throw GUIException (this->_GUIName, "SDL_SetRenderDrawColor GUISDL::drawBoard", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_SetRenderDrawColor GUISDL::drawBoard", SDL_GetError());
 	}
 
 	textDimension.x = 0;
@@ -553,7 +553,7 @@ void						GUISDL::drawScore (void)
 
 	if (SDL_RenderFillRect (this->_boardRenderer, &textDimension))
 	{
-		throw GUIException (this->_GUIName, "SDL_RenderFillRect GUISDL::drawBoard", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_RenderFillRect GUISDL::drawBoard", SDL_GetError());
 	}
 
 	/* Setting Score Text */
@@ -573,7 +573,7 @@ void						GUISDL::drawScore (void)
 	this->_scoreP1TextImage = TTF_RenderUTF8_Shaded (this->_scoreTextPolice, scoreString.c_str(), textColor, textBGColor);
 	if (this->_scoreP1TextImage == NULL)
 	{
-		throw GUIException (this->_GUIName, "TTF_RenderUTF8_Shaded 1", TTF_GetError());
+		throw GUIException (eGUIString (this->_GUI), "TTF_RenderUTF8_Shaded 1", TTF_GetError());
 	}
 
 	if (this->_snakeP2)
@@ -593,7 +593,7 @@ void						GUISDL::drawScore (void)
 		this->_scoreP2TextImage = TTF_RenderUTF8_Shaded (this->_scoreTextPolice, scoreString.c_str(), textColor, textBGColor);
 		if (this->_scoreP2TextImage == NULL)
 		{
-			throw GUIException (this->_GUIName, "TTF_RenderUTF8_Shaded 2", TTF_GetError());
+			throw GUIException (eGUIString (this->_GUI), "TTF_RenderUTF8_Shaded 2", TTF_GetError());
 		}
 	}
 
@@ -605,7 +605,7 @@ void						GUISDL::drawScore (void)
 	this->_scoreP1TextTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_scoreP1TextImage);
 	if (this->_scoreP1TextTexture == NULL)
 	{
-		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface 1 GUISDL::drawScore", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_CreateTextureFromSurface 1 GUISDL::drawScore", SDL_GetError());
 	}
 
 	textDimension.x = 10;
@@ -614,7 +614,7 @@ void						GUISDL::drawScore (void)
 	textDimension.h = this->_textHeight - 6;
 	if (SDL_RenderCopy (this->_boardRenderer, this->_scoreP1TextTexture, NULL, &textDimension))
 	{
-		throw GUIException (this->_GUIName, "SDL_RenderCopy 1 GUISDL::drawScore", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_RenderCopy 1 GUISDL::drawScore", SDL_GetError());
 	}
 
 	if (this->_snakeP2)
@@ -625,7 +625,7 @@ void						GUISDL::drawScore (void)
 		this->_scoreP2TextTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_scoreP2TextImage);
 		if (this->_scoreP2TextTexture == NULL)
 		{
-			throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface 2 GUISDL::drawScore", SDL_GetError());
+			throw GUIException (eGUIString (this->_GUI), "SDL_CreateTextureFromSurface 2 GUISDL::drawScore", SDL_GetError());
 		}
 
 		textDimension.x = (_mapWidth - 10) - this->_scoreP2TextImage->w;
@@ -634,7 +634,7 @@ void						GUISDL::drawScore (void)
 		textDimension.h = this->_textHeight - 6;
 		if (SDL_RenderCopy (this->_boardRenderer, this->_scoreP2TextTexture, NULL, &textDimension))
 		{
-			throw GUIException (this->_GUIName, "SDL_RenderCopy 2 GUISDL::drawScore", SDL_GetError());
+			throw GUIException (eGUIString (this->_GUI), "SDL_RenderCopy 2 GUISDL::drawScore", SDL_GetError());
 		}
 	}
 }
@@ -681,7 +681,7 @@ void						GUISDL::drawEndMenu (void)
 	this->_endMenuImage = IMG_Load (endMenuFilename.c_str());
 	if (this->_endMenuImage == NULL)
 	{
-		throw GUIException (this->_GUIName, "IMG_Load GUISDL::drawEndMenu", IMG_GetError());
+		throw GUIException (eGUIString (this->_GUI), "IMG_Load GUISDL::drawEndMenu", IMG_GetError());
 	}
 
 	if (this->_endMenuTexture != NULL)
@@ -690,12 +690,12 @@ void						GUISDL::drawEndMenu (void)
 	this->_endMenuTexture = SDL_CreateTextureFromSurface (this->_boardRenderer, this->_endMenuImage);
 	if (this->_endMenuTexture == NULL)
 	{
-		throw GUIException (this->_GUIName, "SDL_CreateTextureFromSurface GUISDL::drawEndMenu", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_CreateTextureFromSurface GUISDL::drawEndMenu", SDL_GetError());
 	}
 
 	if (SDL_RenderCopy (this->_boardRenderer, this->_endMenuTexture, NULL, NULL))
 	{
-		throw GUIException (this->_GUIName, "SDL_RenderCopy GUISDL::drawEndMenu", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_RenderCopy GUISDL::drawEndMenu", SDL_GetError());
 	}
 }
 
@@ -704,7 +704,7 @@ void						GUISDL::drawEndMenu (void)
  */
 eGUI						GUISDL::getGUIName (void) const
 {
-	return this->_GUIName;
+	return this->_GUI;
 }
 
 void						GUISDL::start (void)
@@ -723,13 +723,13 @@ void						GUISDL::start (void)
 									  _mapWidth, _mapHeight, SDL_WINDOW_SHOWN);
 	if (this->_window == NULL)
 	{
-		throw GUIException (this->_GUIName, "SDL_CreateWindow"), SDL_GetError();
+		throw GUIException (eGUIString (this->_GUI), "SDL_CreateWindow"), SDL_GetError();
 	}
 
 	this->_boardRenderer = SDL_CreateRenderer (this->_window, -1, SDL_RENDERER_ACCELERATED);
 	if (this->_boardRenderer == NULL)
 	{
-		throw GUIException (this->_GUIName, "SDL_CreateRenderer", SDL_GetError());
+		throw GUIException (eGUIString (this->_GUI), "SDL_CreateRenderer", SDL_GetError());
 	}
 
 	this->ajustBounds ();
@@ -745,25 +745,25 @@ void						GUISDL::start (void)
 	this->_mainTextPolice = TTF_OpenFont ("ressources/fonts/FreeMono.ttf", mainFontSize);
 	if (! this->_mainTextPolice)
 	{
-		throw GUIException (this->_GUIName, "TTF_OpenFont 1", TTF_GetError());
+		throw GUIException (eGUIString (this->_GUI), "TTF_OpenFont 1", TTF_GetError());
 	}
 
 	this->_scoreTextPolice = TTF_OpenFont ("ressources/fonts/Ubuntu-MI.ttf", 18);
 	if (! this->_scoreTextPolice)
 	{
-		throw GUIException (this->_GUIName, "TTF_OpenFont 3", TTF_GetError());
+		throw GUIException (eGUIString (this->_GUI), "TTF_OpenFont 3", TTF_GetError());
 	}
 
 	this->_mainMenuMusic = Mix_LoadMUS ("ressources/sounds/ff_main_menu.wav");
 	if (! this->_mainMenuMusic)
 	{
-		throw GUIException (this->_GUIName, "Mix_LoadMUS 1", Mix_GetError());
+		throw GUIException (eGUIString (this->_GUI), "Mix_LoadMUS 1", Mix_GetError());
 	}
 
 	this->_mapSelectionMusic = Mix_LoadMUS ("ressources/sounds/ff_main_theme.wav");
 	if (! this->_mapSelectionMusic)
 	{
-		throw GUIException (this->_GUIName, "Mix_LoadMUS _mapSelectionMusic", Mix_GetError());
+		throw GUIException (eGUIString (this->_GUI), "Mix_LoadMUS _mapSelectionMusic", Mix_GetError());
 	}
 
 	Mix_VolumeMusic (this->_musicVolume);
@@ -787,7 +787,7 @@ void						GUISDL::stop()
 
 	if (! this->_started)
 	{
-		throw GUIException (this->_GUIName, "GUISDL::stop => GUISDL wasn't started");
+		throw GUIException (eGUIString (this->_GUI), "GUISDL::stop => GUISDL wasn't started");
 	}
 
 	if (this->_mainMenuMusic != NULL)
@@ -1109,7 +1109,7 @@ void						GUISDL::loadBoard (unsigned int soundTrack)
 	this->_boardMusic = Mix_LoadMUS (boardMusicName.c_str());
 	if (! this->_boardMusic)
 	{
-		throw GUIException (this->_GUIName, "Mix_LoadMUS", Mix_GetError());
+		throw GUIException (eGUIString (this->_GUI), "Mix_LoadMUS", Mix_GetError());
 	}
 
 	if (Mix_PausedMusic() == 1)
@@ -1334,7 +1334,7 @@ void						GUISDL::loadEndMenu (void)
 	this->_endMenuMusic = Mix_LoadMUS (endMenuMusicName.c_str());
 	if (! this->_endMenuMusic)
 	{
-		throw GUIException (this->_GUIName, std::string ("Mix_LoadMUS \"") + endMenuMusicName.c_str() + "\"", Mix_GetError());
+		throw GUIException (eGUIString (this->_GUI), std::string ("Mix_LoadMUS \"") + endMenuMusicName.c_str() + "\"", Mix_GetError());
 	}
 
 	if (Mix_PausedMusic() == 1)
@@ -1447,11 +1447,6 @@ eGUIEndMenuEvent			GUISDL::getEndMenuEvent (void)
 GUISDL						*createGUI (Board *board)
 {
 	return new GUISDL (board);
-}
-
-void						setPlayers (GUISDL *GUI, Snake *snakeP1, Snake *snakeP2)
-{
-	GUI->setPlayers (snakeP1, snakeP2);
 }
 
 void						destroyGUI (GUISDL *GUI)

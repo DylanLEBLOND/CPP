@@ -4,7 +4,6 @@
 /*
  * Personals Includes
  */
-# include <IGUI.class.hpp>
 
 /*
  * System Includes
@@ -22,8 +21,8 @@ private:
 
 public:
 
-	DynamicLoadGUIException	(eGUI affectedGUI, std::string const &dlFunc, const char* dlErrorMessage);
-	DynamicLoadGUIException	(eGUI affectedGUI, const char *dlFunc, const char* dlErrorMessage);
+	DynamicLoadGUIException	(std::string const &affectedGUI, std::string const &dlFunc, const char* dlErrorMessage);
+	DynamicLoadGUIException	(const char *affectedGUI, const char *dlFunc, const char* dlErrorMessage);
 	DynamicLoadGUIException	(DynamicLoadGUIException const &src);
 	~DynamicLoadGUIException (void);
 

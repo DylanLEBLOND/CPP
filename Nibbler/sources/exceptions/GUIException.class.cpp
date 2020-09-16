@@ -3,47 +3,19 @@
 /*
 ** Constructors
 */
-GUIException::GUIException (eGUI affectedGUI, std::string const &GUIFunc)
+GUIException::GUIException (std::string const &affectedGUI, std::string const &GUIFunc)
 {
 	this->_message = "GUI Error: GUI = \"";
-	switch (affectedGUI)
-	{
-		case eGUI::SDL:
-			this->_message += "SDL";
-			break;
-		case eGUI::SFML:
-			this->_message += "SFML";
-			break;
-		case eGUI::Allegro:
-			this->_message += "Allegro";
-			break;
-		default:
-			this->_message += "Unknown";
-			break;
-	}
+	this->_message += affectedGUI;
 	this->_message += "\" | function = \"";
 	this->_message += GUIFunc;
 	this->_message += "\".";
 }
 
-GUIException::GUIException (eGUI affectedGUI, std::string const &GUIFunc, std::string const &GUIErrorMessage)
+GUIException::GUIException (std::string const &affectedGUI, std::string const &GUIFunc, std::string const &GUIErrorMessage)
 {
 	this->_message = "GUI Error: GUI = \"";
-	switch (affectedGUI)
-	{
-		case eGUI::SDL:
-			this->_message += "SDL";
-			break;
-		case eGUI::SFML:
-			this->_message += "SFML";
-			break;
-		case eGUI::Allegro:
-			this->_message += "Allegro";
-			break;
-		default:
-			this->_message += "Unknown";
-			break;
-	}
+	this->_message += affectedGUI;
 	this->_message += "\" | function = \"";
 	this->_message += GUIFunc;
 	this->_message += "\" | library error message = \"";
@@ -51,47 +23,19 @@ GUIException::GUIException (eGUI affectedGUI, std::string const &GUIFunc, std::s
 	this->_message += "\".";
 }
 
-GUIException::GUIException (eGUI affectedGUI, const char *GUIFunc)
+GUIException::GUIException (const char *affectedGUI, const char *GUIFunc)
 {
 	this->_message = "GUI Error: GUI = \"";
-	switch (affectedGUI)
-	{
-		case eGUI::SDL:
-			this->_message += "SDL";
-			break;
-		case eGUI::SFML:
-			this->_message += "SFML";
-			break;
-		case eGUI::Allegro:
-			this->_message += "Allegro";
-			break;
-		default:
-			this->_message += "Unknown";
-			break;
-	}
+	this->_message += affectedGUI;
 	this->_message += "\" | function = \"";
 	this->_message += GUIFunc;
 	this->_message += "\".";
 }
 
-GUIException::GUIException (eGUI affectedGUI, const char *GUIFunc, const char *GUIErrorMessage)
+GUIException::GUIException (const char *affectedGUI, const char *GUIFunc, const char *GUIErrorMessage)
 {
 	this->_message = "GUI Error: GUI = \"";
-	switch (affectedGUI)
-	{
-		case eGUI::SDL:
-			this->_message += "SDL";
-			break;
-		case eGUI::SFML:
-			this->_message += "SFML";
-			break;
-		case eGUI::Allegro:
-			this->_message += "Allegro";
-			break;
-		default:
-			this->_message += "Unknown";
-			break;
-	}
+	this->_message += affectedGUI;
 	this->_message += "\" | function = \"";
 	this->_message += GUIFunc;
 	this->_message += "\" | library error message = \"";

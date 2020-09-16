@@ -4,7 +4,6 @@
 /*
  * Personals Includes
  */
-# include <IGUI.class.hpp>
 
 /*
  * System Includes
@@ -22,10 +21,10 @@ private:
 
 public:
 
-	GUIException (eGUI affectedGUI, std::string const &GUIFunc);
-	GUIException (eGUI affectedGUI, std::string const &GUIFunc, std::string const &GUIErrorMessage);
-	GUIException (eGUI affectedGUI, const char *GUIFunc);
-	GUIException (eGUI affectedGUI, const char *GUIFunc, const char *GUIErrorMessage);
+	GUIException (std::string const &affectedGUI, std::string const &GUIFunc);
+	GUIException (std::string const &affectedGUI, std::string const &GUIFunc, std::string const &GUIErrorMessage);
+	GUIException (const char *affectedGUI, const char *GUIFunc);
+	GUIException (const char *affectedGUI, const char *GUIFunc, const char *GUIErrorMessage);
 	GUIException (GUIException const &src);
 	~GUIException (void);
 

@@ -16,13 +16,15 @@
 /*
  * Personals Includes
  */
-# include <SFML/Graphics.hpp>
-# include <SFML/Audio.hpp>
-# include <common.hpp>
+# include <Board.class.hpp>
+# include <Snake.class.hpp>
+# include <IGUI.class.hpp>
 
 /*
  * System Includes
  */
+# include <SFML/Graphics.hpp>
+# include <SFML/Audio.hpp>
 
 
 class GUISFML : public IGUI
@@ -125,7 +127,6 @@ public:
 extern "C" {
 
 	GUISFML						*createGUI (Board *board);
-	void						setPlayers (GUISFML *GUI, Snake *snakeP1, Snake *snakeP2);
 	void						destroyGUI (GUISFML* GUI);
 }
 

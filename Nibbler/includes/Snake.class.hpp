@@ -17,6 +17,7 @@
  * Personals Includes
  */
 # include <Exceptions.hpp>
+# include <common.hpp>
 
 /*
  * System Includes
@@ -50,28 +51,6 @@ typedef struct s_cell
 		return this->positionX == rhs.positionX && this->positionY == rhs.positionY;
 	}
 }				t_cell;
-
-/*
- * Defines
- */
-# ifdef DEBUG_MODE
-
-#  ifndef print_trace
-#   define print_trace(message, eol)				\
-{													\
-	std::cout << (message);							\
-	if (eol)										\
-		std::cout << std::endl;						\
-}
-#endif
-
-# else
-
-#  ifndef print_trace
-#   define print_trace(message, eol) {}
-#  endif
-
-# endif
 
 class Snake
 {

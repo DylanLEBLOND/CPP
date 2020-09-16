@@ -17,8 +17,8 @@
  * Personals Includes
  */
 # include <Exceptions.hpp>
-# include <Snake.class.hpp>
 # include <Bonus.class.hpp>
+# include <Snake.class.hpp>
 
 /*
  * System Includes
@@ -60,28 +60,6 @@ enum eboadMode : unsigned int
 	NoFriendlyFire	= 1 << 2,	/* Cannot eat himself or an ally */
 	Endless			= 1 << 3	/* The map doesn't end before at least one player is dead */
 };
-
-/*
- * Defines
- */
-# ifdef DEBUG_MODE
-
-#  ifndef print_trace
-#   define print_trace(message, eol)				\
-{													\
-	std::cout << (message);							\
-	if (eol)										\
-		std::cout << std::endl;						\
-}
-#endif
-
-# else
-
-#  ifndef print_trace
-#   define print_trace(message, eol) {}
-#  endif
-
-# endif
 
 class Board
 {

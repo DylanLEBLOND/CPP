@@ -55,7 +55,7 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 				break;
 
 			default:
-				throw UnknownEventException (GUI->getGUIName(), currentEvent);
+				throw UnknownEventException (eGUIString (GUI->getGUIName()), eGUIMainMenuEventString (currentEvent));
 		}
 	}
 
@@ -150,7 +150,7 @@ static bool				selectMap (Board *board, guiFuncStruct *guiFunc, IGUI* &GUI,
 				break;
 
 			default:
-				throw UnknownEventException (GUI->getGUIName(), currentEvent);
+				throw UnknownEventException (eGUIString (GUI->getGUIName()), eGUIMapSelectionEventString (currentEvent));
 		}
 	}
 
@@ -196,25 +196,25 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 				if (nibblerParams->boardMode & eboadMode::Multiplayer)
 					snakeP2->goLeft();
 				else
-					throw UnknownEventException (currentGUI, currentEvent);
+					throw UnknownEventException (eGUIString (GUI->getGUIName()), eGUIGameEventString (currentEvent));
 				break;
 			case eGUIGameEvent::p2GoRight:
 				if (nibblerParams->boardMode & eboadMode::Multiplayer)
 					snakeP2->goRight();
 				else
-					throw UnknownEventException (currentGUI, currentEvent);
+					throw UnknownEventException (eGUIString (GUI->getGUIName()), eGUIGameEventString (currentEvent));
 				break;
 			case eGUIGameEvent::p2GoUp:
 				if (nibblerParams->boardMode & eboadMode::Multiplayer)
 					snakeP2->goUp();
 				else
-					throw UnknownEventException (currentGUI, currentEvent);
+					throw UnknownEventException (eGUIString (GUI->getGUIName()), eGUIGameEventString (currentEvent));
 				break;
 			case eGUIGameEvent::p2GoDown:
 				if (nibblerParams->boardMode & eboadMode::Multiplayer)
 					snakeP2->goDown();
 				else
-					throw UnknownEventException (currentGUI, currentEvent);
+					throw UnknownEventException (eGUIString (GUI->getGUIName()), eGUIGameEventString (currentEvent));
 				break;
 			case eGUIGameEvent::changeGUI:
 				print_trace ("==> Switch GUI <==", true);
@@ -226,8 +226,8 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 
 				openGUILibrary (wantedGUI, guiFunc);
 				GUI = guiFunc->createGUI (board);
-				guiFunc->setPlayers (GUI, snakeP1, snakeP2);
 				GUI->start();
+				GUI->setPlayers (snakeP1, snakeP2);
 				GUI->loadBoard (soundTrack);
 
 				currentGUI = wantedGUI;
@@ -242,7 +242,7 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 				print_trace ("startGame END (Quit)", true);
 				return eGameStatus::quit;
 			default:
-				throw UnknownEventException (GUI->getGUIName(), currentEvent);
+				throw UnknownEventException (eGUIString (GUI->getGUIName()), eGUIGameEventString (currentEvent));
 		}
 
 		board->runTurn();
@@ -292,8 +292,8 @@ static eGameStatus		endGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 
 				openGUILibrary (wantedGUI, guiFunc);
 				GUI = guiFunc->createGUI (board);
-				guiFunc->setPlayers (GUI, snakeP1, snakeP2);
 				GUI->start();
+				GUI->setPlayers (snakeP1, snakeP2);
 				GUI->loadEndMenu();
 
 				currentGUI = wantedGUI;
@@ -319,7 +319,7 @@ static eGameStatus		endGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 				break;
 
 			default:
-				throw UnknownEventException (GUI->getGUIName(), currentEvent);
+				throw UnknownEventException (eGUIString (GUI->getGUIName()), eGUIEndMenuEventString (currentEvent));
 		}
 	}
 
@@ -438,7 +438,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 			break;
 
 		soundTrack = selectSoundTrack (currentMap);
-		guiFunc.setPlayers (GUI, snakeP1, snakeP2);
+		GUI->setPlayers (snakeP1, snakeP2);
 
 		playing = true;
 		while (playing)

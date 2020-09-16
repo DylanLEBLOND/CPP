@@ -8,25 +8,19 @@ static void		openSDL (guiFuncStruct *guiFunc)
 	guiFunc->libHandle = dlopen ("./libguisdl.so", RTLD_LAZY);
 	if (guiFunc->libHandle == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::SDL, "dlopen", dlerror());
+		throw DynamicLoadGUIException (eGUIString (eGUI::SDL), "dlopen", dlerror());
 	}
 
 	guiFunc->createGUI = (IGUI *(*)(Board *)) dlsym (guiFunc->libHandle, "createGUI");
 	if (guiFunc->createGUI == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::SDL, "dlsym createGUI", dlerror());
-	}
-
-	guiFunc->setPlayers = (void (*)(IGUI *, Snake *, Snake *)) dlsym (guiFunc->libHandle, "setPlayers");
-	if (guiFunc->setPlayers == NULL)
-	{
-		throw DynamicLoadGUIException (eGUI::SDL, "dlsym setPlayers", dlerror());
+		throw DynamicLoadGUIException (eGUIString (eGUI::SDL), "dlsym createGUI", dlerror());
 	}
 
 	guiFunc->destroyGUI = (void (*)(IGUI *)) dlsym (guiFunc->libHandle, "destroyGUI");
 	if (guiFunc->destroyGUI == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::SDL, "dlsym destroyGUI", dlerror());
+		throw DynamicLoadGUIException (eGUIString (eGUI::SDL), "dlsym destroyGUI", dlerror());
 	}
 }
 
@@ -35,25 +29,19 @@ static void		openSFML (guiFuncStruct *guiFunc)
 	guiFunc->libHandle = dlopen ("./libguisfml.so", RTLD_LAZY);
 	if (guiFunc->libHandle == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::SFML, "dlopen", dlerror());
+		throw DynamicLoadGUIException (eGUIString (eGUI::SFML), "dlopen", dlerror());
 	}
 
 	guiFunc->createGUI = (IGUI *(*)(Board *)) dlsym (guiFunc->libHandle, "createGUI");
 	if (guiFunc->createGUI == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::SFML, "dlsym createGUI", dlerror());
-	}
-
-	guiFunc->setPlayers = (void (*)(IGUI *, Snake *, Snake *)) dlsym (guiFunc->libHandle, "setPlayers");
-	if (guiFunc->setPlayers == NULL)
-	{
-		throw DynamicLoadGUIException (eGUI::SFML, "dlsym setPlayers", dlerror());
+		throw DynamicLoadGUIException (eGUIString (eGUI::SFML), "dlsym createGUI", dlerror());
 	}
 
 	guiFunc->destroyGUI = (void (*)(IGUI *)) dlsym (guiFunc->libHandle, "destroyGUI");
 	if (guiFunc->destroyGUI == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::SFML, "dlsym destroyGUI", dlerror());
+		throw DynamicLoadGUIException (eGUIString (eGUI::SFML), "dlsym destroyGUI", dlerror());
 	}
 }
 
@@ -62,25 +50,19 @@ static void		openAllegro (guiFuncStruct *guiFunc)
 	guiFunc->libHandle = dlopen ("./libguiallegro.so", RTLD_LAZY);
 	if (guiFunc->libHandle == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::Allegro, "dlopen", dlerror());
+		throw DynamicLoadGUIException (eGUIString (eGUI::Allegro), "dlopen", dlerror());
 	}
 
 	guiFunc->createGUI = (IGUI *(*)(Board *)) dlsym (guiFunc->libHandle, "createGUI");
 	if (guiFunc->createGUI == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::Allegro, "dlsym createGUI", dlerror());
-	}
-
-	guiFunc->setPlayers = (void (*)(IGUI *, Snake *, Snake *)) dlsym (guiFunc->libHandle, "setPlayers");
-	if (guiFunc->setPlayers == NULL)
-	{
-		throw DynamicLoadGUIException (eGUI::Allegro, "dlsym setPlayers", dlerror());
+		throw DynamicLoadGUIException (eGUIString (eGUI::Allegro), "dlsym createGUI", dlerror());
 	}
 
 	guiFunc->destroyGUI = (void (*)(IGUI *)) dlsym (guiFunc->libHandle, "destroyGUI");
 	if (guiFunc->destroyGUI == NULL)
 	{
-		throw DynamicLoadGUIException (eGUI::Allegro, "dlsym destroyGUI", dlerror());
+		throw DynamicLoadGUIException (eGUIString (eGUI::Allegro), "dlsym destroyGUI", dlerror());
 	}
 }
 
@@ -113,7 +95,7 @@ static void		closeSDL (guiFuncStruct *guiFunc)
 {
 	if (dlclose (guiFunc->libHandle))
 	{
-		throw DynamicLoadGUIException (eGUI::SDL, "dlclose", dlerror());
+		throw DynamicLoadGUIException (eGUIString (eGUI::SDL), "dlclose", dlerror());
 	}
 }
 
@@ -121,7 +103,7 @@ static void		closeSFML (guiFuncStruct *guiFunc)
 {
 	if (dlclose (guiFunc->libHandle))
 	{
-		throw DynamicLoadGUIException (eGUI::SFML, "dlclose", dlerror());
+		throw DynamicLoadGUIException (eGUIString (eGUI::SFML), "dlclose", dlerror());
 	}
 }
 
@@ -129,7 +111,7 @@ static void		closeAllegro (guiFuncStruct *guiFunc)
 {
 	if (dlclose (guiFunc->libHandle))
 	{
-		throw DynamicLoadGUIException (eGUI::Allegro, "dlclose", dlerror());
+		throw DynamicLoadGUIException (eGUIString (eGUI::Allegro), "dlclose", dlerror());
 	}
 }
 
@@ -155,7 +137,6 @@ void			closeGUILibrary (eGUI currentGUI, guiFuncStruct *guiFunc)
 
 	guiFunc->libHandle = NULL;
 	guiFunc->createGUI = NULL;
-	guiFunc->setPlayers = NULL;
 	guiFunc->destroyGUI = NULL;
 }
 

@@ -16,22 +16,24 @@
 /*
  * Personals Includes
  */
-# include <SDL2/SDL.h>
-# include <SDL2/SDL_image.h>
-# include <SDL2/SDL_ttf.h>
-# include <SDL2/SDL_mixer.h>
-# include <common.hpp>
+# include <Board.class.hpp>
+# include <Snake.class.hpp>
+# include <IGUI.class.hpp>
 
 /*
  * System Includes
  */
+# include <SDL2/SDL.h>
+# include <SDL2/SDL_image.h>
+# include <SDL2/SDL_ttf.h>
+# include <SDL2/SDL_mixer.h>
 
 
 class GUISDL : public IGUI
 {
 private:
 
-	eGUI const			_GUIName = eGUI::SDL;
+	eGUI const				_GUI = eGUI::SDL;
 
 	/* common */
 	Board*				_board;
@@ -130,7 +132,6 @@ public:
 extern "C" {
 
 	GUISDL						*createGUI (Board *board);
-	void						setPlayers (GUISDL *GUI, Snake *snakeP1, Snake *snakeP2);
 	void						destroyGUI (GUISDL* GUI);
 }
 

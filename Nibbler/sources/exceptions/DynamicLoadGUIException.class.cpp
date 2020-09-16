@@ -3,21 +3,10 @@
 /*
 ** Constructors
 */
-DynamicLoadGUIException::DynamicLoadGUIException (eGUI affectedGUI, std::string const &dlFunc, const char* dlErrorMessage)
+DynamicLoadGUIException::DynamicLoadGUIException (std::string const &affectedGUI, std::string const &dlFunc, const char* dlErrorMessage)
 {
 	this->_message = "DynamicLoadGUI Error: GUI = \"";
-	switch (affectedGUI)
-	{
-		case eGUI::SDL:
-			this->_message += "SDL";
-			break;
-		case eGUI::SFML:
-			this->_message += "SFML";
-			break;
-		default:
-			this->_message += "Unknown";
-			break;
-	}
+	this->_message += affectedGUI;
 	this->_message += "\" | function = \"";
 	this->_message += dlFunc;
 	this->_message += "\" | dlerror message = \"";
@@ -25,21 +14,10 @@ DynamicLoadGUIException::DynamicLoadGUIException (eGUI affectedGUI, std::string 
 	this->_message += "\".";
 }
 
-DynamicLoadGUIException::DynamicLoadGUIException (eGUI affectedGUI, const char *dlFunc, const char* dlErrorMessage)
+DynamicLoadGUIException::DynamicLoadGUIException (const char *affectedGUI, const char *dlFunc, const char* dlErrorMessage)
 {
 	this->_message = "DynamicLoadGUI Error: GUI = \"";
-	switch (affectedGUI)
-	{
-		case eGUI::SDL:
-			this->_message += "SDL";
-			break;
-		case eGUI::SFML:
-			this->_message += "SFML";
-			break;
-		default:
-			this->_message += "Unknown";
-			break;
-	}
+	this->_message += affectedGUI;
 	this->_message += "\" | function = \"";
 	this->_message += dlFunc;
 	this->_message += "\" | dlerror message = \"";

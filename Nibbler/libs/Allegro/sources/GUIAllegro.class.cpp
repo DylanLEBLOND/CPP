@@ -24,47 +24,47 @@ GUIAllegro::GUIAllegro (Board *board)
 
 	if (! al_init())
 	{
-		throw GUIException (this->_GUIName, "al_init");
+		throw GUIException (eGUIString (this->_GUIName), "al_init");
 	}
 
 	if (! al_init_primitives_addon())
 	{
-		throw GUIException (this->_GUIName, "al_init_primitives_addon");
+		throw GUIException (eGUIString (this->_GUIName), "al_init_primitives_addon");
 	}
 
 	if (! al_install_keyboard())
 	{
-		throw GUIException (this->_GUIName, "al_install_keyboard");
+		throw GUIException (eGUIString (this->_GUIName), "al_install_keyboard");
 	}
 
 	if (! al_install_mouse())
 	{
-		throw GUIException (this->_GUIName, "al_install_mouse");
+		throw GUIException (eGUIString (this->_GUIName), "al_install_mouse");
 	}
 
 	if (! al_init_image_addon())
 	{
-		throw GUIException (this->_GUIName, "al_init_image_addon");
+		throw GUIException (eGUIString (this->_GUIName), "al_init_image_addon");
 	}
 
 	if (! al_init_font_addon())
 	{
-		throw GUIException (this->_GUIName, "al_init_font_addon");
+		throw GUIException (eGUIString (this->_GUIName), "al_init_font_addon");
 	}
 
 	if (! al_init_ttf_addon())
 	{
-		throw GUIException (this->_GUIName, "al_init_ttf_addon");
+		throw GUIException (eGUIString (this->_GUIName), "al_init_ttf_addon");
 	}
 
 	if (! al_install_audio())
 	{
-		throw GUIException (this->_GUIName, "al_install_audio");
+		throw GUIException (eGUIString (this->_GUIName), "al_install_audio");
 	}
 
 	if (! al_init_acodec_addon())
 	{
-		throw GUIException (this->_GUIName, "al_init_acodec_addon");
+		throw GUIException (eGUIString (this->_GUIName), "al_init_acodec_addon");
 	}
 
 	this->_menuLeftButton.x = 50;
@@ -224,7 +224,7 @@ void						GUIAllegro::drawMainMenu (void)
 		this->_mainMenuImage = al_load_bitmap ("ressources/images/main_menu.png");
 		if (this->_mainMenuImage == NULL)
 		{
-			throw GUIException (this->_GUIName, "al_load_bitmap GUIAllegro::drawMainMenu");
+			throw GUIException (eGUIString (this->_GUIName), "al_load_bitmap GUIAllegro::drawMainMenu");
 		}
 	}
 
@@ -304,7 +304,7 @@ void						GUIAllegro::drawMapSelection (void)
 		this->_mapSelectionImage = al_load_bitmap ("ressources/images/map_selection.png");
 		if (this->_mapSelectionImage == NULL)
 		{
-			throw GUIException (this->_GUIName, "al_load_bitmap GUIAllegro::drawMapSelection");
+			throw GUIException (eGUIString (this->_GUIName), "al_load_bitmap GUIAllegro::drawMapSelection");
 		}
 	}
 
@@ -590,7 +590,7 @@ void						GUIAllegro::drawEndMenu (void)
 	this->_endMenuImage = al_load_bitmap (endMenuFilename.c_str());
 	if (this->_endMenuImage == NULL)
 	{
-		throw GUIException (this->_GUIName, "al_load_bitmap GUIAllegro::drawEndMenu");
+		throw GUIException (eGUIString (this->_GUIName), "al_load_bitmap GUIAllegro::drawEndMenu");
 	}
 
 	al_draw_scaled_bitmap (this->_endMenuImage, 0, 0, 1000, 1000, 0, 0, _mapWidth, _mapHeight, 0);
@@ -617,7 +617,7 @@ void						GUIAllegro::start (void)
 
 	if (! al_get_monitor_info (0 , &monitorInfo))
 	{
-		throw GUIException (this->_GUIName, "al_get_monitor_info");
+		throw GUIException (eGUIString (this->_GUIName), "al_get_monitor_info");
 	}
 	desktop_width = monitorInfo.x2 - monitorInfo.x1 + 1;
 	desktop_height = monitorInfo.y2 - monitorInfo.y1 + 1;
@@ -627,7 +627,7 @@ void						GUIAllegro::start (void)
 	this->_window = al_create_display (_mapWidth, _mapHeight);
 	if (this->_window == NULL)
 	{
-		throw GUIException (this->_GUIName, "al_create_display");
+		throw GUIException (eGUIString (this->_GUIName), "al_create_display");
 	}
 	al_set_window_title (this->_window, "Nibbler (Allegro GUI)");
 
@@ -635,7 +635,7 @@ void						GUIAllegro::start (void)
 	this->_boardBitmap = al_create_bitmap (_mapWidth, _mapHeight - this->_textHeight);
 	if (! this->_boardBitmap)
 	{
-		throw GUIException (this->_GUIName, "al_create_bitmap");
+		throw GUIException (eGUIString (this->_GUIName), "al_create_bitmap");
 	}
 
 	this->ajustBounds();
@@ -643,7 +643,7 @@ void						GUIAllegro::start (void)
 	this->_eventQueue = al_create_event_queue();
 	if (! this->_eventQueue)
 	{
-		throw GUIException (this->_GUIName, "al_create_event_queue");
+		throw GUIException (eGUIString (this->_GUIName), "al_create_event_queue");
 	}
 	al_register_event_source (this->_eventQueue, al_get_display_event_source (this->_window));
 	al_register_event_source (this->_eventQueue, al_get_keyboard_event_source());
@@ -655,52 +655,52 @@ void						GUIAllegro::start (void)
 	this->_mainTextPolice = al_load_ttf_font_stretch ("ressources/fonts/FreeMono.ttf", mainFontSize, mainFontSize, 0);
 	if (! this->_mainTextPolice)
 	{
-		throw GUIException (this->_GUIName, "al_load_ttf_font 1");
+		throw GUIException (eGUIString (this->_GUIName), "al_load_ttf_font 1");
 	}
 
 	this->_scoreTextPolice = al_load_ttf_font_stretch ("ressources/fonts/Ubuntu-MI.ttf", this->_textHeight - 10, this->_textHeight - 10, 0);
 	if (! this->_scoreTextPolice)
 	{
-		throw GUIException (this->_GUIName, "al_load_ttf_font 3");
+		throw GUIException (eGUIString (this->_GUIName), "al_load_ttf_font 3");
 	}
 
 	if (! al_reserve_samples (4))
 	{
-		throw GUIException (this->_GUIName, "al_reserve_samples");
+		throw GUIException (eGUIString (this->_GUIName), "al_reserve_samples");
 	}
 
 	this->_mainMenuSample = al_load_sample ("ressources/sounds/ff_main_menu.wav");
 	if (! this->_mainMenuSample)
 	{
-		throw GUIException (this->_GUIName, "al_load_sample this->_mainMenuSample");
+		throw GUIException (eGUIString (this->_GUIName), "al_load_sample this->_mainMenuSample");
 	}
 
 	this->_mainMenuMusic = al_create_sample_instance (this->_mainMenuSample);
 	if (! this->_mainMenuMusic)
 	{
-		throw GUIException (this->_GUIName, "al_create_sample_instance this->_mainMenuMusic");
+		throw GUIException (eGUIString (this->_GUIName), "al_create_sample_instance this->_mainMenuMusic");
 	}
 
 	if (! al_set_sample_instance_playmode (this->_mainMenuMusic, ALLEGRO_PLAYMODE_LOOP))
 	{
-		throw GUIException (this->_GUIName, "al_set_sample_instance_playmode this->_mainMenuMusic");
+		throw GUIException (eGUIString (this->_GUIName), "al_set_sample_instance_playmode this->_mainMenuMusic");
 	}
 
 	this->_mapSelectionSample = al_load_sample ("ressources/sounds/ff_main_theme.wav");
 	if (! this->_mapSelectionSample)
 	{
-		throw GUIException (this->_GUIName, "al_load_sample this->_mapSelectionSample");
+		throw GUIException (eGUIString (this->_GUIName), "al_load_sample this->_mapSelectionSample");
 	}
 
 	this->_mapSelectionMusic = al_create_sample_instance (this->_mapSelectionSample);
 	if (! this->_mapSelectionMusic)
 	{
-		throw GUIException (this->_GUIName, "al_create_sample_instance this->_mapSelectionMusic");
+		throw GUIException (eGUIString (this->_GUIName), "al_create_sample_instance this->_mapSelectionMusic");
 	}
 
 	if (! al_set_sample_instance_playmode (this->_mapSelectionMusic, ALLEGRO_PLAYMODE_LOOP))
 	{
-		throw GUIException (this->_GUIName, "al_set_sample_instance_playmode this->_mapSelectionMusic");
+		throw GUIException (eGUIString (this->_GUIName), "al_set_sample_instance_playmode this->_mapSelectionMusic");
 	}
 
 	this->_started = true;
@@ -722,7 +722,7 @@ void						GUIAllegro::stop()
 
 	if (! this->_started)
 	{
-		throw GUIException (this->_GUIName, "GUIAllegro::stop => GUIAllegro wasn't started");
+		throw GUIException (eGUIString (this->_GUIName), "GUIAllegro::stop => GUIAllegro wasn't started");
 	}
 
 	if (this->_endMenuSample != NULL)
@@ -812,7 +812,7 @@ void						GUIAllegro::loadMainMenu (void)
 
 	if (! al_attach_sample_instance_to_mixer (this->_mainMenuMusic, al_get_default_mixer()))
 	{
-		throw GUIException (this->_GUIName, "al_attach_sample_instance_to_mixer this->_mainMenuMusic");
+		throw GUIException (eGUIString (this->_GUIName), "al_attach_sample_instance_to_mixer this->_mainMenuMusic");
 	}
 
 	al_set_sample_instance_position (this->_mainMenuMusic, 0.0f);
@@ -919,7 +919,7 @@ void						GUIAllegro::loadMapSelection (void)
 
 	if (! al_attach_sample_instance_to_mixer (this->_mapSelectionMusic, al_get_default_mixer()))
 	{
-		throw GUIException (this->_GUIName, "al_attach_sample_instance_to_mixer this->_mapSelectionMusic");
+		throw GUIException (eGUIString (this->_GUIName), "al_attach_sample_instance_to_mixer this->_mapSelectionMusic");
 	}
 
 	al_set_sample_instance_position (this->_mapSelectionMusic, 0.0f);
@@ -1078,7 +1078,7 @@ void						GUIAllegro::loadBoard (unsigned int soundTrack)
 	this->_boardSample = al_load_sample (boardMusicName.c_str());
 	if (! this->_boardSample)
 	{
-		throw GUIException (this->_GUIName, "al_load_sample this->_boardSample");
+		throw GUIException (eGUIString (this->_GUIName), "al_load_sample this->_boardSample");
 	}
 
 	if (this->_boardMusic != NULL)
@@ -1090,17 +1090,17 @@ void						GUIAllegro::loadBoard (unsigned int soundTrack)
 	this->_boardMusic = al_create_sample_instance (this->_boardSample);
 	if (! this->_boardMusic)
 	{
-		throw GUIException (this->_GUIName, "al_create_sample_instance this->_boardMusic");
+		throw GUIException (eGUIString (this->_GUIName), "al_create_sample_instance this->_boardMusic");
 	}
 
 	if (! al_set_sample_instance_playmode (this->_boardMusic, ALLEGRO_PLAYMODE_LOOP))
 	{
-		throw GUIException (this->_GUIName, "al_set_sample_instance_playmode this->_boardMusic");
+		throw GUIException (eGUIString (this->_GUIName), "al_set_sample_instance_playmode this->_boardMusic");
 	}
 
 	if (! al_attach_sample_instance_to_mixer (this->_boardMusic, al_get_default_mixer()))
 	{
-		throw GUIException (this->_GUIName, "al_attach_sample_instance_to_mixer this->_boardMusic");
+		throw GUIException (eGUIString (this->_GUIName), "al_attach_sample_instance_to_mixer this->_boardMusic");
 	}
 
 	if (this->_mainMenuMusic != NULL)
@@ -1330,7 +1330,7 @@ void						GUIAllegro::loadEndMenu (void)
 	this->_endMenuSample = al_load_sample (endMenuMusicName.c_str());
 	if (! this->_endMenuSample)
 	{
-		throw GUIException (this->_GUIName, "al_load_sample this->_endMenuSample");
+		throw GUIException (eGUIString (this->_GUIName), "al_load_sample this->_endMenuSample");
 	}
 
 	if (this->_mainMenuMusic != NULL)
@@ -1440,11 +1440,6 @@ eGUIEndMenuEvent			GUIAllegro::getEndMenuEvent (void)
 GUIAllegro					*createGUI (Board *board)
 {
 	return new GUIAllegro (board);
-}
-
-void						setPlayers (GUIAllegro *GUI, Snake *snakeP1, Snake *snakeP2)
-{
-	GUI->setPlayers (snakeP1, snakeP2);
 }
 
 void						destroyGUI (GUIAllegro *GUI)
