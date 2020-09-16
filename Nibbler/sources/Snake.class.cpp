@@ -116,8 +116,17 @@ void					Snake::eat (int value)
 	if (! this->_isAlive)
 		return;
 
+	if (this->_score >= SNAKE_SCORE_MAX)
+	{
+		print_trace ("Snake current score = MAXIMUM POSSIBLE SCORE", true);
+		return ;
+	}
+
 	this->_eatCounter += value;
 	this->_score += value;
+
+	if (this->_score > this->_mapWidth * this->_mapHeight)
+		this->_score = SNAKE_SCORE_MAX;
 
 	print_trace ("Snake current score = ", false);
 	print_trace (this->_score, true);

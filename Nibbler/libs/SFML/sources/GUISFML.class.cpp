@@ -338,6 +338,7 @@ void						GUISFML::drawSnakes (void)
 void						GUISFML::drawScore (void)
 {
 	sf::RectangleShape scoreZone;
+	unsigned int snakeScore;
 	std::wstring scoreString;
 	int boardCompletedScore;
 
@@ -351,8 +352,13 @@ void						GUISFML::drawScore (void)
 
 	/* Setting Score Text */
 
+	snakeScore = this->_snakeP1->getScore();
+
 	scoreString = L"Player1: ";
-	scoreString += std::to_wstring (this->_snakeP1->getScore());
+	if (snakeScore >= SNAKE_SCORE_MAX)
+		scoreString += L"MAX";
+	else
+		scoreString += std::to_wstring (snakeScore);
 	scoreString += L"/";
 	boardCompletedScore = this->_board->getBoardCompletedScore();
 	if (boardCompletedScore != -1)
@@ -364,8 +370,13 @@ void						GUISFML::drawScore (void)
 
 	if (this->_snakeP2)
 	{
+		snakeScore = this->_snakeP2->getScore();
+
 		scoreString = L"Player2: ";
-		scoreString += std::to_wstring (this->_snakeP2->getScore());
+		if (snakeScore >= SNAKE_SCORE_MAX)
+			scoreString += L"MAX";
+		else
+			scoreString += std::to_wstring (snakeScore);
 		scoreString += L"/";
 		boardCompletedScore = this->_board->getBoardCompletedScore();
 		if (boardCompletedScore != -1)
@@ -822,12 +833,47 @@ void						GUISFML::updateGameGUI (void)
 		currentGlobalScore = 95;
 
 	boardCompletedScore = this->_board->getBoardCompletedScore();
-	if (boardCompletedScore <= 1)
+	if (boardCompletedScore <= -1)
 		speed = 100 - currentGlobalScore;
 	else
-		speed = 100 - (currentGlobalScore * 50 / (boardCompletedScore - 1));
+	{
+		switch (boardCompletedScore)
+		{
+			case 20 ... 24:
+				speed = 100 - (currentGlobalScore * 50 / (boardCompletedScore - 1));
+				break;
+			case 25 ... 29:
+				speed = 100 - (currentGlobalScore * 52 / (boardCompletedScore - 1));
+				break;
+			case 30 ... 34:
+				speed = 100 - (currentGlobalScore * 54 / (boardCompletedScore - 1));
+				break;
+			case 35 ... 39:
+				speed = 100 - (currentGlobalScore * 58 / (boardCompletedScore - 1));
+				break;
+			case 40 ... 44:
+				speed = 100 - (currentGlobalScore * 60 / (boardCompletedScore - 1));
+				break;
+			case 45 ... 49:
+				speed = 100 - (currentGlobalScore * 62 / (boardCompletedScore - 1));
+				break;
+			case 50 ... 54:
+				speed = 100 - (currentGlobalScore * 66 / (boardCompletedScore - 1));
+				break;
+			case 55 ... 59:
+				speed = 100 - (currentGlobalScore * 68 / (boardCompletedScore - 1));
+				break;
+			case 60 ... 64:
+				speed = 100 - (currentGlobalScore * 70 / (boardCompletedScore - 1));
+				break;
+			default:
+				speed = 100 - (currentGlobalScore * 80 / (boardCompletedScore - 1));
+				break;
+		}
+	}
 
-	sf::sleep (sf::milliseconds (speed));
+	if (! (boardCompletedScore <= -1 && currentGlobalScore >= 100))
+		sf::sleep (sf::milliseconds (speed));
 }
 
 eGUIGameEvent				GUISFML::getGameEvent (void)
@@ -849,6 +895,7 @@ eGUIGameEvent				GUISFML::getGameEvent (void)
 			case sf::Event::KeyPressed:
 				switch (events.key.code)
 				{
+#ifdef DEBUG_MODE
 					case sf::Keyboard::E:
 						this->_snakeP1->eat (1);
 						break;
@@ -857,7 +904,7 @@ eGUIGameEvent				GUISFML::getGameEvent (void)
 						if (this->_snakeP2)
 							this->_snakeP2->eat (1);
 						break;
-
+#endif
 					case sf::Keyboard::F:
 						return eGUIGameEvent::forfeitGame;
 

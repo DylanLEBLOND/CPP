@@ -19,6 +19,7 @@
 # include <Exceptions.hpp>
 # include <Bonus.class.hpp>
 # include <Snake.class.hpp>
+# include <common.hpp>
 
 /*
  * System Includes
@@ -60,6 +61,14 @@ enum eboadMode : unsigned int
 	NoFriendlyFire	= 1 << 2,	/* Cannot eat himself or an ally */
 	Endless			= 1 << 3	/* The map doesn't end before at least one player is dead */
 };
+
+/*
+ * Defines
+ */
+# define BOARD_MIN_WIDTH				NIBBLER_BOARD_MIN_WIDTH
+# define BOARD_MIN_HEIGHT				NIBBLER_BOARD_MIN_HEIGHT
+# define BOARD_MAX_WIDTH				NIBBLER_BOARD_MAX_WIDTH
+# define BOARD_MAX_HEIGHT				NIBBLER_BOARD_MAX_HEIGHT
 
 class Board
 {

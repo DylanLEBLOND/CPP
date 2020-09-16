@@ -207,7 +207,7 @@ void								Board::loadMapLines (void)
 			this->_boardEmptyCells.erase (it);
 	}
 
-	this->_boardCompletedScore = 20;
+	this->_boardCompletedScore = 25;
 }
 
 void								Board::loadMapBlocks (void)
@@ -247,7 +247,7 @@ void								Board::loadMapBlocks (void)
 		}
 	}
 
-	this->_boardCompletedScore = 20;
+	this->_boardCompletedScore = 30;
 }
 
 void								Board::loadMapBorderless (void)
@@ -267,7 +267,7 @@ void								Board::loadMapBorderless (void)
 		}
 	}
 
-	this->_boardCompletedScore = 20;
+	this->_boardCompletedScore = 35;
 }
 
 void								Board::loadMapLinesBorderless (void)
@@ -372,7 +372,7 @@ void								Board::loadMapLinesBorderless (void)
 			this->_boardEmptyCells.erase (it);
 	}
 
-	this->_boardCompletedScore = 20;
+	this->_boardCompletedScore = 40;
 }
 
 void								Board::loadMapBlocksBorderless (void)
@@ -412,7 +412,7 @@ void								Board::loadMapBlocksBorderless (void)
 		}
 	}
 
-	this->_boardCompletedScore = 20;
+	this->_boardCompletedScore = 45;
 }
 
 void								Board::loadMapTribal (void)
@@ -468,7 +468,7 @@ void								Board::loadMapTribal (void)
 			this->_boardEmptyCells.erase (it);
 	}
 
-	this->_boardCompletedScore = 20;
+	this->_boardCompletedScore = 50;
 }
 
 void								Board::loadMapLinesTribal (void)
@@ -573,7 +573,7 @@ void								Board::loadMapLinesTribal (void)
 			this->_boardEmptyCells.erase (it);
 	}
 
-	this->_boardCompletedScore = 20;
+	this->_boardCompletedScore = 55;
 }
 
 void								Board::loadMapBlocksTribal (void)
@@ -613,7 +613,7 @@ void								Board::loadMapBlocksTribal (void)
 		}
 	}
 
-	this->_boardCompletedScore = 20;
+	this->_boardCompletedScore = 60;
 }
 
 void								Board::updateBonus (void)
@@ -795,18 +795,26 @@ void								Board::checkSnakesCollision (void)
  */
 void								Board::initBoard (unsigned int width, unsigned int height, eboadMode boardMode)
 {
-	if (width < 30 || 100 < width)
+	if (width < BOARD_MIN_WIDTH || BOARD_MAX_WIDTH < width)
 	{
-		std::string error_message = "Board::initBoard: width < 30 || width > 100 (";
+		std::string error_message = "Board::initBoard: width < ";
+		error_message = BOARD_MIN_WIDTH;
+		error_message = " || width > ";
+		error_message = BOARD_MAX_WIDTH;
+		error_message = " (";
 		error_message += std::to_string (width);
 		error_message += ")";
 
 		throw InvalidArgumentException (error_message.c_str());
 	}
 
-	if (height < 30 || 100 < height)
+	if (height < BOARD_MIN_HEIGHT || BOARD_MAX_HEIGHT < height)
 	{
-		std::string error_message = "Board::initBoard: height < 30 || height > 100 (";
+		std::string error_message = "Board::initBoard: height < ";
+		error_message = BOARD_MIN_HEIGHT;
+		error_message = " || height > ";
+		error_message = BOARD_MAX_HEIGHT;
+		error_message = " (";
 		error_message += std::to_string (height);
 		error_message += ")";
 

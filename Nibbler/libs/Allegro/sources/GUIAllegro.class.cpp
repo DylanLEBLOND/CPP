@@ -511,6 +511,7 @@ void						GUIAllegro::drawSnakes (void)
 
 void						GUIAllegro::drawScore (void)
 {
+	unsigned int snakeScore;
 	std::string scoreString;
 	int boardCompletedScore;
 
@@ -520,8 +521,13 @@ void						GUIAllegro::drawScore (void)
 
 	/* Setting Score Text */
 
+	snakeScore = this->_snakeP1->getScore();
+
 	scoreString = "Player1: ";
-	scoreString += std::to_string (this->_snakeP1->getScore());
+	if (snakeScore >= SNAKE_SCORE_MAX)
+		scoreString += "MAX";
+	else
+		scoreString += std::to_string (snakeScore);
 	scoreString += "/";
 	boardCompletedScore = this->_board->getBoardCompletedScore();
 	if (boardCompletedScore != -1)
@@ -534,8 +540,13 @@ void						GUIAllegro::drawScore (void)
 
 	if (this->_snakeP2)
 	{
+		snakeScore = this->_snakeP2->getScore();
+
 		scoreString = "Player2: ";
-		scoreString += std::to_string (this->_snakeP2->getScore());
+		if (snakeScore >= SNAKE_SCORE_MAX)
+			scoreString += "MAX";
+		else
+			scoreString += std::to_string (snakeScore);
 		scoreString += "/";
 		boardCompletedScore = this->_board->getBoardCompletedScore();
 		if (boardCompletedScore != -1)
@@ -1143,12 +1154,47 @@ void						GUIAllegro::updateGameGUI (void)
 		currentGlobalScore = 95;
 
 	boardCompletedScore = this->_board->getBoardCompletedScore();
-	if (boardCompletedScore <= 1)
+	if (boardCompletedScore <= -1)
 		speed = 100 - currentGlobalScore;
 	else
-		speed = 100 - (currentGlobalScore * 50 / (boardCompletedScore - 1));
+	{
+		switch (boardCompletedScore)
+		{
+			case 20 ... 24:
+				speed = 100 - (currentGlobalScore * 50 / (boardCompletedScore - 1));
+				break;
+			case 25 ... 29:
+				speed = 100 - (currentGlobalScore * 52 / (boardCompletedScore - 1));
+				break;
+			case 30 ... 34:
+				speed = 100 - (currentGlobalScore * 54 / (boardCompletedScore - 1));
+				break;
+			case 35 ... 39:
+				speed = 100 - (currentGlobalScore * 58 / (boardCompletedScore - 1));
+				break;
+			case 40 ... 44:
+				speed = 100 - (currentGlobalScore * 60 / (boardCompletedScore - 1));
+				break;
+			case 45 ... 49:
+				speed = 100 - (currentGlobalScore * 62 / (boardCompletedScore - 1));
+				break;
+			case 50 ... 54:
+				speed = 100 - (currentGlobalScore * 66 / (boardCompletedScore - 1));
+				break;
+			case 55 ... 59:
+				speed = 100 - (currentGlobalScore * 68 / (boardCompletedScore - 1));
+				break;
+			case 60 ... 64:
+				speed = 100 - (currentGlobalScore * 70 / (boardCompletedScore - 1));
+				break;
+			default:
+				speed = 100 - (currentGlobalScore * 80 / (boardCompletedScore - 1));
+				break;
+		}
+	}
 
-	al_rest ((double)speed / 1200.0);
+	if (! (boardCompletedScore <= -1 && currentGlobalScore >= 100))
+		al_rest ((double)speed / 1200.0);
 }
 
 eGUIGameEvent				GUIAllegro::getGameEvent (void)
@@ -1170,6 +1216,7 @@ eGUIGameEvent				GUIAllegro::getGameEvent (void)
 			case ALLEGRO_EVENT_KEY_DOWN:
 				switch (events.keyboard.keycode)
 				{
+#ifdef DEBUG_MODE
 					case ALLEGRO_KEY_E:
 						this->_snakeP1->eat (1);
 						break;
@@ -1178,7 +1225,7 @@ eGUIGameEvent				GUIAllegro::getGameEvent (void)
 						if (this->_snakeP2)
 							this->_snakeP2->eat (1);
 						break;
-
+#endif
 					case ALLEGRO_KEY_F:
 						return eGUIGameEvent::forfeitGame;
 

@@ -40,7 +40,7 @@ COMMANDS
             Left Arrow (→)
                 when possible, turn the Snake to go to the left of the board
 
-            (E)
+            (E)         [DEBUG MODE ONLY]
                 Simulate the first player snake eating a +1 Bonus
 
         === Player 2 ===
@@ -57,6 +57,6 @@ COMMANDS
             (D)
                 when possible, turn the Snake to go to the left of the board
 
-            (R)
+            (R)         [DEBUG MODE ONLY]
                 Simulate the second player snake eating a +1 Bonus
 

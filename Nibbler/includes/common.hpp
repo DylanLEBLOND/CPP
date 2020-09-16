@@ -9,6 +9,11 @@
 /*
  * Defines
  */
+# define NIBBLER_BOARD_MIN_WIDTH		30
+# define NIBBLER_BOARD_MIN_HEIGHT		30
+# define NIBBLER_BOARD_MAX_WIDTH		100
+# define NIBBLER_BOARD_MAX_HEIGHT		100
+
 # ifdef DEBUG_MODE
 
 #  ifndef print_trace

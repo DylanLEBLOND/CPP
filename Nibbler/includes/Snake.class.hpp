@@ -52,6 +52,11 @@ typedef struct s_cell
 	}
 }				t_cell;
 
+/*
+ * Defines
+ */
+# define SNAKE_SCORE_MAX				NIBBLER_BOARD_MAX_WIDTH * NIBBLER_BOARD_MAX_HEIGHT + 1
+
 class Snake
 {
 private:
