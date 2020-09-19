@@ -636,6 +636,8 @@ eGUIMainMenuEvent			GUISFML::getMainMenuEvent (void)
 		}
 	}
 
+	this->_window.display();		/* SFML is not a graphical library which update only when needed */
+
 	return eGUIMainMenuEvent::nothingTODO;
 }
 
@@ -757,6 +759,8 @@ eGUIMapSelectionEvent		GUISFML::getMapSelectionEvent (void)
 				break;
 		}
 	}
+
+	this->_window.display();		/* SFML is not a graphical library which update only when needed */
 
 	return eGUIMapSelectionEvent::nothingTODO;
 }
@@ -1156,6 +1160,8 @@ eGUIEndMenuEvent			GUISFML::getEndMenuEvent (void)
 				break;
 		}
 	}
+
+	this->_window.display();		/* SFML is not a graphical library which update only when needed */
 
 	return eGUIEndMenuEvent::nothingTODO;
 }

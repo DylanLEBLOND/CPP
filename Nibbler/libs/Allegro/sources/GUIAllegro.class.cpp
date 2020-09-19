@@ -634,6 +634,7 @@ void						GUIAllegro::start (void)
 	desktop_height = monitorInfo.y2 - monitorInfo.y1 + 1;
 	al_set_new_window_position (desktop_width / 2 - _mapWidth / 2,
 								desktop_height / 2 - _mapHeight / 2);
+	al_set_new_display_flags (ALLEGRO_GENERATE_EXPOSE_EVENTS);
 
 	this->_window = al_create_display (_mapWidth, _mapHeight);
 	if (this->_window == NULL)
@@ -847,6 +848,10 @@ eGUIMainMenuEvent			GUIAllegro::getMainMenuEvent (void)
 			case ALLEGRO_EVENT_DISPLAY_CLOSE:
 				return eGUIMainMenuEvent::quitGame;
 
+			case ALLEGRO_EVENT_DISPLAY_EXPOSE:
+				al_flip_display();
+				break;
+
 			case ALLEGRO_EVENT_KEY_DOWN:
 				switch (events.keyboard.keycode)
 				{
@@ -953,6 +958,10 @@ eGUIMapSelectionEvent		GUIAllegro::getMapSelectionEvent (void)
 		{
 			case ALLEGRO_EVENT_DISPLAY_CLOSE:
 				return eGUIMapSelectionEvent::quitGame;
+
+			case ALLEGRO_EVENT_DISPLAY_EXPOSE:
+				al_flip_display();
+				break;
 
 			case ALLEGRO_EVENT_KEY_DOWN:
 				switch (events.keyboard.keycode)
@@ -1213,6 +1222,10 @@ eGUIGameEvent				GUIAllegro::getGameEvent (void)
 			case ALLEGRO_EVENT_DISPLAY_CLOSE:
 				return eGUIGameEvent::quitGame;
 
+			case ALLEGRO_EVENT_DISPLAY_EXPOSE:
+				al_flip_display();
+				break;
+
 			case ALLEGRO_EVENT_KEY_DOWN:
 				switch (events.keyboard.keycode)
 				{
@@ -1406,6 +1419,10 @@ eGUIEndMenuEvent			GUIAllegro::getEndMenuEvent (void)
 		{
 			case ALLEGRO_EVENT_DISPLAY_CLOSE:
 				return eGUIEndMenuEvent::quitGame;
+
+			case ALLEGRO_EVENT_DISPLAY_EXPOSE:
+				al_flip_display();
+				break;
 
 			case ALLEGRO_EVENT_KEY_DOWN:
 				switch (events.keyboard.keycode)

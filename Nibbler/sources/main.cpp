@@ -428,9 +428,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 			break;
 
 		if (nibblerParams->boardMode & eboadMode::Multiplayer)
-		{
 			snakeP2 = save_snakeP2;
-		}
 		else
 			snakeP2 = NULL;
 

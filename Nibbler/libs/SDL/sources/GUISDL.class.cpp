@@ -879,6 +879,17 @@ eGUIMainMenuEvent			GUISDL::getMainMenuEvent (void)
 			case SDL_QUIT:
 				return eGUIMainMenuEvent::quitGame;
 
+			case SDL_WINDOWEVENT:
+				switch (events.window.event)
+				{
+					case SDL_WINDOWEVENT_EXPOSED:
+						SDL_RenderPresent (this->_boardRenderer);
+						break;
+					default:
+						break;
+				}
+				break;
+
 			case SDL_KEYDOWN:
 				switch (events.key.keysym.sym)
 				{
@@ -983,6 +994,17 @@ eGUIMapSelectionEvent		GUISDL::getMapSelectionEvent (void)
 		{
 			case SDL_QUIT:
 				return eGUIMapSelectionEvent::quitGame;
+
+			case SDL_WINDOWEVENT:
+				switch (events.window.event)
+				{
+					case SDL_WINDOWEVENT_EXPOSED:
+						SDL_RenderPresent (this->_boardRenderer);
+						break;
+					default:
+						break;
+				}
+				break;
 
 			case SDL_KEYDOWN:
 				switch (events.key.keysym.sym)
@@ -1217,6 +1239,17 @@ eGUIGameEvent				GUISDL::getGameEvent (void)
 			case SDL_QUIT:
 				return eGUIGameEvent::quitGame;
 
+			case SDL_WINDOWEVENT:
+				switch (events.window.event)
+				{
+					case SDL_WINDOWEVENT_EXPOSED:
+						SDL_RenderPresent (this->_boardRenderer);
+						break;
+					default:
+						break;
+				}
+				break;
+
 			case SDL_KEYDOWN:
 
 				switch (events.key.keysym.sym)
@@ -1412,6 +1445,17 @@ eGUIEndMenuEvent			GUISDL::getEndMenuEvent (void)
 		{
 			case SDL_QUIT:
 				return eGUIEndMenuEvent::quitGame;
+
+			case SDL_WINDOWEVENT:
+				switch (events.window.event)
+				{
+					case SDL_WINDOWEVENT_EXPOSED:
+						SDL_RenderPresent (this->_boardRenderer);
+						break;
+					default:
+						break;
+				}
+				break;
 
 			case SDL_KEYDOWN:
 				switch (events.key.keysym.sym)

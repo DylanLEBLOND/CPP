@@ -956,9 +956,9 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2)
 			}
 			else
 			{
-				p1InitPosX = floor (this->_width / 8.0f) > 4 ?
+				p1InitPosX = floor (this->_width / 8.0f) > 5 ?
 							 floor (this->_width / 8.0f) : 6;
-				p1InitPosY = floor (this->_height / 8.0f) > 4 ?
+				p1InitPosY = floor (this->_height / 8.0f) > 5 ?
 							 floor (this->_height / 8.0) : 6;
 			}
 			break;
@@ -991,9 +991,9 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2)
 			}
 			else
 			{
-				p1InitPosX = floor (this->_width / 5.0f) > 4 ?
+				p1InitPosX = floor (this->_width / 5.0f) > 5 ?
 							 floor (this->_width / 5.0f) : 6;
-				p1InitPosY = floor (this->_height / 5.0f) > 4 ?
+				p1InitPosY = floor (this->_height / 5.0f) > 5 ?
 							 floor (this->_height / 5.0) : 6;
 			}
 			break;
@@ -1035,10 +1035,10 @@ void								Board::initPlayers (Snake *snakeP1, Snake *snakeP2)
 			case eBoardMaps::BlocksBorderless:
 				p2InitPosX = ceil (9.0f * this->_width / 10.0f) < this->_width - 4 ?
 							 ceil (9.0f * this->_width / 10.0f) - 1 :
-							 this->_width - 5;
+							 this->_width - 3;
 				p2InitPosY = ceil (9.0f * this->_height / 10.0f) < this->_height - 4 ?
 							 ceil (9.0f * this->_height / 10.0f) - 1 :
-							 this->_height - 5;
+							 this->_height - 3;
 				break;
 			case eBoardMaps::Tribal:
 			case eBoardMaps::LinesTribal:
