@@ -1532,12 +1532,12 @@ eGUIEndMenuEvent			GUISDL::getEndMenuEvent (void)
 /*
  * Extern
  */
-GUISDL						*createGUI (Board *board)
+IGUI						*createGUI (Board *board)
 {
 	return new GUISDL (board);
 }
 
-void						destroyGUI (GUISDL *GUI)
+void						destroyGUI (IGUI *GUI)
 {
 	delete GUI;
 }

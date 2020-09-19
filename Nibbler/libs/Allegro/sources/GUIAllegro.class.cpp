@@ -1501,12 +1501,12 @@ eGUIEndMenuEvent			GUIAllegro::getEndMenuEvent (void)
 /*
  * Extern
  */
-GUIAllegro					*createGUI (Board *board)
+IGUI						*createGUI (Board *board)
 {
 	return new GUIAllegro (board);
 }
 
-void						destroyGUI (GUIAllegro *GUI)
+void						destroyGUI (IGUI *GUI)
 {
 	delete GUI;
 }

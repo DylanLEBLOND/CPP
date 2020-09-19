@@ -504,7 +504,9 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 int main (int ac, char **av)
 {
 	std::string validParameters ("--help|-c|--commands|-e|--endless|--nff|--nofriendlyfire|--no-friendly-fire|-s|--specialfood|--special-food");
+	std::string workString;
 	nibblerParametersStruct nibblerParams;
+	int width, height;
 	unsigned int param, i;
 
 	/* default */
@@ -535,13 +537,22 @@ int main (int ac, char **av)
 					return 0;
 				}
 
-				nibblerParams.width = std::stoi (av[1]);
-				if (nibblerParams.width < 30 || 100 < nibblerParams.width)
+				workString = av[1];
+				if (! std::all_of (workString.begin(), workString.end(), isdigit))
 				{
- 					std::cerr << "nibbler: invalid width value '" << nibblerParams.width << "'" << std::endl;
- 					std::cerr << "Try './nibbler --help' for more information." << std::endl;
+					std::cerr << "nibbler: invalid width value '" << workString << "'" << std::endl;
+					std::cerr << "Try './nibbler --help' for more information." << std::endl;
 					exit (0);
 				}
+
+				width = std::stoi (av[1]);
+				if (width < 30 || 100 < width)
+				{
+					std::cerr << "nibbler: invalid width value '" << width << "'" << std::endl;
+					std::cerr << "Try './nibbler --help' for more information." << std::endl;
+					exit (0);
+				}
+				nibblerParams.width = static_cast <unsigned int> (width);
 
 				if (ac == 2)
 				{
@@ -563,13 +574,22 @@ int main (int ac, char **av)
 					return 0;
 				}
 
-				nibblerParams.height = std::stoi (av[2]);
-				if (nibblerParams.height < 30 || 100 < nibblerParams.height)
+				workString = av[2];
+				if (! std::all_of (workString.begin(), workString.end(), isdigit))
 				{
- 					std::cerr << "nibbler: invalid height value '" << nibblerParams.height << "'" << std::endl;
- 					std::cerr << "Try './nibbler --help' for more information." << std::endl;
+					std::cerr << "nibbler: invalid height value '" << workString << "'" << std::endl;
+					std::cerr << "Try './nibbler --help' for more information." << std::endl;
 					exit (0);
 				}
+
+				height = std::stoi (av[2]);
+				if (height < 30 || 100 < height)
+				{
+					std::cerr << "nibbler: invalid height value '" << height << "'" << std::endl;
+					std::cerr << "Try './nibbler --help' for more information." << std::endl;
+					exit (0);
+				}
+				nibblerParams.height = static_cast <unsigned int> (height);
 
 				for (i = 3; i < (unsigned int)ac; i++)
 				{
@@ -611,7 +631,20 @@ int main (int ac, char **av)
 			}
 			catch (std::invalid_argument &e)
 			{
-				std::cerr << "nibbler: invalid width or height value" << std::endl;
+				std::cerr << "nibbler: invalid width '" << av[1] << "'";
+				if (ac > 2)
+					std::cerr << "' or height '" << av[2] << "'";
+				std::cerr << " value" << std::endl;
+
+				std::cerr << "Try './nibbler --help' for more information." << std::endl;
+				exit (0);
+			}
+			catch (std::out_of_range &e)
+			{
+				std::cerr << "nibbler: out_of_range width '" << av[1] << "'";
+				if (ac > 2)
+					std::cerr << " or height '" << av[2] << "'";
+				std::cerr << " value" << std::endl;
 				std::cerr << "Try './nibbler --help' for more information." << std::endl;
 				exit (0);
 			}

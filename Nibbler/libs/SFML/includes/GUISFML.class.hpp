@@ -126,8 +126,8 @@ public:
 
 extern "C" {
 
-	GUISFML						*createGUI (Board *board);
-	void						destroyGUI (GUISFML* GUI);
+	IGUI						*createGUI (Board *board);
+	void						destroyGUI (IGUI* GUI);
 }
 
 #endif /* GUISFML_CLASS_HPP */

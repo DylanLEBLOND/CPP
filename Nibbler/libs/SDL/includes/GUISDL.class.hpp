@@ -131,8 +131,8 @@ public:
 
 extern "C" {
 
-	GUISDL						*createGUI (Board *board);
-	void						destroyGUI (GUISDL* GUI);
+	IGUI						*createGUI (Board *board);
+	void						destroyGUI (IGUI* GUI);
 }
 
 #endif /* GUISDL_CLASS_HPP */

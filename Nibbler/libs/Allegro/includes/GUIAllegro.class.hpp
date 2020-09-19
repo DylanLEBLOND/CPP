@@ -130,8 +130,8 @@ public:
 
 extern "C" {
 
-	GUIAllegro					*createGUI (Board *board);
-	void						destroyGUI (GUIAllegro* GUI);
+	IGUI						*createGUI (Board *board);
+	void						destroyGUI (IGUI* GUI);
 }
 
 #endif /* GUIALLEGRO_CLASS_HPP */

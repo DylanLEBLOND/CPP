@@ -1169,12 +1169,12 @@ eGUIEndMenuEvent			GUISFML::getEndMenuEvent (void)
 /*
  * Extern
  */
-GUISFML						*createGUI (Board *board)
+IGUI						*createGUI (Board *board)
 {
 	return new GUISFML (board);
 }
 
-void						destroyGUI (GUISFML *GUI)
+void						destroyGUI (IGUI *GUI)
 {
 	delete GUI;
 }
