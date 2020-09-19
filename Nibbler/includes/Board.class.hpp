@@ -53,7 +53,7 @@ enum class eBoardStatus { Playing,
 						  Forfeit,
 						  UnknownStatus };
 
-enum eboadMode : unsigned int
+enum eboardMode : unsigned int
 {
 	Default			= 0,		/* SinglePlayer / BasicFood / FriendlyFire / Finish Score (this flag and all others are mutually exclusive) */
 	SpecialFood		= 1 << 0,	/* Food had differents values and disappear after a certain time */
@@ -85,7 +85,7 @@ private:
 
 	Snake*								_snakeP1;
 	Snake*								_snakeP2;
-	eboadMode							_boardMode;
+	eboardMode							_boardMode;
 	eBoardStatus						_boardStatus;
 	bool								_playersInitialized;
 
@@ -117,11 +117,11 @@ public:
 	unsigned int						getHeight (void) const;
 	std::vector< std::vector<int> >		*getBoardCells (void) const;
 	int									getBoardCompletedScore (void) const;
-	eboadMode							getBoardMode (void) const;
+	eboardMode							getBoardMode (void) const;
 	eBoardStatus						getBoardStatus (void) const;
 	bool								isInitialized (void) const;
 
-	void								initBoard (unsigned int width, unsigned int height, eboadMode boardMode);
+	void								initBoard (unsigned int width, unsigned int height, eboardMode boardMode);
 	void								setMultiPlayerMode (bool activate);
 	void								loadMap (eBoardMaps map);
 	void								initPlayers (Snake *snakeP1, Snake *snakeP2);

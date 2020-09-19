@@ -19,15 +19,15 @@ static bool				launchNibbler (Board *board, nibblerParametersPointer nibblerPara
 		{
 			case eGUIMainMenuEvent::startSinglePlayerGame:
 				board->setMultiPlayerMode (false);
-				nibblerParams->boardMode = static_cast<eboadMode>
-										   (nibblerParams->boardMode & ~eboadMode::Multiplayer);
+				nibblerParams->boardMode = static_cast<eboardMode>
+										   (nibblerParams->boardMode & ~eboardMode::Multiplayer);
 				print_trace ("launchNibbler END (startSinglePlayerGame)", true);
 				return true;
 
 			case eGUIMainMenuEvent::startMultiPlayerGame:
 				board->setMultiPlayerMode (true);
-				nibblerParams->boardMode = static_cast<eboadMode>
-										   (nibblerParams->boardMode | eboadMode::Multiplayer);
+				nibblerParams->boardMode = static_cast<eboardMode>
+										   (nibblerParams->boardMode | eboardMode::Multiplayer);
 				print_trace ("launchNibbler END (startMultiPlayerGame)", true);
 				return true;
 
@@ -193,25 +193,25 @@ static eGameStatus		startGame (Board *board, Snake *snakeP1, Snake *snakeP2,
 				snakeP1->goDown();
 				break;
 			case eGUIGameEvent::p2GoLeft:
-				if (nibblerParams->boardMode & eboadMode::Multiplayer)
+				if (nibblerParams->boardMode & eboardMode::Multiplayer)
 					snakeP2->goLeft();
 				else
 					throw UnknownEventException (eGUIString (GUI->getGUIName()), eGUIGameEventString (currentEvent));
 				break;
 			case eGUIGameEvent::p2GoRight:
-				if (nibblerParams->boardMode & eboadMode::Multiplayer)
+				if (nibblerParams->boardMode & eboardMode::Multiplayer)
 					snakeP2->goRight();
 				else
 					throw UnknownEventException (eGUIString (GUI->getGUIName()), eGUIGameEventString (currentEvent));
 				break;
 			case eGUIGameEvent::p2GoUp:
-				if (nibblerParams->boardMode & eboadMode::Multiplayer)
+				if (nibblerParams->boardMode & eboardMode::Multiplayer)
 					snakeP2->goUp();
 				else
 					throw UnknownEventException (eGUIString (GUI->getGUIName()), eGUIGameEventString (currentEvent));
 				break;
 			case eGUIGameEvent::p2GoDown:
-				if (nibblerParams->boardMode & eboadMode::Multiplayer)
+				if (nibblerParams->boardMode & eboardMode::Multiplayer)
 					snakeP2->goDown();
 				else
 					throw UnknownEventException (eGUIString (GUI->getGUIName()), eGUIGameEventString (currentEvent));
@@ -427,7 +427,7 @@ static void				startNibbler (nibblerParametersPointer nibblerParams)
 		if (! launchNibbler (board, nibblerParams, &guiFunc, GUI))
 			break;
 
-		if (nibblerParams->boardMode & eboadMode::Multiplayer)
+		if (nibblerParams->boardMode & eboardMode::Multiplayer)
 			snakeP2 = save_snakeP2;
 		else
 			snakeP2 = NULL;
@@ -510,7 +510,7 @@ int main (int ac, char **av)
 	/* default */
 	nibblerParams.width = 40u;
 	nibblerParams.height = 40u;
-	nibblerParams.boardMode = eboadMode::Default;
+	nibblerParams.boardMode = eboardMode::Default;
 
 	switch (ac)
 	{
@@ -585,20 +585,20 @@ int main (int ac, char **av)
 							return 0;
 						case 21:
 						case 24:
-							nibblerParams.boardMode = static_cast<eboadMode>
-													  (nibblerParams.boardMode | eboadMode::Endless);
+							nibblerParams.boardMode = static_cast<eboardMode>
+													  (nibblerParams.boardMode | eboardMode::Endless);
 							break;
 						case 34:
 						case 40:
 						case 57:
-							nibblerParams.boardMode = static_cast<eboadMode>
-													  (nibblerParams.boardMode | eboadMode::NoFriendlyFire);
+							nibblerParams.boardMode = static_cast<eboardMode>
+													  (nibblerParams.boardMode | eboardMode::NoFriendlyFire);
 							break;
 						case 76:
 						case 79:
 						case 93:
-							nibblerParams.boardMode = static_cast<eboadMode>
-													  (nibblerParams.boardMode | eboadMode::SpecialFood);
+							nibblerParams.boardMode = static_cast<eboardMode>
+													  (nibblerParams.boardMode | eboardMode::SpecialFood);
 							break;
 						default:
 		 					std::cerr << "nibbler: invalid option '" << av[i] << "'" << std::endl;

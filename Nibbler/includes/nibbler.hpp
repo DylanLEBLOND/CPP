@@ -32,7 +32,7 @@ typedef struct nibblerParametersStruct
 {
 	unsigned int	width;
 	unsigned int	height;
-	eboadMode		boardMode;
+	eboardMode		boardMode;
 
 } nibblerParametersStruct, *nibblerParametersPointer;
 

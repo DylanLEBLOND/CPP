@@ -196,7 +196,7 @@ void						GUISDL::ajustBounds (void)
 
 void						GUISDL::drawMainMenu (void)
 {
-	eboadMode boardCurrentMode;
+	eboardMode boardCurrentMode;
 	std::string mainString;
 	SDL_Rect textDimension;
 	SDL_Color textColor, textBGColor;
@@ -229,55 +229,55 @@ void						GUISDL::drawMainMenu (void)
 	boardCurrentMode = this->_board->getBoardMode();
 
 	mainString = "Current Mode: ";
-	if ((boardCurrentMode | eboadMode::Default) == eboadMode::Default)
+	if ((boardCurrentMode | eboardMode::Default) == eboardMode::Default)
 		mainString += "Default";
 	else
 	{
 		switch (static_cast <unsigned int> (boardCurrentMode))
 		{
-			case eboadMode::SpecialFood:
+			case eboardMode::SpecialFood:
 				mainString += "SpecialFood";
 				break;
-			case eboadMode::NoFriendlyFire:
+			case eboardMode::NoFriendlyFire:
 				mainString += "NoFriendlyFire";
 				break;
-			case eboadMode::Endless:
+			case eboardMode::Endless:
 				mainString += "Endless";
 				break;
-			case eboadMode::Multiplayer:
+			case eboardMode::Multiplayer:
 				mainString += "Multiplayer";
 				break;
-			case eboadMode::SpecialFood | eboadMode::NoFriendlyFire:
+			case eboardMode::SpecialFood | eboardMode::NoFriendlyFire:
 				mainString += "SpecialFood | NoFriendlyFire";
 				break;
-			case eboadMode::SpecialFood | eboadMode::Endless:
+			case eboardMode::SpecialFood | eboardMode::Endless:
 				mainString += "SpecialFood | Endless";
 				break;
-			case eboadMode::SpecialFood | eboadMode::Multiplayer:
+			case eboardMode::SpecialFood | eboardMode::Multiplayer:
 				mainString += "SpecialFood | Multiplayer";
 				break;
-			case eboadMode::NoFriendlyFire | eboadMode::Endless:
+			case eboardMode::NoFriendlyFire | eboardMode::Endless:
 				mainString += "NoFriendlyFire | Endless";
 				break;
-			case eboadMode::NoFriendlyFire | eboadMode::Multiplayer:
+			case eboardMode::NoFriendlyFire | eboardMode::Multiplayer:
 				mainString += "NoFriendlyFire | Multiplayer";
 				break;
-			case eboadMode::Endless | eboadMode::Multiplayer:
+			case eboardMode::Endless | eboardMode::Multiplayer:
 				mainString += "Endless | Multiplayer";
 				break;
-			case eboadMode::SpecialFood | eboadMode::NoFriendlyFire | eboadMode::Endless:
+			case eboardMode::SpecialFood | eboardMode::NoFriendlyFire | eboardMode::Endless:
 				mainString += "SpecialFood | NoFriendlyFire | Endless";
 				break;
-			case eboadMode::SpecialFood | eboadMode::NoFriendlyFire | eboadMode::Multiplayer:
+			case eboardMode::SpecialFood | eboardMode::NoFriendlyFire | eboardMode::Multiplayer:
 				mainString += "SpecialFood | NoFriendlyFire | Multiplayer";
 				break;
-			case eboadMode::SpecialFood | eboadMode::Endless | eboadMode::Multiplayer:
+			case eboardMode::SpecialFood | eboardMode::Endless | eboardMode::Multiplayer:
 				mainString += "SpecialFood | Endless | Multiplayer";
 				break;
-			case eboadMode::NoFriendlyFire | eboadMode::Endless | eboadMode::Multiplayer:
+			case eboardMode::NoFriendlyFire | eboardMode::Endless | eboardMode::Multiplayer:
 				mainString += "NoFriendlyFire | Endless | Multiplayer";
 				break;
-			case eboadMode::SpecialFood | eboadMode::NoFriendlyFire | eboadMode::Endless | eboadMode::Multiplayer:
+			case eboardMode::SpecialFood | eboardMode::NoFriendlyFire | eboardMode::Endless | eboardMode::Multiplayer:
 				mainString += "SpecialFood | NoFriendlyFire | Endless | Multiplayer";
 				break;
 			default:
