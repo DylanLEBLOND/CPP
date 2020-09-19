@@ -168,9 +168,6 @@ GUISDL::~GUISDL (void)
 
 	IMG_Quit();
 
-
-
-
 	SDL_Quit();
 
 	unsetenv (SDLenv);
